@@ -12,8 +12,12 @@ myst:
 :caption: Tutorials
 :maxdepth: 2
 
-dataset
-model
-training
-evaluation
+core-concepts
+how-to-use-task
+how-to-use-robot
+how-to-use-controller
+how-to-use-sensor
+how-to-use-objects
+
+[//]: # (how-to-run-benchmark-with-custom-agent)
 ```

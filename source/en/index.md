@@ -16,7 +16,7 @@ myst:
  - **Data Generation**: Collect training data inside various simulation environments.
  - **Development**: Develop various robotics systems, tasks and applications.
 
-The framework comprises a general-purpose simulation platform [InternUtopia]() that provides realistic and immersive environments, along with toolkits that support research across various embodied AI domains:
+The framework comprises a general-purpose simulation platform [InternUtopia](user_guide/internutopia/index.md) that provides realistic and immersive environments, along with toolkits that support research across various embodied AI domains:
 - [InternPerception](user_guide/internperception/index.md): Egocentric perception and spatial intelligence.
 - [InternNav](user_guide/internnav/index.md): Interactive multimodal embodied navigation.
 - [InternManip](user_guide/internmanip/index.md): Multimodal manipulation.
