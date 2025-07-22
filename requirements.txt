@@ -1,4 +1,5 @@
 myst_parser
+pre-commit==4.2.0
 pydata-sphinx-theme
 sphinx==6.2.1
 sphinx_copybutton==0.5.2
