@@ -137,7 +137,7 @@ Then you can one of the following methods to get the assets:
 
   > **NOTE**: If InternUtopia is installed with Docker, We recommend downloading the assets to a location under `/isaac-sim/InternUtopia/` in container (which is mounted from a host path) so that it can be retained across container recreations.
 
-- Download the assets manually from [HuggingFace](https://huggingface.co/datasets/InternRobotics/GRScenes)/[ModelScope](https://www.modelscope.cn/datasets/Shanghai_AI_Laboratory/GRScenes/summary)/[OpenDataLab](https://openxlab.org.cn/datasets/InternRobotics/GRScenes), and then use the following command to tell InternUtopia where the assets locate if you are meant to use it with InternUtopia:
+- Download the assets manually from [HuggingFace](https://huggingface.co/datasets/OpenRobotLab/GRScenes)/[ModelScope](https://www.modelscope.cn/datasets/Shanghai_AI_Laboratory/GRScenes/summary)/[OpenDataLab](https://openxlab.org.cn/datasets/OpenRobotLab/GRScenes), and then use the following command to tell InternUtopia where the assets locate if you are meant to use it with InternUtopia:
 
   ```shell
   $ python -m internutopia.set_assets_path

@@ -2,31 +2,31 @@ User Guide
 =====
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internutopia/index
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internperception/index
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internnav/index
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internhumanoid/index
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internmanip/index
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    internworldmodel/index
