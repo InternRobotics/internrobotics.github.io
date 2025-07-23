@@ -10,13 +10,12 @@ myst:
 
 ```{toctree}
 :caption: Get Started
-:maxdepth: 2
+:maxdepth: 1
 
 installation
-wander-with-keyboard
-explore-grscenes
-teleoperating-with-mocap
-teleoperating-with-visionpro
-layout_edit_with_mocap.md
-run-benchmark-baseline
+drive-unitree-g1-with-keyboard
+dive-into-grscenes-100
+control-franak-with-your-hand
+teleoprate-fourier-gr1-with-visionpro
+edit-scene-interactively
 ```

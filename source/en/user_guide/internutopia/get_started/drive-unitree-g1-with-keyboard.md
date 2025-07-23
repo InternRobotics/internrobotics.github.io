@@ -1,6 +1,6 @@
-# Wander with keyboard
+# 🚶‍➡️Drive Unitree G1 with Keyboard
 
-> This tutorial guides you to wander with keyboard as g1 robot.
+> This tutorial guides you to drive Unitree G1 Robot with keyboard.
 
 ```bash
 $ python -m grutopia.demo.g1_locomotion

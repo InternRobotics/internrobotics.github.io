@@ -10,7 +10,7 @@ myst:
 
 ```{toctree}
 :caption: Tutorials
-:maxdepth: 2
+:maxdepth: 1
 
 core-concepts
 gym_env
@@ -22,6 +22,4 @@ how-to-use-sensor
 how-to-use-objects
 how-to-use-metric
 multi-gpu-and-multi-node
-
-[//]: # (how-to-run-benchmark-with-custom-agent)
 ```

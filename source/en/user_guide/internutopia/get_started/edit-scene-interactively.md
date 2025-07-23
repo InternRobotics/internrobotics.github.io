@@ -1,4 +1,4 @@
-# Layout Edit with Mocap
+# 🫳Edit Scene Interactively
 
 This tutorial will guide you on how to remotely operate gesture-based motion capture (Mocap). Using layout editing as an example, it provides a description of the process of building and editing layouts using motion capture technology. By following this guide, you will be able to complete the [`GRUtopia/toolkits/layout_edit/layout_edit.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/toolkits/layout_edit/layout_edit.py) task, allowing you to flexibly edit the contents of the layout, even adjusting the camera position in the simulation environment. Let's start with the steps below.
 

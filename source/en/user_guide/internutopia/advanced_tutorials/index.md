@@ -10,7 +10,7 @@ myst:
 
 ```{toctree}
 :caption: Advanced Tutorials
-:maxdepth: 2
+:maxdepth: 1
 
 how-to-add-robot
 how-to-add-controller

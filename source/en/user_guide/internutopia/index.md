@@ -18,13 +18,12 @@ Here is a brief overview of GRUtopia:
 
 We provide some demostrations to show what GRUtopia can do after [installation](./get_started/installation.md):
 
-| Name | Description | Requirement | Reference |
-| --- | --- | --- | --- |
-| Robot simulation | Control a humanoid robot to explore a simulation world | A host with NVIDIA RTX GPU | [Wander with Keyboard](./get_started/wander-with-keyboard.html) |
-| Teleoperating with VisionPro | Teleoperate a humanoid robot with a VR headset (Apple VisionPro) | * A host with NVIDIA RTX GPU <br /> * [Apple VisionPro](https://www.apple.com/apple-vision-pro/) | [Teleoperate with VisionPro](./get_started/teleoperating-with-visionpro.html) |
-| Teleoperating with Mocap | Teleoperate a robot arm with camera-based motion capture system | * A host with NVIDIA RTX GPU <br /> * A camera | [Teleoperate with Mocap](./get_started/teleoperating-with-mocap.html) |
-| Layout Edit with Mocap | Interactively edit scene with camera-based motion capture system | * A host with NVIDIA RTX GPU <br /> * A camera | [Layout Edit with Mocap](./get_started/layout_edit_with_mocap.html) |
-| Benchmark | Run a social-navigation/mobile-manipulation benchmark with agent | A host with NVIDIA RTX GPU <br />(32GB+ VRAM and 64GB+ RAM) | [Run Benchmark Baseline](./get_started/run-benchmark-baseline.html) |
+| Name | Description | Requirement |
+| --- | --- | --- |
+| [🚶‍➡️Drive Unitree G1 with Keyboard](./get_started/drive-unitree-g1-with-keyboard.html) | Control a Unitree G1 robot to walk around in a simulation world with keyboard | A host with NVIDIA RTX GPU |
+| [🥽Teleoperate Fourier GR1 with VisionPro](./get_started/teleoprate-fourier-gr1-with-visionpro.html) | Teleoperate a Fourier GR1 robot with a VR headset (Apple VisionPro) | * A host with NVIDIA RTX GPU <br /> * [Apple VisionPro](https://www.apple.com/apple-vision-pro/) |
+| [👋Control Franka with Your Hand](./get_started/control-franak-with-your-hand.html) | Teleoperate a Franka with camera-based motion capture system | * A host with NVIDIA RTX GPU <br /> * A camera |
+| [🫳Edit Scene Interactively](./get_started/edit-scene-interactively.md) | Interactively edit scene with camera-based motion capture system | * A host with NVIDIA RTX GPU <br /> * A camera |
 
 
 

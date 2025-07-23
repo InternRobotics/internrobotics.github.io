@@ -1,8 +1,8 @@
-# Explore GRscenes
+# 🔍Dive into GRScenes-100
 
 ## Download
 
-You can refer to the chapter [Prepare Assets](installation.md#prepare-assets) in the installation doc to download the GRscenes.
+You can refer to the chapter [Prepare Assets](installation.md#prepare-assets) in the installation doc to download the GRscenes-100.
 
 ## Overview of dataset
 

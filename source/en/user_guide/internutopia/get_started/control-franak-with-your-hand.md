@@ -1,4 +1,4 @@
-# Teleoperating with Mocap
+# 👋Control Franka with Your Hand
 
 This tutorial will guide you how to teleoperate with hand gesture-based motion capture (Mocap). It takes Franka robotic arm as example to give an instruction for the process of setting up and controlling the Franka robotic arm using Mocap. By following this guide, you will be able to complete the [`GRUtopia/grutopia/demo/franka_manipulation_mocap_teleop.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/franka_manipulation_mocap_teleop.py) task, enabling flexible control of the arm’s movement, rotation, gripper actions, and even the camera position in the simulated environment. Let's get started by following the steps below.
 

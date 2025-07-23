@@ -1,4 +1,4 @@
-# Teleoperating with VisionPro
+# 🥽Teleoperate Fourier GR1 with VisionPro
 
 ## Prerequisites
 

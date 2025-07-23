@@ -1,9 +1,9 @@
-grutopia.core.scene
+grutopia.core.object
 ===================================
 
 
 object
 ------
 
-.. automodule:: grutopia.core.scene.scene
+.. automodule:: grutopia.core.object.object
    :members:
