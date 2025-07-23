@@ -22,38 +22,31 @@ We can also review the configuration of each task in [`grutopia_extension/config
 To use an existing task within GRUtopia, you can simply use the corresponding type of task config in the runtime configuration as following:
 
 ```{code-block} python
-:emphasize-lines: 16-22
+:emphasize-lines: 14-18
 
-from grutopia.core.config import Config, SimConfig
-from grutopia.core.gym_env import Env
-from grutopia.core.runtime import SimulatorRuntime
-from grutopia.core.util import has_display
-from grutopia.macros import gm
-from grutopia_extension import import_extensions
-from grutopia_extension.configs.tasks import (
-    SingleInferenceEpisodeCfg,
-    SingleInferenceTaskCfg,
-)
+from internutopia.core.config import Config, SimConfig
+from internutopia.core.gym_env import Env
+from internutopia.core.util import has_display
+from internutopia.macros import gm
+from internutopia_extension import import_extensions
+from internutopia_extension.configs.tasks import SingleInferenceTaskCfg
 
-headless = not has_display()
+headless = False
+if not has_display():
+    headless = True
 
 config = Config(
-    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False),
-    task_config=SingleInferenceTaskCfg(
-        episodes=[
-            SingleInferenceEpisodeCfg(
-                scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
-            ),
-        ],
-    ),
+    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False, headless=headless),
+    task_configs=[
+        SingleInferenceTaskCfg(
+            scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
+        )
+    ],
 )
 
-sim_runtime = SimulatorRuntime(config_class=config, headless=headless, native=headless)
-
 import_extensions()
-# import custom extensions here.
 
-env = Env(sim_runtime)
+env = Env(config)
 obs, _ = env.reset()
 
 i = 0
@@ -72,4 +65,4 @@ env.simulation_app.close()
     <source src="../../../_static/video/tutorial_use_task.webm" type="video/webm">
 </video>
 
-In the above example, we use `SingleInferenceTaskCfg` to specify the type of task. For each type of task the corresponding episode config type (`SingleInferenceEpisodeCfg` in the example) should be used to specify episode-wise configurations, such as the scene assets to use in each episode.
+> In InternUtopia, `task_configs` is a list in which each element represents one episode. This is one of the key points that distinguish InternUtopia with other platforms.

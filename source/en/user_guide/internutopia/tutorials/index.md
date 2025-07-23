@@ -13,11 +13,14 @@ myst:
 :maxdepth: 2
 
 core-concepts
+gym_env
+vec_env
 how-to-use-task
 how-to-use-robot
 how-to-use-controller
 how-to-use-sensor
 how-to-use-objects
+how-to-use-metric
 
 [//]: # (how-to-run-benchmark-with-custom-agent)
 ```

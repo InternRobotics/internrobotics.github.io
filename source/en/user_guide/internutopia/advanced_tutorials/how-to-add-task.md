@@ -1,203 +1,122 @@
 # How to Add Custom Task
 
-> This tutorial guides you on how to add a custom task
+> This tutorial explains how to add a custom task.
 
 ## 1. Defining a New Task
-Before adding a new task, the following points should be figured out:
+Before adding a new task, we need to clarify the following issues:
 
-- Task Objective: What does the task meant to do?
-- Task Termination: Will the task end, and how do we determine that?
-- Metrics Calculation: What metrics need to be calculated for the task?
+- Task Name: What will the task be called?
+- Task Objective: What specific Objective will the task achieve?
+- Task Termination: Will the task end, and how will we determine that?
 
 
-Now we want to add a new task named `FiniteStepTask`. Here's the answers for `FiniteStepTask` based on the above points:
-
-- Objective: Do something until a certain number of steps reached.
+Here is how we define FiniteStepTask based on the above issues:
+- Name: FiniteStepTask
+- Objective: Demo
 - Termination:
   - The Task will end.
-  - End Criteria: The task will end after finite steps.
-- Metrics Calculation:
-  - Record the total distance a robot moves from start to finish.
-  - (Additional metrics as needed.)
+  - End Condition: The task will end either after finite steps.
 
-To add a custom task, you need to:
 
-- Create a config class for episode, inheriting from the `grutopia.core.config.task.EpisodeCfg`.
-- Create a config class for task, inheriting from the `grutopia.core.config.task.TaskCfg`.
+To add a custom task, we need to:
+- Create a config class for task config, inheriting from the `grutopia.core.config.task.TaskCfg`.
 - Create a class for task, inheriting from the `grutopia.core.task.BaseTask`.
 
-For the differences between the two config classes, follow the rules below:
 
-- The configs that don't vary across all the episodes should be defined in **task** config class.
-- The configs that may vary between episodes should be defined in **episode** config class.
-- The task config class should always include a list of corresponding episode configs.
+## 2. Create Task Config Class
 
-## 2. Create Config Classes
+Here's how we define the `FiniteStepTask` based on the above considerations:
 
-Here's an example of the task and episode config classes for the `FiniteStepTask`:
+```{code-block} python
+:emphasize-lines: 8-9
 
-```python
-from typing import List, Optional
+from typing import Optional
 
 from grutopia.core.config.task import TaskCfg
 
 
 class FiniteStepTaskCfg(TaskCfg):
-  type: Optional[str] = 'FiniteStepTask'
-  max_step: Optional[int] = 500
+    type: Optional[str] = 'FiniteStepTask'
+    max_steps: Optional[int] = 500
 
 ```
 
+NOTE:
+
+- Define a unique `type` name
+- Define new task-specific parameters directly in the config (e.g., `max_steps`)
+- Avoid overriding other parameters defined in `grutopia.core.config.task.TaskCfg`
+
+
 ## 3. Create Task Class
 
-What is a runtime?
-
 ```Python
-from omni.isaac.core.scenes import Scene
-
-from grutopia.core.task_config_manager.base import TaskCfg
+from grutopia.core.scene.scene import IScene
 from grutopia.core.task import BaseTask
+from grutopia_extension.configs.tasks.finite_step_task import FiniteStepTaskCfg
 
 
 @BaseTask.register('FiniteStepTask')
 class FiniteStepTask(BaseTask):
-  def __init__(self, task_config: TaskCfg, scene: Scene):
-    super().__init__(task_config, scene)
-    self.stop_count = 0
-    self.max_step = 500  # default max_step
-    # ======= Validate task setting =======
-    if not task_config.task_settings:
-      pass
-    elif not isinstance(task_config.task_settings, dict):
-      raise ValueError('task_settings of FiniteStepTask must be a dict')
-    if 'max_step' in task_config.task_settings:
-      self.max_step = task_config.task_settings['max_step']
-    # ======= Validate task setting =======
+    def __init__(self, config: FiniteStepTaskCfg, scene: IScene):
+        super().__init__(config, scene)
+        self.stop_count = 0
+        self.max_steps = config.max_steps
 
-  def is_done(self) -> bool:
-    self.stop_count += 1
-    return self.stop_count > self.max_step
-
-```
-- The `is_done` method is overridden based on the termination condition defined [above](#1-defining-a-new-task).
-- This task is ready to use, but it will not output any results by itself. To make it work in practice, you must define Metrics and configure them.
-
-
-## 4. Create Metrics Config Class
-
-
-To add a custom metric, you need to:
-- Create a config class for metric config, inheriting from the `grutopia.core.config.metric.MetricUserConfig`.
-- Create a class for metric, inheriting from the `grutopia.core.task.metric.BaseMetric`.
-
-Here's an example of a config class for a metric:
-
-```python
-# This is also the simplest configuration.
-from typing import Optional
-
-from grutopia.core.config.metric import MetricUserConfig
-
-
-class SimpleMetricCfg(MetricUserConfig):
-    type: Optional[str] = 'SimpleMetric'
+    def is_done(self) -> bool:
+        self.stop_count += 1
+        return self.stop_count > self.max_steps
 ```
 
-
-## 5. Create Metrics Class
-
-In this doc, we demonstrate a simple metrics used to track the total distance a robot moves.
-
-```Python
-import numpy as np
-from pydantic import BaseModel
-
-from grutopia.core.config.metric import MetricCfg
-from grutopia.core.task_config_manager.base import TaskRuntime
-from grutopia.core.task.metric import BaseMetric
-from grutopia.core.util import log
+The `is_done` method has been overridden based on the End Condition defined above.
 
 
-class SimpleMetricParam(BaseModel):
-  robot_name: str
+## 4. Task Usage Preview
+To use the custom task, we can simply include them in the configuration settings as follows
 
+```{code-block} python
+:emphasize-lines: 15-18
 
-@BaseMetric.register('SimpleMetric')
-class SimpleMetric(BaseMetric):
-  """
-  Calculate the total distance a robot moves
-  """
+from internutopia.core.config import Config, SimConfig
+from internutopia.core.gym_env import Env
+from internutopia.core.util import has_display
+from internutopia.macros import gm
+from internutopia_extension import import_extensions
+from internutopia_extension.configs.tasks import SingleInferenceTaskCfg
 
-  def __init__(self, config: MetricCfg, task_runtime: TaskRuntime):
-    super().__init__(config, task_runtime)
-    self.distance: float = 0.0
-    self.position = None
-    self.param = SimpleMetricParam(**config.metric_config)
-    _robot_name = self.param.robot_name
-    self.robot_name = (
-            _robot_name + '_' + str(self.task_runtime.env.env_id)
-    )  # real robot name in isaac sim: {robot_name}_{env_id}
+headless = False
+if not has_display():
+    headless = True
 
-  def reset(self):
-    self.distance = 0.0
-
-  def update(self, task_obs: dict):
-    """
-    This function is called at each world step.
-    """
-    if self.position is None:
-      self.position = task_obs[self.robot_name]['position']
-      return
-    self.distance += np.linalg.norm(self.position - task_obs[self.robot_name]['position'])
-    self.position = task_obs[self.robot_name]['position']
-    return
-
-  def calc(self):
-    """
-    This function is called to calculate the metrics when the episode is terminated.
-    """
-    log.info('SimpleMetric calc() called.')
-    return self.distance
-
-```
-- The `update` method will be invoked after every step.
-- The `calc` method will be invoked at the end of an episode.
-- The `reset` method be invoked when an episode is reset. Reset within one episode is not supported yet, so this method won't be used at the time.
-
-
-## 6. Task Usage Preview
-To use the custom task and metrics, you can simply include them in the configuration settings as follows
-
-```Python
-...
 config = Config(
-    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False),
-    task_config=FiniteStepTaskCfg(
-        task_settings={'max_step': 300},
-        metrics=[
-            SimpleMetricCfg(metric_config={'robot_name': 'h1'}),
-            # Add more metrics here.
-        ],
-        metrics_save_path='./h1_simple_metric.jsonl',
-        episodes=[
-            ...
-        ],
-    ),
+    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False, headless=headless),
+    task_configs=[
+        FiniteStepTaskCfg(
+            scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
+            max_steps = 300,
+        ),
+    ]
 )
 
-sim_runtime = SimulatorRuntime(config_class=config)
-
 import_extensions()
-# import custom extensions here.
 
-env = Env(sim_runtime)
+env = Env(config)
+obs, _ = env.reset()
+
+i = 0
+
+while env.simulation_app.is_running():
+    obs, _, terminated, _, _ = env.step(action={})
+
+    if i % 1000 == 0:
+        print(i)
+
+    i += 1
+
+env.simulation_app.close()
+
+env = Env(config)
 ...
 ```
 
-You can also run the [`h1_traveled_distance.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/h1_traveled_distance.py) in the demo directly.
-
-And you can check result in `./h1_simple_metric.jsonl` after the task finishes.
-
-```json
-{"SimpleMetric": 0.7508679775492055, "normally_end": true}
-```
+This task will terminate after 300 steps.
