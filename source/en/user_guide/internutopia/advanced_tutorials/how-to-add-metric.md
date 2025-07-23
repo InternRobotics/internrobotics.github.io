@@ -19,8 +19,8 @@ Here is how we define TraveledDistanceMetric based on the above issues:
   - (Additional metrics as needed.)
 
 To add a custom metric, you need to:
-- Create a config class for metric config, inheriting from the `grutopia.core.config.metric.MetricCfg`.
-- Create a class for metric, inheriting from the `grutopia.core.task.metric.BaseMetric`.
+- Create a config class for metric config, inheriting from the `internutopia.core.config.metric.MetricCfg`.
+- Create a class for metric, inheriting from the `internutopia.core.task.metric.BaseMetric`.
 
 
 ## 2. Create Metrics Config Class
@@ -31,7 +31,7 @@ Here's an example of a config class for a metric:
 # This is also the simplest configuration.
 from typing import Optional
 
-from grutopia.core.config.metric import MetricCfg
+from internutopia.core.config.metric import MetricCfg
 
 
 class TraveledDistanceMetricCfg(MetricCfg):
@@ -52,9 +52,9 @@ In this doc, we demonstrate a simple metrics used to track the total distance a 
 import numpy as np
 from pydantic import BaseModel
 
-from grutopia.core.config import TaskCfg
-from grutopia.core.task.metric import BaseMetric
-from grutopia.core.util import log
+from internutopia.core.config import TaskCfg
+from internutopia.core.task.metric import BaseMetric
+from internutopia.core.util import log
 from internutopia_extension.configs.metrics.traveled_distance_metric import TraveledDistanceMetricCfg
 
 

@@ -1,15 +1,15 @@
-grutopia.core.robot
+internutopia.core.robot
 ===================================
 
 robot
 -----
 
-.. automodule:: grutopia.core.robot.robot
+.. automodule:: internutopia.core.robot.robot
    :members:
 
 
 controller
 ----------
 
-.. automodule:: grutopia.core.robot.controller
+.. automodule:: internutopia.core.robot.controller
    :members:

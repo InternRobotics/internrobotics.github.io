@@ -1,13 +1,13 @@
 # 🫳Edit Scene Interactively
 
-This tutorial will guide you on how to remotely operate gesture-based motion capture (Mocap). Using layout editing as an example, it provides a description of the process of building and editing layouts using motion capture technology. By following this guide, you will be able to complete the [`GRUtopia/toolkits/layout_edit/layout_edit.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/toolkits/layout_edit/layout_edit.py) task, allowing you to flexibly edit the contents of the layout, even adjusting the camera position in the simulation environment. Let's start with the steps below.
+This tutorial will guide you on how to remotely operate gesture-based motion capture (Mocap). Using layout editing as an example, it provides a description of the process of building and editing layouts using motion capture technology. By following this guide, you will be able to complete the [`InternUtopia/toolkits/layout_edit/layout_edit.py`](https://github.com/InternRobotics/InternUtopia/blob/main/toolkits/layout_edit/layout_edit.py) task, allowing you to flexibly edit the contents of the layout, even adjusting the camera position in the simulation environment. Let's start with the steps below.
 
 ## 1. Implementation Guide
 Please refer to the `Implementation Guide` Step1 and Step2 content [here](teleoperating-with-mocap.md#implementation-guide) for the process.
 
-Then start the task in GRUtopia:
+Then start the task in InternUtopia:
 
-Update the `mocap_url` parameter in [`GRUtopia/toolkits/layout_edit/layout_edit.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/toolkits/layout_edit/layout_edit.py) with the Hamer server URL obtained in Step 2 (e.g., `http://127.0.0.1:5001`). After that, start the task by running the following command:
+Update the `mocap_url` parameter in [`InternUtopia/toolkits/layout_edit/layout_edit.py`](https://github.com/InternRobotics/InternUtopia/blob/main/toolkits/layout_edit/layout_edit.py) with the Hamer server URL obtained in Step 2 (e.g., `http://127.0.0.1:5001`). After that, start the task by running the following command:
 
 ```
 python -m toolkits.layout_edit.layout_edit
@@ -75,7 +75,7 @@ After editing the scene, save the scene as needed.
 
 #### Operation
 
-- Pinch the thumb and middle finger of the right hand together for approximately 0.5 seconds to delete the loaded gesture in the virtual scene. Then, the current state of the scene is automatically saved to the `/GRUtopia/out` directory.
+- Pinch the thumb and middle finger of the right hand together for approximately 0.5 seconds to delete the loaded gesture in the virtual scene. Then, the current state of the scene is automatically saved to the `/InternUtopia/out` directory.
 
 <video width="720" height="405" controls>
     <source src="../../../_static/video/mocap_layout_edit.webm" type="video/webm">

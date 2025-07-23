@@ -6,25 +6,29 @@ Note that the controller cannot be operated independently. It must be used with 
 
 
 To add a custom controller, you need to:
-- Create a config class for controller config, inheriting from the `grutopia.core.config.robot.ControllerCfg`.
-- Create a class for controller, inheriting from the `grutopia.core.robot.controller.BaseController`.
+- Create a config class for controller config, inheriting from the `internutopia.core.config.robot.ControllerCfg`.
+- Create a class for controller, inheriting from the `internutopia.core.robot.controller.BaseController`.
+
+In this tutorial we take Differential Drive Controller as an example to show how to add a custom controller.
 
 ## Create Config Class
 
 Here's an example of a config class for a controller:
 
 ```Python
-from grutopia.core.config.robot import ControllerCfg
+from typing import Optional
+
+from internutopia.core.config.robot import ControllerCfg
 
 
-class DemoControllerCfg(ControllerCfg):
+class DifferentialDriveControllerCfg(ControllerCfg):
 
-    name: str = 'demo_controller'
-    type: str = 'DemoController'
-    forward_speed: float = 1.0
+    type: Optional[str] = 'DifferentialDriveController'
+    wheel_radius: float
+    wheel_base: float
 ```
 
-Generally, when creating a new config class, reasonable default values for required fields should be specified, and controller specific config fields can be added when necessary.
+For differential drive controller, we specify the type and add new fields `wheel_radius` and `wheel_base` to specify the radius and base of the wheels.
 
 ## Create Controller Class
 
@@ -33,22 +37,21 @@ In the simplest scenario, the following methods are required to be implemented i
 ```python
 import numpy as np
 from typing import List, Union
-from omni.isaac.core.utils.types import ArticulationAction
 
-from grutopia.core.robot.controller import BaseController
-from grutopia.core.robot.robot import BaseRobot
+from internutopia.core.robot.articulation_action import ArticulationAction
+from internutopia.core.robot.controller import BaseController
+from internutopia.core.robot.robot import BaseRobot
 
 
-@BaseController.register('DemoController')
-class DemoController(BaseController):
-
-    def __init__(self, config: DemoControllerCfg, robot: BaseRobot, scene: Scene):
+@BaseController.register('DifferentialDriveController')
+class DifferentialDriveController(BaseController):
+    def __init__(self, config: DifferentialDriveControllerCfg, robot: BaseRobot, scene: IScene) -> None:
         """Initialize the controller with the given configuration and its owner robot.
 
         Args:
-            config (DemoControllerCfg): controller configuration.
+            config (DifferentialDriveControllerCfg): controller configuration.
             robot (BaseRobot): robot owning the controller.
-            scene (Scene): scene from isaac sim.
+            scene (IScene): scene interface.
         """
 
     def action_to_control(self, action: Union[np.ndarray, List]) -> ArticulationAction:
@@ -64,9 +67,9 @@ class DemoController(BaseController):
 
 The `action_to_control` method translates the input action into joint signals to apply in each step.
 
-For complete list of controller methods, please refer to the [Controller API documentation](../../api/robot.rst#module-grutopia.core.robot.controller).
+For complete list of controller methods, please refer to the [Controller API documentation](../../api/robot.rst#module-internutopia.core.robot.controller).
 
-Please note that the registration of the controller class is done through the `@BaseController.register` decorator, and the registered name should match the value of `type` field within the corresponding controller config class (here is `DemoController`).
+Please note that the registration of the controller class is done through the `@BaseController.register` decorator, and the registered name **MUST** match the value of `type` field within the corresponding controller config class (here is `DifferentialDriveController`).
 
 Sometimes the calculation logic is defined in a method named `forward` to show the input parameters the controller accepts (which is common in our implementations), making it more human-readable. In this case, the `action_to_control` method itself only expands the parameters, and invokes `forward` method to calculate the joint signals.
 
@@ -76,36 +79,31 @@ An example of controller class implementation is shown as following:
 from typing import List
 
 import numpy as np
-from omni.isaac.core.scenes import Scene
-from omni.isaac.core.utils.types import ArticulationAction
 
-from grutopia.core.robot.controller import BaseController
-from grutopia.core.robot.robot import BaseRobot
-from grutopia_extension.configs.controllers import DemoControllerCfg
+from internutopia.core.robot.articulation_action import ArticulationAction
+from internutopia.core.robot.controller import BaseController
+from internutopia.core.robot.robot import BaseRobot
+from internutopia.core.scene.scene import IScene
+from internutopia_extension.configs.controllers import DifferentialDriveControllerCfg
 
 
-@BaseController.register('DemoController')
-class DemoController(BaseController):
-    def __init__(self, config: DemoControllerCfg, robot: BaseRobot, scene: Scene) -> None:
+@BaseController.register('DifferentialDriveController')
+class DifferentialDriveController(BaseController):
+    def __init__(self, config: DifferentialDriveControllerCfg, robot: BaseRobot, scene: IScene) -> None:
         super().__init__(config=config, robot=robot, scene=scene)
+        self._robot_scale = self.robot.get_robot_scale()[0]
+        self._wheel_base = config.wheel_base * self._robot_scale
+        self._wheel_radius = config.wheel_radius * self._robot_scale
 
     def forward(
         self,
         forward_speed: float = 0,
         rotation_speed: float = 0,
-        scaler: float = 1,
     ) -> ArticulationAction:
-        if forward_speed == 0 and rotation_speed == 0:
-            return ArticulationAction(joint_velocities=np.array([0, 0]))
-
-        forward_basis = np.array([1.0, 1.0])
-        spin_basis = np.array([-1.0, 1.0])
-
-        wheel_vel_for = forward_basis * forward_speed
-        wheel_vel_rot = spin_basis * rotation_speed
-        wheel_vel = wheel_vel_for + wheel_vel_rot
-
-        return ArticulationAction(joint_velocities=wheel_vel)
+        left_wheel_vel = ((2 * forward_speed) - (rotation_speed * self._wheel_base)) / (2 * self._wheel_radius)
+        right_wheel_vel = ((2 * forward_speed) + (rotation_speed * self._wheel_base)) / (2 * self._wheel_radius)
+        # A controller has to return an ArticulationAction
+        return ArticulationAction(joint_velocities=[left_wheel_vel, right_wheel_vel])
 
     def action_to_control(self, action: List | np.ndarray) -> ArticulationAction:
         """
@@ -118,8 +116,12 @@ class DemoController(BaseController):
         return self.forward(
             forward_speed=action[0],
             rotation_speed=action[1],
-            scaler=1 / self.robot.get_robot_scale()[0],
         )
+
 ```
 
-You can check the implementations of our controllers under [`grutopia_extension/controllers/`](https://github.com/OpenRobotLab/GRUtopia/tree/main/grutopia_extension/controllers).
+You can check implementations of our controllers under [`internutopia_extension/controllers/`](https://github.com/InternRobotics/InternUtopia/tree/main/internutopia_extension/controllers), within which you can find:
+
+- Rule-based controllers: such as `ik_controller`, `dd_controller`.
+- Learning-based controllers: such as `g1_move_by_speed_controller`, `h1_move_by_speed_controller`.
+- Composite controllers: controllers chained with other controller, such as `move_to_point_by_speed_controller`, `rotate_controller`.

@@ -1,14 +1,22 @@
-grutopia.core.env
+internutopia.core.env
 =================
 
-env
----
+gym_env
+-----
 
-.. autoclass:: grutopia.core.gym_env.Env
+.. autoclass:: internutopia.core.gym_env.Env
    :members:
+
+
+vec_env
+-----
+
+.. autoclass:: internutopia.core.vec_env.Env
+   :members:
+
 
 runner
 ------
 
-.. autoclass:: grutopia.core.runner.SimulatorRunner
+.. autoclass:: internutopia.core.runner.SimulatorRunner
    :members:

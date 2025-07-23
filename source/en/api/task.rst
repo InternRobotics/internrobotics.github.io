@@ -1,20 +1,20 @@
-grutopia.core.task
+internutopia.core.task
 ==================
 
 task
 ----
 
-.. automodule:: grutopia.core.task.task
+.. automodule:: internutopia.core.task.task
    :members:
 
 metric
 ----
 
-.. automodule:: grutopia.core.task.metric
+.. automodule:: internutopia.core.task.metric
    :members:
 
 reward
 ----
 
-.. automodule:: grutopia.core.task.reward
+.. automodule:: internutopia.core.task.reward
    :members:

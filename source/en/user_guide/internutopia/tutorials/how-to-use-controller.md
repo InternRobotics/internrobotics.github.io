@@ -4,10 +4,10 @@
 
 ## Pre-defined Controllers
 
-The directory [`grutopia_extension/controllers/`](https://github.com/OpenRobotLab/GRUtopia/tree/main/grutopia_extension/controllers) contains a list of all pre-defined controllers:
+The directory [`internutopia_extension/controllers/`](https://github.com/InternRobotics/InternUtopia/tree/main/internutopia_extension/controllers) contains a list of all pre-defined controllers:
 
 ```
-grutopia_extension/
+internutopia_extension/
 └── controllers
     ├── aliengo_move_by_speed_controller.py
     ├── dd_controller.py
@@ -28,56 +28,47 @@ grutopia_extension/
     ...
 ```
 
-For each robot, we provide some ready-to-use controller configurations for each robot in `grutopia_extension/configs/robots/{robot_name}.py`.
+For each robot, we provide some ready-to-use controller configurations for each robot in `internutopia_extension/configs/robots/{robot_name}.py`.
 
 ## How to Use a Controller
 
 A controller must be used with a robot, and the corresponding action must be specified in each step to control the robot with that controller.
 
 ```{code-block} python
-:emphasize-lines: 9,28,48-49
+:emphasize-lines: 8,25,39-40
 
-from grutopia.core.config import Config, SimConfig
-from grutopia.core.gym_env import Env
-from grutopia.core.runtime import SimulatorRuntime
-from grutopia.core.util import has_display
-from grutopia.macros import gm
-from grutopia_extension import import_extensions
-from grutopia_extension.configs.robots.jetbot import (
+from internutopia.core.config import Config, SimConfig
+from internutopia.core.gym_env import Env
+from internutopia.core.util import has_display
+from internutopia.macros import gm
+from internutopia_extension import import_extensions
+from internutopia_extension.configs.robots.jetbot import (
     JetbotRobotCfg,
     move_by_speed_cfg,
 )
-from grutopia_extension.configs.tasks import (
-    SingleInferenceEpisodeCfg,
-    SingleInferenceTaskCfg,
-)
+from internutopia_extension.configs.tasks import SingleInferenceTaskCfg
+
+import_extensions()
 
 headless = not has_display()
 
 config = Config(
-    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False),
-    task_config=SingleInferenceTaskCfg(
-        episodes=[
-            SingleInferenceEpisodeCfg(
-                scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
-                robots=[
-                    JetbotRobotCfg(
-                        position=(0.0, 0.0, 0.0),
-                        scale=(5.0, 5.0, 5.0),
-                        controllers=[move_by_speed_cfg],
-                    )
-                ],
-            ),
-        ],
-    ),
+    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False, headless=headless, webrtc=headless),
+    task_configs=[
+        SingleInferenceTaskCfg(
+            scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
+            robots=[
+                JetbotRobotCfg(
+                    position=(0.0, 0.0, 0.0),
+                    scale=(5.0, 5.0, 5.0),
+                    controllers=[move_by_speed_cfg],
+                )
+            ],
+        ),
+    ],
 )
 
-sim_runtime = SimulatorRuntime(config_class=config, headless=headless, native=headless)
-
-import_extensions()
-# import custom extensions here.
-
-env = Env(sim_runtime)
+env = Env(config)
 obs, _ = env.reset()
 
 i = 0
@@ -91,7 +82,7 @@ while env.simulation_app.is_running():
         print(i)
         print(obs)
 
-env.simulation_app.close()
+env.close()
 ```
 
 <video width="720" height="405" controls>
@@ -100,7 +91,7 @@ env.simulation_app.close()
 
 In the above example, first we import the `move_by_speed_cfg` for jetbot. It'a a ready-to-use controller config for jetbot to use the `DifferentialDriveController` to move around:
 
-[`grutopia_extension/configs/robots/jetbot.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/configs/robots/jetbot.py)
+[`internutopia_extension/configs/robots/jetbot.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/configs/robots/jetbot.py)
 
 ```python
 move_by_speed_cfg = DifferentialDriveControllerCfg(name='move_by_speed', wheel_base=0.1125, wheel_radius=0.03)
@@ -108,7 +99,7 @@ move_by_speed_cfg = DifferentialDriveControllerCfg(name='move_by_speed', wheel_b
 
 The controller config is then added to the robot config to declare it as an available controller for the robot in that episode. In each step, we define the action to be applied to the robot, that is, a dict with the controller name as the key and desired action as the value. The format of action is defined by the `action_to_control` method of the specific controller. For the above example, we can check it in the `DifferentialDriveController` class:
 
-[`grutopia_extension/controllers/dd_controller.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/controllers/dd_controller.py)
+[`internutopia_extension/controllers/dd_controller.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/controllers/dd_controller.py)
 
 ```python
 class DifferentialDriveController(BaseController):
@@ -128,4 +119,4 @@ class DifferentialDriveController(BaseController):
 
 So with the action `[0.5, 0.5]` the jetbot will move forward at 0.5 m/s and rotate at 0.5 rad/s.
 
-You can try more controllers with the controller configurations defined in [`grutopia_extension/configs/robots/jetbot.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/configs/robots/jetbot.py).
+You can try more controllers with the controller configurations defined in [`internutopia_extension/configs/robots/jetbot.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/configs/robots/jetbot.py).

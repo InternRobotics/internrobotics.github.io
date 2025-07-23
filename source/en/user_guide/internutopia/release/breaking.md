@@ -2,7 +2,11 @@
 
 change some import path
 
-- grutopia.core.robot.articulation_action.ArticulationAction
-- grutopia.core.robot.articulation_subset.ArticulationSubset
-- from grutopia.core.scene.scene import IScene
-- from grutopia.core.robot.rigid_body import IRigidBody
+- internutopia.core.robot.articulation_action.ArticulationAction
+- internutopia.core.robot.articulation_subset.ArticulationSubset
+- from internutopia.core.scene.scene import IScene
+- from internutopia.core.robot.rigid_body import IRigidBody
+
+ordered dict
+
+simulation runtime

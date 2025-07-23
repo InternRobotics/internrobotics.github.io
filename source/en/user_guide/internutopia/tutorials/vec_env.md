@@ -4,7 +4,7 @@
 
 > The Vec Env provides speed-up in the steps taken per second by running multiple independent environments in parallel.
 
-In most cases, we use `grutopia.core.gym_env` as the simulation execution environment (i.e., single environment), and tasks are executed by looping through all the `episodes`. However, in certain situations, we can achieve parallel simulation and improve efficiency through **vectorization**.
+In most cases, we use `internutopia.core.gym_env` as the simulation execution environment (i.e., single environment), and tasks are executed by looping through all the `episodes`. However, in certain situations, we can achieve parallel simulation and improve efficiency through **vectorization**.
 
 
 ## Usage
@@ -104,12 +104,13 @@ If `env_num = 4`, valid values in `reset_list` can be `0, 1, 2, 3`. Any other va
 
 ### Example
 
-For example, if `reset_list = [3, 0]`. The returned `obs` and `info` will both have length 2:
+For example, if `reset_list = [3, 0]`, the returned `obs` and `info` both have length 2:
 - `obs[0]` and `info[0]` correspond to the environment with `env_id = 3`.
 - `obs[1]` and `info[1]` correspond to the environment with `env_id = 0`.
 
 ### Edge Case
-If there is only **one episode** left in `task_configs`. Calling `env.reset([3, 0])` will still return lists of length 2：
+
+If there is only **one episode** left in `task_configs`, `env.reset([3, 0])` still returns lists of length 2：
 - `obs[0]` and `info[0]` will contain valid data for `env_id = 3`.
 - `obs[1]` and `info[1]` (for `env_id = 0`) will be `None`.
 

@@ -8,15 +8,15 @@ myst:
 
 # InternUtopia
 
-This document introduces installation steps, tutorials, and reference APIs of [GRUtopia](https://github.com/OpenRobotLab/GRUtopia).
+This document introduces installation steps, tutorials, and reference APIs of [InternUtopia](https://github.com/InternRobotics/InternUtopia).
 
-GRUtopia, built on NVIDIA Isaac Sim, is an embodied AI research platform. It aims to reduce the burden of engineering implementation, tackle the data scarcity in the field of embodied intelligence, and offer simulations that are more reflective of real-world scenarios.
+InternUtopia, built on NVIDIA Isaac Sim, is an embodied AI research platform. It aims to reduce the burden of engineering implementation, tackle the data scarcity in the field of embodied intelligence, and offer simulations that are more reflective of real-world scenarios.
 
-Here is a brief overview of GRUtopia:
+Here is a brief overview of InternUtopia:
 
-![overview](../../_static/image/overview.webp)
+![overview](../../_static/image/overview_v2.webp)
 
-We provide some demostrations to show what GRUtopia can do after [installation](./get_started/installation.md):
+We provide some demostrations to show what InternUtopia can do after [installation](./get_started/installation.md):
 
 | Name | Description | Requirement |
 | --- | --- | --- |

@@ -18,7 +18,7 @@ $ brew install mkcert
 
 # Generate certs for local address.
 $ ip addr | grep inet  # Find the IP address Vision Pro can access, assume 192.168.100.101
-$ cd GRUtopia && mkdir mkcert && cd mkcert
+$ cd InternUtopia && mkdir mkcert && cd mkcert
 $ mkcert -install  # Generate the local CA and install it in the system trust store.
 $ mkcert -cert-file cert.pem -key-file key.pem 192.168.100.101 localhost 127.0.0.1  # Replace 192.168.100.101 with your host IP addr
 
@@ -46,18 +46,18 @@ To run the example, you need to create a new conda env to run the IK solver proc
 ```bash
 $ conda create -n sim-teleop python=3.10
 $ conda activate sim-teleop
-$ pip install -r GRUtopia/requirements/teleop.txt
-$ cd GRUtopia/grutopia_extension/controllers && conda run --no-capture-output -n sim-teleop python gr1_teleop.py
+$ pip install -r InternUtopia/requirements/teleop.txt
+$ cd InternUtopia/internutopia_extension/controllers && conda run --no-capture-output -n sim-teleop python gr1_teleop.py
 ```
 
 If you see the message "waiting for teleop action...", it indicates that the solver process has started successfully.
 
-Then open another session with grutopia conda environment, and specify the locations of server cert and key in [`GRUtopia/grutopia/demo/gr1_teleop.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/gr1_teleop.py).
+Then open another session with internutopia conda environment, and specify the locations of server cert and key in [`InternUtopia/internutopia/demo/gr1_teleop.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia/demo/gr1_teleop.py).
 
 ```python
 ...
 teleop = VuerTeleop(
-    cert_file='./GRUtopia/mkcert/cert.pem', key_file='./GRUtopia/mkcert/key.pem',   # Specify locations of your cert and key here
+    cert_file='./InternUtopia/mkcert/cert.pem', key_file='./InternUtopia/mkcert/key.pem',   # Specify locations of your cert and key here
     resolution=(720, 1280)
 )
 ...
@@ -66,7 +66,7 @@ teleop = VuerTeleop(
 Then run the demo script:
 
 ```bash
-$ python -m grutopia.demo.gr1_teleop
+$ python -m internutopia.demo.gr1_teleop
 ```
 
 Once the simulation starts, open Safari on VisionPro and navigate to:
@@ -91,7 +91,7 @@ Pose collecting logic with VisionPro comes from [Open-TeleVision](https://github
 
 The poses are used to control robot through a teleop controller, followed by a env step. Once the env step finished, the latest vision is collected from cameras and transferred to VisionPro.
 
-You can refer to [`GRUtopia/grutopia/demo/gr1_teleop.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/gr1_teleop.py) for the complete implementation.
+You can refer to [`InternUtopia/internutopia/demo/gr1_teleop.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia/demo/gr1_teleop.py) for the complete implementation.
 
 ```python
 teleop = VuerTeleop(cert_file='./mkcert/cert.pem',

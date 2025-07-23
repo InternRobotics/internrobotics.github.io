@@ -3,7 +3,7 @@
 > This tutorial guides you to drive Unitree G1 Robot with keyboard.
 
 ```bash
-$ python -m grutopia.demo.g1_locomotion
+$ python -m internutopia.demo.g1_locomotion
 ```
 
 You can control the g1 robot with keyboard command:
@@ -24,7 +24,7 @@ You can control the g1 robot with keyboard command:
 The keyboard is abstracted as an interaction device. A vector is used to denote which key is being pressed, and this vector is then translated into the robot's actions at each step.
 
 ```python
-from grutopia_extension.interactions.keyboard import KeyboardInteraction
+from internutopia_extension.interactions.keyboard import KeyboardInteraction
 
 keyboard = KeyboardInteraction()
 
@@ -41,4 +41,4 @@ while env.simulation_app.is_running():
     ...
 ```
 
-You can refer to [`GRUtopia/grutopia/demo/g1_locomotion.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/g1_locomotion.py) for a complete example.
+You can refer to [`InternUtopia/internutopia/demo/g1_locomotion.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia/demo/g1_locomotion.py) for a complete example.

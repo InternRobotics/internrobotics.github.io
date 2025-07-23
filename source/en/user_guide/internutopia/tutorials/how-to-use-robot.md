@@ -4,10 +4,10 @@
 
 ## Pre-defined Robots
 
-The directory [`grutopia_extension/robots/`](https://github.com/OpenRobotLab/GRUtopia/tree/main/grutopia_extension/robots) contains a list of all pre-defined robots:
+The directory [`internutopia_extension/robots/`](https://github.com/InternRobotics/InternUtopia/tree/main/internutopia_extension/robots) contains a list of all pre-defined robots:
 
 ```
-grutopia_extension/
+internutopia_extension/
 └── robots
     ├── aliengo.py
     ├── franka.py
@@ -25,9 +25,9 @@ grutopia_extension/
 
 Each robot has its own config class, and we use the config class to create a robot in simulation.
 
-All our pre-defined robot config classes are located in the [`grutopia_extension/configs/robots`](https://github.com/OpenRobotLab/GRUtopia/tree/main/grutopia_extension/configs/robots) folder.
+All our pre-defined robot config classes are located in the [`internutopia_extension/configs/robots`](https://github.com/InternRobotics/InternUtopia/tree/main/internutopia_extension/configs/robots) folder.
 
-Let's take `JetbotRobot` for instance, the file [`grutopia_extension/configs/robots/jetbot.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/robots/jetbot.py) includes the config class for JetbotRobot:
+Let's take `JetbotRobot` for instance, the file [`internutopia_extension/configs/robots/jetbot.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/robots/jetbot.py) includes the config class for JetbotRobot:
 
 ```python
 class JetbotRobotCfg(RobotCfg):
@@ -46,47 +46,36 @@ These configurations can be used to create a robot instance in the simulation en
 The following code illustrates how to add a robot config to the episode config to create the robot in that episode.
 
 ```{code-block} python
-:emphasize-lines: 7-9,23-28,50
+:emphasize-lines: 6,18-23,39
 
-from grutopia.core.config import Config, SimConfig
-from grutopia.core.gym_env import Env
-from grutopia.core.runtime import SimulatorRuntime
-from grutopia.core.util import has_display
-from grutopia.macros import gm
-from grutopia_extension import import_extensions
-from grutopia_extension.configs.robots.jetbot import (
-    JetbotRobotCfg,
-)
-from grutopia_extension.configs.tasks import (
-    SingleInferenceEpisodeCfg,
-    SingleInferenceTaskCfg,
-)
+from internutopia.core.config import Config, SimConfig
+from internutopia.core.gym_env import Env
+from internutopia.core.util import has_display
+from internutopia.macros import gm
+from internutopia_extension import import_extensions
+from internutopia_extension.configs.robots.jetbot import JetbotRobotCfg
+from internutopia_extension.configs.tasks import SingleInferenceTaskCfg
+
+import_extensions()
 
 headless = not has_display()
 
 config = Config(
-    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False),
-    task_config=SingleInferenceTaskCfg(
-        episodes=[
-            SingleInferenceEpisodeCfg(
-                scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
-                robots=[
-                    JetbotRobotCfg(
-                        position=(0.0, 0.0, 0.0),
-                        scale=(5.0, 5.0, 5.0),
-                    )
-                ],
-            ),
-        ],
-    ),
+    simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False, headless=headless, webrtc=headless),
+    task_configs=[
+        SingleInferenceTaskCfg(
+            scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
+            robots=[
+                JetbotRobotCfg(
+                    position=(0.0, 0.0, 0.0),
+                    scale=(5.0, 5.0, 5.0),
+                )
+            ],
+        ),
+    ],
 )
 
-sim_runtime = SimulatorRuntime(config_class=config, headless=headless, native=headless)
-
-import_extensions()
-# import custom extensions here.
-
-env = Env(sim_runtime)
+env = Env(config)
 obs, _ = env.reset()
 
 i = 0
@@ -99,7 +88,7 @@ while env.simulation_app.is_running():
         print(i)
         print(obs)
 
-env.simulation_app.close()
+env.close()
 ```
 
 <video width="720" height="405" controls>
@@ -121,19 +110,19 @@ In the above example, we create a jetbot in the first episode with initial posit
 }
 ```
 
-The obs returned are defined in the `get_obs` method of the robot. For jetbot, you can check it in [`grutopia_extension/robots/jetbot.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/robots/jetbot.py):
+The obs returned are defined in the `get_obs` method of the robot. For jetbot, you can check it in [`internutopia_extension/robots/jetbot.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/robots/jetbot.py):
 
 ```python
 class JetbotRobot(BaseRobot):
-    def get_obs(self):
-        position, orientation = self.isaac_robot.get_world_pose()
+    def get_obs(self) -> OrderedDict:
+        position, orientation = self.articulation.get_pose()
 
         # custom
         obs = {
             'position': position,
             'orientation': orientation,
-            'joint_positions': self.isaac_robot.get_joint_positions(),
-            'joint_velocities': self.isaac_robot.get_joint_velocities(),
+            'joint_positions': self.articulation.get_joint_positions(),
+            'joint_velocities': self.articulation.get_joint_velocities(),
             'controllers': {},
             'sensors': {},
         }
@@ -143,5 +132,5 @@ class JetbotRobot(BaseRobot):
             obs['controllers'][c_obs_name] = controller_obs.get_obs()
         for sensor_name, sensor_obs in self.sensors.items():
             obs['sensors'][sensor_name] = sensor_obs.get_data()
-        return obs
+        return self._make_ordered(obs)
 ```

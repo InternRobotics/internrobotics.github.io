@@ -6,21 +6,21 @@
 
 ## Pre-defined Metric
 
-The directory [`grutopia_extension/metrics/__init__.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/metrics/__init__.py) contains a list of all our pre-defined metrics:
+The directory [`internutopia_extension/metrics/__init__.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/metrics/__init__.py) contains a list of all our pre-defined metrics:
 
 ```Python
-from grutopia_extension.metrics import (
-    traveled_distance_metric,
-    recording_metric
+from internutopia_extension.metrics.recording_metric import RecordingMetric
+from internutopia_extension.metrics.traveled_distance_metric import (
+    TraveledDistanceMetric,
 )
 ```
 
-We can also review the configuration of each metric in [`grutopia_extension/configs/metrics/__init__.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia_extension/configs/metrics/__init__.py).
+We can also review the configuration of each metric in [`internutopia_extension/configs/metrics/__init__.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/configs/metrics/__init__.py).
 
 
 ## How to Use Metric
 
-To use an existing metric within GRUtopia, you can simply use the corresponding type of metric config in the task configuration as following:
+To use an existing metric within InternUtopia, you can simply use the corresponding type of metric config in the task configuration as following:
 
 ```{code-block} python
 :emphasize-lines: 6,36,40
@@ -100,7 +100,7 @@ env.close()
 
 ```
 
-You can also run the [`h1_traveled_distance.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/h1_traveled_distance.py) in the demo directly.
+You can also run the [`h1_traveled_distance.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia/demo/h1_traveled_distance.py) in the demo directly.
 
 And you can check result in `./h1_traveled_distance_metric.jsonl`, the key of output json is the `name` of metrics.
 

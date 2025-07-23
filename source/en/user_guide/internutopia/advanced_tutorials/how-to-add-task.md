@@ -19,8 +19,8 @@ Here is how we define FiniteStepTask based on the above issues:
 
 
 To add a custom task, we need to:
-- Create a config class for task config, inheriting from the `grutopia.core.config.task.TaskCfg`.
-- Create a class for task, inheriting from the `grutopia.core.task.BaseTask`.
+- Create a config class for task config, inheriting from the `internutopia.core.config.task.TaskCfg`.
+- Create a class for task, inheriting from the `internutopia.core.task.BaseTask`.
 
 
 ## 2. Create Task Config Class
@@ -32,7 +32,7 @@ Here's how we define the `FiniteStepTask` based on the above considerations:
 
 from typing import Optional
 
-from grutopia.core.config.task import TaskCfg
+from internutopia.core.config.task import TaskCfg
 
 
 class FiniteStepTaskCfg(TaskCfg):
@@ -41,19 +41,19 @@ class FiniteStepTaskCfg(TaskCfg):
 
 ```
 
-NOTE:
+Respect the following rules when defining a task config class:
 
 - Define a unique `type` name
 - Define new task-specific parameters directly in the config (e.g., `max_steps`)
-- Avoid overriding other parameters defined in `grutopia.core.config.task.TaskCfg`
+- Avoid overriding other parameters defined in `internutopia.core.config.task.TaskCfg`
 
 
 ## 3. Create Task Class
 
 ```Python
-from grutopia.core.scene.scene import IScene
-from grutopia.core.task import BaseTask
-from grutopia_extension.configs.tasks.finite_step_task import FiniteStepTaskCfg
+from internutopia.core.scene.scene import IScene
+from internutopia.core.task import BaseTask
+from internutopia_extension.configs.tasks.finite_step_task import FiniteStepTaskCfg
 
 
 @BaseTask.register('FiniteStepTask')
@@ -75,7 +75,7 @@ The `is_done` method has been overridden based on the End Condition defined abov
 To use the custom task, we can simply include them in the configuration settings as follows
 
 ```{code-block} python
-:emphasize-lines: 15-18
+:emphasize-lines: 17-20
 
 from internutopia.core.config import Config, SimConfig
 from internutopia.core.gym_env import Env
@@ -83,6 +83,8 @@ from internutopia.core.util import has_display
 from internutopia.macros import gm
 from internutopia_extension import import_extensions
 from internutopia_extension.configs.tasks import SingleInferenceTaskCfg
+
+import_extensions()
 
 headless = False
 if not has_display():
@@ -98,7 +100,6 @@ config = Config(
     ]
 )
 
-import_extensions()
 
 env = Env(config)
 obs, _ = env.reset()

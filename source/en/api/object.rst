@@ -1,9 +1,9 @@
-grutopia.core.object
+internutopia.core.object
 ===================================
 
 
 object
 ------
 
-.. automodule:: grutopia.core.object.object
+.. automodule:: internutopia.core.object.object
    :members:

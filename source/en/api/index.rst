@@ -1,15 +1,18 @@
 API
 =====
 
+
+InternUtopia
+------
 .. toctree::
    :maxdepth: 2
-   :caption: API Reference
+   :caption: InternUtopia
 
-    grutopia.core.env <env>
-    grutopia.core.register <register>
-    grutopia.core.robot <robot>
-    grutopia.core.sensor <sensor>
-    grutopia.core.scene <scene>
-    grutopia.core.object <object>
-    grutopia.core.task <task>
-    grutopia.core.util <util>
+    internutopia.core.env <env>
+    internutopia.core.robot <robot>
+    internutopia.core.sensor <sensor>
+    internutopia.core.object <object>
+    internutopia.core.task <task>
+    internutopia.core.robot.articulation <articulation>
+    internutopia.core.sensor.camera <camera>
+    internutopia.core.robot.rigid_body <rigid_body>

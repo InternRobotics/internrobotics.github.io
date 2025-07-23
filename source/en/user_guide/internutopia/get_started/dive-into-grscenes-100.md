@@ -94,11 +94,11 @@ GRScenes-100/home_scenes.zip --(unzip)--> home_scenes
 
 1. Use the scene asset for your custom task
 
-Currently, we have provided two types of scene assets for navigation and manipulation tasks respectively. Users can get these scene assets from the GRScenes dataset, the scene asset path is typically like `.../GRScenes-100/home_scenes/scenes/{scene_id}/start_result_xxx.usd`. Please refer to the [examples](https://github.com/OpenRobotLab/GRUtopia/tree/main/grutopia/demo) to learn how to specify scene through `scene_asset_path` field in config.
+Currently, we have provided two types of scene assets for navigation and manipulation tasks respectively. Users can get these scene assets from the GRScenes dataset, the scene asset path is typically like `.../GRScenes-100/home_scenes/scenes/{scene_id}/start_result_xxx.usd`. Please refer to the [examples](https://github.com/InternRobotics/InternUtopia/tree/main/internutopia/demo) to learn how to specify scene through `scene_asset_path` field in config.
 
 2. Use the raw dataset
 
-The dataset contains raw models and raw scenes. We recommend using [OpenUSD python SDK](https://openusd.org/release/intro.html) to apply physics APIs such as the rigid body and collider to the models. We also provide an example [preprocess](https://github.com/OpenRobotLab/GRUtopia/blob/main/toolkits/grscenes_scripts/preprocess.py) script to learn the detailed workflow of the physics property bindings. Besides, here are some other [tool scripts](https://github.com/OpenRobotLab/GRUtopia/tree/main/toolkits/grscenes_scripts) for GRScenes-100.
+The dataset contains raw models and raw scenes. We recommend using [OpenUSD python SDK](https://openusd.org/release/intro.html) to apply physics APIs such as the rigid body and collider to the models. We also provide an example [preprocess](https://github.com/InternRobotics/InternUtopia/blob/main/toolkits/grscenes_scripts/preprocess.py) script to learn the detailed workflow of the physics property bindings. Besides, here are some other [tool scripts](https://github.com/InternRobotics/InternUtopia/tree/main/toolkits/grscenes_scripts) for GRScenes-100.
 
 
 ## FAQ
@@ -114,4 +114,4 @@ The dataset contains raw models and raw scenes. We recommend using [OpenUSD pyth
     [Error] [omni.hydra] Failed to create MDL shade node for prim '/Root/Looks/DayMaterial/DayMaterial'. Empty identifier: ''        and/or subIdentifier: ''
     ...
     ```
-  These errors don't affect the simulations process, but make the scene loading much slower (might cost 15~20 minutes). You can refer to [this issue](https://github.com/OpenRobotLab/GRUtopia/issues/30) for more details, and we provide a workaround to speed up the loading process in the issue.
+  These errors don't affect the simulations process, but make the scene loading much slower (might cost 15~20 minutes). You can refer to [this issue](https://github.com/InternRobotics/InternUtopia/issues/30) for more details, and we provide a workaround to speed up the loading process in the issue.

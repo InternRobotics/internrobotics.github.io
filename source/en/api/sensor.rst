@@ -1,5 +1,8 @@
-grutopia.core.sensor
+internutopia.core.sensor
+===================================
+
+sensor
 ------
 
-.. automodule:: grutopia.core.sensor.sensor
+.. automodule:: internutopia.core.sensor.sensor
    :members:
