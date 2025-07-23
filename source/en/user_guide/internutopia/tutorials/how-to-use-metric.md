@@ -10,7 +10,7 @@ The directory [`grutopia_extension/metrics/__init__.py`](https://github.com/Open
 
 ```Python
 from grutopia_extension.metrics import (
-    simple_metric,
+    traveled_distance_metric,
     recording_metric
 )
 ```
@@ -30,7 +30,7 @@ from internutopia.core.gym_env import Env
 from internutopia.core.util import has_display
 from internutopia.macros import gm
 from internutopia_extension import import_extensions
-from internutopia_extension.configs.metrics.simple_metric import SimpleMetricCfg
+from internutopia_extension.configs.metrics.traveled_distance_metric import TraveledDistanceMetricCfg
 from internutopia_extension.configs.robots.h1 import (
     H1RobotCfg,
     h1_camera_cfg,
@@ -60,11 +60,11 @@ h1_1 = H1RobotCfg(
 
 config = Config(
     simulator=SimConfig(physics_dt=1 / 240, rendering_dt=1 / 240, use_fabric=False, headless=headless),
-    metrics_save_path='./h1_simple_metric.jsonl',
+    metrics_save_path='./h1_traveled_distance_metric.jsonl',
     task_configs=[
         FiniteStepTaskCfg(
             max_steps=300,
-            metrics=[SimpleMetricCfg(robot_name='h1')],
+            metrics=[TraveledDistanceMetricCfg(name='robot_movement',robot_name='h1')],
             scene_asset_path=gm.ASSET_PATH + '/scenes/empty.usd',
             scene_scale=(0.01, 0.01, 0.01),
             robots=[h1_1],
@@ -102,8 +102,20 @@ env.close()
 
 You can also run the [`h1_traveled_distance.py`](https://github.com/OpenRobotLab/GRUtopia/blob/main/grutopia/demo/h1_traveled_distance.py) in the demo directly.
 
-And you can check result in `./h1_simple_metric.jsonl`
+And you can check result in `./h1_traveled_distance_metric.jsonl`, the key of output json is the `name` of metrics.
 
 ```json
-{"SimpleMetric": 0.7508679775492055, "normally_end": true}
+{"traveled_distance_metric": 0.7508679775492055}
 ```
+
+## Metric save
+
+The `metrics_save_path` parameter in the Config has three ways to be filled:
+
+1. `None` or `'none'`: Do not save.
+2. `'console'`: Output to the console.
+3. Other: Save to the specified path.
+
+When multiple episodes are executed, the results from all episodes will be saved in a single file (in JSON Lines format).
+
+Each time the process starts, a new file will be created at the `metrics_save_path`, and any existing content in that file will be cleared.
