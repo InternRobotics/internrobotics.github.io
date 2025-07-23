@@ -21,6 +21,7 @@ how-to-use-controller
 how-to-use-sensor
 how-to-use-objects
 how-to-use-metric
+multi-gpu-and-multi-node
 
 [//]: # (how-to-run-benchmark-with-custom-agent)
 ```
