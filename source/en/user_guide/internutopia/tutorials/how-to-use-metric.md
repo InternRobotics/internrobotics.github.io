@@ -4,7 +4,7 @@
 
 > This tutorial guides you on how to use a metric.
 
-## Pre-defined Metric
+## Pre-defined Metrics
 
 The directory [`internutopia_extension/metrics/__init__.py`](https://github.com/InternRobotics/InternUtopia/blob/main/internutopia_extension/metrics/__init__.py) contains a list of all our pre-defined metrics:
 

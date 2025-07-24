@@ -78,17 +78,10 @@ Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Con
    $ git clone git@github.com:InternRobotics/InternUtopia.git
    ```
 
-1. Pull the Isaac Sim image (`docker login` is required, please refer to [NGC Documents](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim)).
+1. Pull the InternUtopia docker image.
 
    ```bash
-   $ docker pull nvcr.io/nvidia/isaac-sim:4.5.0
-   ```
-1. Build docker image, replacing <your tag> with your desired tag:
-
-   ```bash
-   $ cd PATH/TO/INTERNUTOPIA/ROOT
-
-   $ docker build -t internutopia:<your tag> .
+   $ docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
    ```
 
 1. Start docker container, replacing <your tag> with the above tag:
@@ -112,12 +105,12 @@ Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Con
      -v ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
      -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
      -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
-     internutopia:<your tag>
+     registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
    ```
 
    You are now ready to use InternUtopia in this container.
 
-   **NOTE**: If you are using a remote server without display, you can use the [Omniverse Streaming Client](https://docs.omniverse.nvidia.com/extensions/latest/ext_livestream/native.html) to stream the simulation UI.
+   **NOTE**: If you are using a remote server without display, you can use the [WebRTC Streaming Client](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/manual_livestream_clients.html) to stream the simulation UI.
 
 ## Prepare Assets
 
