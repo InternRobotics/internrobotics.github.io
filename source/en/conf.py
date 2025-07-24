@@ -64,7 +64,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # html_theme = 'alabaster'
 html_theme = 'pydata_sphinx_theme'
 html_logo = '_static/image/logo.png'
-html_favicon = '_static/image/logo192.png'
 
 # Define the json_url for our version switcher.
 json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json'
