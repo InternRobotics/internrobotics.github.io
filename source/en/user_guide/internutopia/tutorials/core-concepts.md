@@ -67,7 +67,7 @@ env.close()
     <source src="../../../_static/video/tutorial_minimum.webm" type="video/webm">
 </video>
 
-Config must contain at least one task config. After the config is created, we can create the env to run the task in simulation. It is important to note that all the extension and packages must be imported **BEFORE** env creation to ensure all extensions can be resolved properly. In the example above, we wrap them in the `import_extensions()`.
+Config must contain at least one task config. After the config is created, we can create the env to run the task in simulation. It is important to note that all the extension and packages must be imported **BEFORE** env creation to ensure all extensions to be resolved properly. In the example above, we wrap them in the `import_extensions()`.
 
 Once the env is created, the first thing to do is to reset the env to load the first episode. And then we can step the env to run the simulation.
 

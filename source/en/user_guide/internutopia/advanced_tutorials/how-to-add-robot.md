@@ -84,7 +84,7 @@ Please note that the registration of the robot class is done through the `@BaseR
 
 [`IArticulation`](../../../api/articulation.rst) is an interface class to deal with any articulated object in InternUtopia. Robot is one kind of articulated object, so here we use it to control the robot.
 
-For users who want to get state of a certain rigid link of robot, we provide the `self._rigid_body_map` containing all rigid links of the robot with prim path as key. All the links within are of [`IRigidBody`](../../../api/rigidbody.rst) type which is an interface class to deal with rigid bodies.
+For users who want to get state of a certain rigid link of robot, we provide the `self._rigid_body_map` containing all rigid links of the robot with prim path as key. All the links within are of [`IRigidBody`](../../../api/rigid_body.rst) type which is an interface class to deal with rigid bodies.
 
 An example of g1 robot class implementation is shown as following:
 
