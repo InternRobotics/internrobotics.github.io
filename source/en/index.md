@@ -20,8 +20,8 @@ The framework comprises a general-purpose simulation platform [InternUtopia](use
 - [InternSR](user_guide/internsr/index.md): Embodied spatial reasoning.
 - [InternNav](user_guide/internnav/index.md): Interactive multimodal embodied navigation.
 - [InternManip](user_guide/internmanip/index.md): Multimodal manipulation.
-- [InternHumanoid](user_guide/internhumanoid/index.md): Agile humanoid robot control.
-- [InternWorldModel](user_guide/internworldmodel/index.md): World modeling and dynamic prediction.
+- [InternHumanoid](#) (WIP): Agile humanoid robot control.
+- [InternWorldModel](#) (WIP): World modeling and dynamic prediction.
 
 
 

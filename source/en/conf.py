@@ -25,9 +25,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Intern Robotics Engine'
-copyright = '2025, OpenRobotLab'
-author = 'OpenRobotLab'
+project = 'Intern Robotics Infrastructure'
+copyright = '2025, Intern Robotics'
+author = 'Intern Robotics'
 
 # The full version, including alpha/beta/rc tags
 release = 'v0.0.1'

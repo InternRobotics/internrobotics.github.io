@@ -16,17 +16,10 @@ User Guide
 
    internnav/index
 
-.. toctree::
-   :maxdepth: 3
-
-   internhumanoid/index
 
 .. toctree::
    :maxdepth: 3
 
    internmanip/index
 
-.. toctree::
-   :maxdepth: 3
 
-   internworldmodel/index
