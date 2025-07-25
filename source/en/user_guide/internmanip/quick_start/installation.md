@@ -13,7 +13,7 @@
 
 # 🛠️ Installation Guide
 ```{important}
-We are actively fixing mistakes in the document. If you find any errors in the documentation, please feel free to [open an issue](https://github.com/InternRobotics/InternRobotics-doc/issues). Your help in improving the document is greatly appreciated 🥰.
+We are actively fixing mistakes in the document. If you find any errors in the documentation, please feel free to [open an issue](https://github.com/InternRobotics/internrobotics.github.io/issues). Your help in improving the document is greatly appreciated 🥰.
 ```
 
 😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
