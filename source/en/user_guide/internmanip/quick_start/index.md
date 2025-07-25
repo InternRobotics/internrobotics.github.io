@@ -9,10 +9,11 @@ myst:
 # Quick Start
 
 ```{toctree}
-:caption: Quick Start
 :maxdepth: 2
 
 installation
-finetune
-evaluation
+train_eval
+add_model
+add_dataset
+add_benchmark
 ```

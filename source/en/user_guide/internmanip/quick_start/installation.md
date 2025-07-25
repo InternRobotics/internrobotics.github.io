@@ -1,160 +1,338 @@
-# Installation
+<style>
+  .mytable {
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .mytable th, .mytable td {
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    padding: 6px 12px;
+  }
+</style>
+
+# 🛠️ Installation Guide
+```{important}
+We are actively fixing mistakes in the document. If you find any errors in the documentation, please feel free to [open an issue](https://github.com/InternRobotics/InternRobotics-doc/issues). Your help in improving the document is greatly appreciated 🥰.
+```
+
+😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
+
+
+<!-- > 💡NOTE \
+> 🙋 **[First-time users:](#-lightweight-installation-recommended-for-beginners)** Skip GenManip for now — it requires installing NVIDIA [⚙️ Isaac Sim](#), which can be complex.
+Start with **CALVIN** or **SimplerEnv** for easy setup and full training/eval support.\
+> 🧠 **[Advanced users:](#-full-installation-advanced-users)** Feel free to use all benchmarks, including **GenManip** with Isaac Sim support. -->
+
+<!-- > For 🙋**first-time** users, we recommend skipping the GenManip benchmark, as it requires installing NVIDIA [⚙️ Isaac Sim](#) for simulation (which can be complex).
+Instead, start with **CALVIN** or **SimplerEnv** — both are easy to set up and fully support training and evaluation. -->
+
+<!-- This guide provides comprehensive instructions for installing and setting up the InternManip robot manipulation learning suite. Please read through the following prerequisites carefully before proceeding with the installation. -->
 
 ## Prerequisites
 
-- OS: Ubuntu 20.04/22.04
-- RAM: 32GB+
-- GPU: NVIDIA RTX 2070+ (must with RTX cores)
-- NVIDIA Driver: 535.216.01+
+InternManip works across most hardware setups.
+Just note the following exceptions:
+- **GenManip Benchmark** must run on **NVIDIA RTX series GPUs** (e.g., RTX 4090).
+- GR00T requires **CUDA 12.4 installed system-wide (not via Conda)**.
 
-> For complete requirements, please see [Isaac Sim's Requirements](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/requirements.html).
->
-> GRUtopia is built upon NVIDIA's [Omniverse](https://www.nvidia.com/en-us/omniverse/) and [Isaac Sim](https://developer.nvidia.com/isaac-sim) platforms, inheriting their dependencies. GRUtopia 2.0 specifically requires **Isaac Sim 4.2.0**. To ensure optimal performance and avoid any potential issues, it is essential to use this version rather than any other releases, such as 4.5.0 or 4.1.0.
+### Overall Requirements
+- **OS:** Ubuntu 20.04/22.04
+- **GPU Compatibility**:
+<table align="center" class="mytable">
+  <tbody>
+    <tr align="center" valign="middle">
+      <td rowspan="2">
+         <b>GPU</b>
+      </td>
+      <td rowspan="2">
+         <b>Model Training & Inference</b>
+      </td>
+      <td colspan="3">
+         <b>Simulation</b>
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         CALVIN
+      </td>
+       <td>
+         Simpler-Env
+      </td>
+       <td>
+         Genmanip
+      </td>
 
-## Installation
-
-Three ways of installation are provided:
-
-- [Install from source (Linux)](#install-from-source-linux): recommended for users who wants to thoroughly explore GRUtopia with Isaac Sim as a GUI application on Linux workstation with a GPU.
-- [Install from PyPI (Linux)](#install-from-pypi-linux): recommended for users who wants to use GRUtopia as a handy toolbox with Isaac Sim as a GUI application on Linux workstation with a GPU.
-- [Install with Docker (Linux)](#install-with-docker-linux): recommended for deployment on remote servers or the Cloud using a Docker container.
-
-See more: [Differences Between Workstation And Docker](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_faq.html#isaac-sim-setup-differences).
-
-Windows support is in our roadmap. Contributions are welcome!
-
-
-### Install from source (Linux)
-
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.2.0](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_workstation.html) and [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-
-1. Clone the GRUtopia repository with [git](https://git-scm.com).
-   ```bash
-   $ git clone git@github.com:OpenRobotLab/GRUtopia.git
-   ```
-
-2. Navigate to GRUtopia root path and configure the conda environment.
-
-   ```bash
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   # Conda environment will be created and configured automatically with prompt.
-   $ ./setup_conda.sh
-
-   $ cd .. && conda activate grutopia  # or your conda env name
-   ```
-
-### Install from PyPI (Linux)
-
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.2.0](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_workstation.html) and [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-
-1. Create conda env with `python=3.10` specified.
-    ```bash
-   $ conda create -n <env> python=3.10
-   ```
-2. Install GRUtopia through pip.
-
-   **NOTE**: Ensure you have [git](https://git-scm.com) installed.
-
-   ```bash
-   $ conda activate <env>
-   $ pip install grutopia
-   ```
-3. Configure the conda environment.
-
-   ```bash
-   $ python -m grutopia.setup_conda_pypi
-
-   $ conda deactivate && conda activate <env>
-   ```
-
-### Install with Docker (Linux)
-
-Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed. You can refer to the [container installation doc](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html) of Isaac Sim for detailed instructions.
-
-1. Clone the GRUtopia repository to any desired location.
-
-   ```bash
-   $ git clone git@github.com:OpenRobotLab/GRUtopia.git
-   ```
-
-1. Pull the Isaac Sim image (`docker login` is required, please refer to [NGC Documents](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim)).
-
-   ```bash
-   $ docker pull nvcr.io/nvidia/isaac-sim:4.2.0
-   ```
-1. Build docker image, replacing <your tag> with your desired tag:
-
-   ```bash
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   $ docker build -t grutopia:<your tag> .
-   ```
-
-1. Start docker container, replacing <your tag> with the above tag:
-
-   ```bash
-   $ xhost +local:root # Allow the container to access the display
-
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   $ docker run --name grutopia -it --rm --gpus all --network host \
-     -e "ACCEPT_EULA=Y" \
-     -e "PRIVACY_CONSENT=Y" \
-     -e "DISPLAY=${DISPLAY}" \
-     -v /tmp/.X11-unix/:/tmp/.X11-unix \
-     -v ${PWD}:/isaac-sim/GRUtopia \
-     -v ${HOME}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
-     -v ${HOME}/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
-     -v ${HOME}/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
-     -v ${HOME}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
-     -v ${HOME}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
-     -v ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
-     -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
-     -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
-     grutopia:<your tag>
-   ```
-
-   You are now ready to use GRUtopia in this container.
-
-   **NOTE**: If you are using a remote server without display, you can use the [Omniverse Streaming Client](https://docs.omniverse.nvidia.com/extensions/latest/ext_livestream/native.html) to stream the simulation UI.
-
-## Prepare Assets
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         NVIDIA RTX Series <br> (Driver: 535.216.01+ )
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         NVIDIA V/A/H100
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ❌
+      </td>
+   </tr>
+  </tbody>
+</table>
 
 ```{note}
-📝First of all you **MUST** complete the [User Agreement for GRScenes-100 Dataset Access](https://docs.google.com/forms/d/e/1FAIpQLSccX4pMb57eZbjXpH12Jz6WUBmCfeyc2t0s98k_u4Z-GD3Org/viewform?fbzx=8256642192244696391).
+We provide a flexible installation tool for users who want to use InternManip for different purposes. Users can choose to install the training and inference environment, and the individual simulation environment independently.
 ```
 
-Then you can one of the following methods to get the assets:
+<!-- Before installing InternManip, ensure your system meets the following requirements based on the specific models and benchmarks you plan to use. -->
 
-- Download the assets automatically with [GRUtopia](#installation) installed:
+### Model-Specific Requirements
 
-  ```shell
-  $ python -m grutopia.download_assets
-  ```
+<table align="center" class="mytable">
+  <tbody>
+    <tr align="center" valign="middle">
+      <td rowspan="2">
+         <b>Models</b>
+      </td>
+      <td colspan="3">
+         <b>Minimum GPU Requirement</b>
+      </td>
+      <td rowspan="2">
+         <b>System RAM<br>(Train/Inference)</b>
+      </td>
+      <td rowspan="2">
+         <b>CUDA</b>
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         Training (Full)
+      </td>
+      <td>
+         Training (LoRA)
+      </td>
+       <td>
+         Inference
+      </td>
 
-  During the script execution, you can choose to download full assets (~80GB) or a minimum set (~500MB), and you will be asked to specify the local path to store the downloaded assets.
 
-  > **NOTE**: If GRUtopia is installed with Docker, We recommend downloading the assets to a location under `/isaac-sim/GRUtopia/` in container (which is mounted from a host path) so that it can be retained across container recreations.
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         GR00T-N1/1.5
+      </td>
+      <td>
+        RTX 4090 / A100
+      </td>
+      <td>
+         -
+      </td>
+      <td>
+         RTX 3090 / A100
+      </td>
+      <td>
+         24GB / 8GB
+      </td>
+      <td>
+         ⚠️ 12.4
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         Pi-0
+      </td>
+      <td>
+        RTX 4090 (48G) / A100
+      </td>
+      <td>
+         RTX 4090
+      </td>
+      <td>
+         RTX 3090 / A100
+      </td>
+      <td>
+         70GB / 8GB
+      </td>
+      <td>
+         -
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         Diffusion Policy (DP)
+      </td>
+      <td>
+        RTX 2080
+      </td>
+      <td>
+         -
+      </td>
+      <td>
+         RTX 2070
+      </td>
+      <td>
+         16GB / 8GB
+      </td>
+      <td>
+         -
+      </td>
+   </tr>
+  </tbody>
+</table>
 
-- Download the assets manually from [HuggingFace](https://huggingface.co/datasets/OpenRobotLab/GRScenes)/[ModelScope](https://www.modelscope.cn/datasets/Shanghai_AI_Laboratory/GRScenes/summary)/[OpenDataLab](https://openxlab.org.cn/datasets/OpenRobotLab/GRScenes), and then use the following command to tell GRUtopia where the assets locate if you are meant to use it with GRUtopia:
 
-  ```shell
-  $ python -m grutopia.set_assets_path
-  ```
 
-## Verify Installation
+## Quick Installation
 
-```shell
-$ python -m grutopia.demo.h1_locomotion  # start simulation
+We provide a unified installation script that handles environment setup and dependency installation automatically.
+
+### Step 1: Clone the Repository and Install uv
+```bash
+# Clone the main repository
+git clone https://github.com/internrobotics/internmanip.git
+cd internmanip
+
+# Initialize and update submodules
+git submodule update --init --recursive
+
+# Skip the following commands if you have installed uv
+# Install uv package manager
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Restart your shell or source the profile
+source ~/.bashrc
 ```
 
-If properly installed, Isaac Sim GUI window would pop up and you can see a humanoid robot (Unitree H1) walking following a pre-defined trajectory in Isaac Sim.
+### Step 2: Run the Installation Script
+```bash
+# Make the script executable
+chmod +x install.sh
 
-<video width="720" height="405" controls>
-    <source src="../../../_static/video/h1_locomotion.webm" type="video/webm">
+# View available options
+./install.sh --help
+```
+
+
+#### 🙋 Lightweight Installation （Recommended for beginners）:
+```bash
+./install.sh --beginner
+```
+
+
+#### 🧠 Full Installation (Advanced users):
+```bash
+./install.sh --all
+```
+
+#### Available Installation Options:
+```bash
+Usage:
+  --calvin [NAME]         Create Calvin benchmark virtual environment and install dependencies
+  --simpler-env [NAME]    Create SimplerEnv benchmark virtual environment and install dependencies
+  --genmanip [NAME]       Create GenManip benchmark virtual environment and install dependencies
+  --model [NAME]          Create model virtual environment and install dependencies
+  --all                   Create all virtual environments and install dependencies (recommended for advanced users)
+  --beginner              Create beginner virtual environments and install dependencies (without genmanip, recommended for beginners)
+
+Customization Options:
+  --venv-dir DIR          Set custom virtual environment root directory (default: .venv)
+  --python-version V      Set default Python version (recommended default: 3.10)
+
+Examples:
+  ./install.sh --venv-dir ./my_envs --model
+  ./install.sh --calvin calvin-test --model model-test
+  ./install.sh --python-version 3.10 --calvin calvin-dev --simpler-env simpler-dev
+  ./install.sh --all
+  ./install.sh --beginner
+  --help                  Show help information
+```
+
+#### Selective Installation:
+```bash
+# Install only specific components
+./install.sh --gr00t --genmanip
+```
+
+#### Activate Virtual Environment
+After installation, virtual environments are created in the `.venv` directory by default.
+
+```bash
+# List available environments
+ls .venv/
+
+# Activate a specific environment
+source .venv/{environment_name}/bin/activate
+
+# Example: Activate GR00T environment
+source .venv/gr00t/bin/activate
+
+# Deactivate environment
+deactivate
+```
+
+Optionally, users can customize the virtual environments directory path by passing the `--venv-dir {path}` option when executing `install.sh`.
+
+```bash
+./install.sh --venv-dir ./my_envs --model
+```
+
+
+## Verification (WIP)
+
+To check your installation, you can evaluate the pretrained Pi-0 on the `Simpler-Env` benchmark using the following command:
+```bash
+python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py
+```
+
+If it installed properly, you can find the evaluation results and the visualization in the `eval_results/bridgedata_v2/pi0` directory:
+
+<!-- <p align="center">
+<video width="640" height="480" controls>
+    <source src="../../../_static/video/manip_verification.webm" type="video/webm">
 </video>
+</p> -->
+<p align="center">
+<video width="640" height="480" controls>
+    <source src="../../../_static/video/widowx_bridge.webm" type="video/webm">
+</video>
+</p>
+🎉 Congratulations! You have successfully installed InternManip.
 
-> **NOTE**: A slowdown is expected during first execution.
-> Isaac sim requires some one-time startup setup the first time you start it.
-> The process could take up to 5 minutes. This is expected behavior, and should only occur once!
+## Dataset Preparation (WIP)
+
+### Automatic Download
+Datasets, model weights, and benchmark assets are automatically downloaded when running the code for the first time. The default download location is `${repo_root}/data`. The system will prompt you to download required datasets.
+```{warning}
+Please ensure you have enough disk space available before starting the download. For cluster users, we recommend creating a symbolic link to a data storage for `${repo_root}/data` to avoid disk space issues.
+```
+
+### Manual Download
+If you prefer manual dataset preparation:
+
+1. **Visit our platform:** [Dataset Platform](https://huggingface.co/InternRobotics)
+2. **Download datasets** based on your needs:
+   - [GenManip-v1](https://huggingface.co/datasets/InternRobotics/InternData-GenmanipTest)
+   - [CALVIN](https://huggingface.co/datasets/InternRobotics/InternData-Calvin_ABC)
+   - [Google-Robot](https://huggingface.co/datasets/InternRobotics/InternData-fractal20220817_data)
+   - [BridgeData-v2](https://huggingface.co/datasets/InternRobotics/InternData-BridgeV2)

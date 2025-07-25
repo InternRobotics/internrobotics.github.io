@@ -6,14 +6,14 @@ myst:
       pydata-sphinx-theme.
 ---
 
-# Tutorials
+# Tutorials (WIP)
 
 ```{toctree}
-:caption: Tutorials
 :maxdepth: 2
 
 dataset
 model
 training
 evaluation
+environment
 ```
