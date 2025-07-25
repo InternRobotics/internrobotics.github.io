@@ -6,14 +6,12 @@ myst:
       pydata-sphinx-theme.
 ---
 
-# Tutorials
+# Quick Start
 
 ```{toctree}
-:caption: Tutorials
+:caption: Quick Start
 :maxdepth: 2
 
-dataset
-model
-training
-evaluation
+installation
+eval
 ```

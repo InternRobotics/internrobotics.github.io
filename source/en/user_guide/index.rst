@@ -9,7 +9,7 @@ User Guide
 .. toctree::
    :maxdepth: 3
 
-   internperception/index
+   internsr/index
 
 .. toctree::
    :maxdepth: 3

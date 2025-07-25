@@ -13,6 +13,7 @@ myst:
 :maxdepth: 2
 
 dataset
+format_specification
 model
 training
 evaluation

@@ -6,13 +6,10 @@ myst:
       pydata-sphinx-theme.
 ---
 
-# Quick Start
+# InternSR
 
 ```{toctree}
-:caption: Quick Start
-:maxdepth: 2
+:maxdepth: 3
 
-installation
-finetune
-evaluation
+quick_start/index
 ```

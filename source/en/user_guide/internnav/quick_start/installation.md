@@ -1,160 +1,268 @@
-# Installation
+<style>
+  .mytable {
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    border-radius: 8px;        /* 四个角统一 8px 圆角 */
+    border-collapse: separate; /* 必须设 separate，否则圆角会被 collapse 吃掉 */
+    border-spacing: 0;
+  }
+  .mytable th, .mytable td {
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    padding: 6px 12px;
+  }
+</style>
+
+# 🛠️ Installation Guide
+
+😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
+
+
+<!-- > 💡NOTE \
+> 🙋 **[First-time users:](#-lightweight-installation-recommended-for-beginners)** Skip GenManip for now — it requires installing NVIDIA [⚙️ Isaac Sim](#), which can be complex.
+Start with **CALVIN** or **SimplerEnv** for easy setup and full training/eval support.\
+> 🧠 **[Advanced users:](#-full-installation-advanced-users)** Feel free to use all benchmarks, including **GenManip** with Isaac Sim support. -->
+
+<!-- > For 🙋**first-time** users, we recommend skipping the GenManip benchmark, as it requires installing NVIDIA [⚙️ Isaac Sim](#) for simulation (which can be complex).
+Instead, start with **CALVIN** or **SimplerEnv** — both are easy to set up and fully support training and evaluation. -->
+
+<!-- This guide provides comprehensive instructions for installing and setting up the InternManip robot manipulation learning suite. Please read through the following prerequisites carefully before proceeding with the installation. -->
 
 ## Prerequisites
 
-- OS: Ubuntu 20.04/22.04
-- RAM: 32GB+
-- GPU: NVIDIA RTX 2070+ (must with RTX cores)
-- NVIDIA Driver: 535.216.01+
+InternNav works across most hardware setups.
+Just note the following exceptions:
+- **Benchmark based on Isaac Sim** such as VN and VLN-PE benchmarks must run on **NVIDIA RTX series GPUs** (e.g., RTX 4090).
 
-> For complete requirements, please see [Isaac Sim's Requirements](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/requirements.html).
->
-> GRUtopia is built upon NVIDIA's [Omniverse](https://www.nvidia.com/en-us/omniverse/) and [Isaac Sim](https://developer.nvidia.com/isaac-sim) platforms, inheriting their dependencies. GRUtopia 2.0 specifically requires **Isaac Sim 4.2.0**. To ensure optimal performance and avoid any potential issues, it is essential to use this version rather than any other releases, such as 4.5.0 or 4.1.0.
+### Simulation Requirements
+- **OS:** Ubuntu 20.04/22.04
+- **GPU Compatibility**:
+<table align="center" class="mytable">
+  <tbody>
+    <tr align="center" valign="middle">
+      <td rowspan="2">
+         <b>GPU</b>
+      </td>
+      <td rowspan="2">
+         <b>Model Training & Inference</b>
+      </td>
+      <td colspan="3">
+         <b>Simulation</b>
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         VLN-CE
+      </td>
+       <td>
+         VN
+      </td>
+       <td>
+         VLN-PE
+      </td>
 
-## Installation
-
-Three ways of installation are provided:
-
-- [Install from source (Linux)](#install-from-source-linux): recommended for users who wants to thoroughly explore GRUtopia with Isaac Sim as a GUI application on Linux workstation with a GPU.
-- [Install from PyPI (Linux)](#install-from-pypi-linux): recommended for users who wants to use GRUtopia as a handy toolbox with Isaac Sim as a GUI application on Linux workstation with a GPU.
-- [Install with Docker (Linux)](#install-with-docker-linux): recommended for deployment on remote servers or the Cloud using a Docker container.
-
-See more: [Differences Between Workstation And Docker](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_faq.html#isaac-sim-setup-differences).
-
-Windows support is in our roadmap. Contributions are welcome!
-
-
-### Install from source (Linux)
-
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.2.0](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_workstation.html) and [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-
-1. Clone the GRUtopia repository with [git](https://git-scm.com).
-   ```bash
-   $ git clone git@github.com:OpenRobotLab/GRUtopia.git
-   ```
-
-2. Navigate to GRUtopia root path and configure the conda environment.
-
-   ```bash
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   # Conda environment will be created and configured automatically with prompt.
-   $ ./setup_conda.sh
-
-   $ cd .. && conda activate grutopia  # or your conda env name
-   ```
-
-### Install from PyPI (Linux)
-
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.2.0](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_workstation.html) and [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-
-1. Create conda env with `python=3.10` specified.
-    ```bash
-   $ conda create -n <env> python=3.10
-   ```
-2. Install GRUtopia through pip.
-
-   **NOTE**: Ensure you have [git](https://git-scm.com) installed.
-
-   ```bash
-   $ conda activate <env>
-   $ pip install grutopia
-   ```
-3. Configure the conda environment.
-
-   ```bash
-   $ python -m grutopia.setup_conda_pypi
-
-   $ conda deactivate && conda activate <env>
-   ```
-
-### Install with Docker (Linux)
-
-Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed. You can refer to the [container installation doc](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html) of Isaac Sim for detailed instructions.
-
-1. Clone the GRUtopia repository to any desired location.
-
-   ```bash
-   $ git clone git@github.com:OpenRobotLab/GRUtopia.git
-   ```
-
-1. Pull the Isaac Sim image (`docker login` is required, please refer to [NGC Documents](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim)).
-
-   ```bash
-   $ docker pull nvcr.io/nvidia/isaac-sim:4.2.0
-   ```
-1. Build docker image, replacing <your tag> with your desired tag:
-
-   ```bash
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   $ docker build -t grutopia:<your tag> .
-   ```
-
-1. Start docker container, replacing <your tag> with the above tag:
-
-   ```bash
-   $ xhost +local:root # Allow the container to access the display
-
-   $ cd PATH/TO/GRUTOPIA/ROOT
-
-   $ docker run --name grutopia -it --rm --gpus all --network host \
-     -e "ACCEPT_EULA=Y" \
-     -e "PRIVACY_CONSENT=Y" \
-     -e "DISPLAY=${DISPLAY}" \
-     -v /tmp/.X11-unix/:/tmp/.X11-unix \
-     -v ${PWD}:/isaac-sim/GRUtopia \
-     -v ${HOME}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
-     -v ${HOME}/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
-     -v ${HOME}/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
-     -v ${HOME}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
-     -v ${HOME}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
-     -v ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
-     -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
-     -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
-     grutopia:<your tag>
-   ```
-
-   You are now ready to use GRUtopia in this container.
-
-   **NOTE**: If you are using a remote server without display, you can use the [Omniverse Streaming Client](https://docs.omniverse.nvidia.com/extensions/latest/ext_livestream/native.html) to stream the simulation UI.
-
-## Prepare Assets
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         NVIDIA RTX Series <br> (Driver: 535.216.01+ )
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         NVIDIA V/A/H100
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ✅
+      </td>
+      <td>
+         ❌
+      </td>
+      <td>
+         ❌
+      </td>
+   </tr>
+  </tbody>
+</table>
 
 ```{note}
-📝First of all you **MUST** complete the [User Agreement for GRScenes-100 Dataset Access](https://docs.google.com/forms/d/e/1FAIpQLSccX4pMb57eZbjXpH12Jz6WUBmCfeyc2t0s98k_u4Z-GD3Org/viewform?fbzx=8256642192244696391).
+We provide a flexible installation tool for users who want to use InternNav for different purposes. Users can choose to install the training and inference environment, and the individual simulation environment independently.
 ```
 
-Then you can one of the following methods to get the assets:
+<!-- Before installing InternManip, ensure your system meets the following requirements based on the specific models and benchmarks you plan to use. -->
 
-- Download the assets automatically with [GRUtopia](#installation) installed:
+### Model-Specific Requirements
 
-  ```shell
-  $ python -m grutopia.download_assets
-  ```
+<table align="center" class="mytable">
+  <tbody>
+    <tr align="center" valign="middle">
+      <td rowspan="2">
+         <b>Models</b>
+      </td>
+      <td colspan="2">
+         <b>Minimum GPU Requirement</b>
+      </td>
+      <td rowspan="2">
+         <b>System RAM<br>(Train/Inference)</b>
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         Training
+      </td>
+      <td>
+         Inference
+      </td>
 
-  During the script execution, you can choose to download full assets (~80GB) or a minimum set (~500MB), and you will be asked to specify the local path to store the downloaded assets.
 
-  > **NOTE**: If GRUtopia is installed with Docker, We recommend downloading the assets to a location under `/isaac-sim/GRUtopia/` in container (which is mounted from a host path) so that it can be retained across container recreations.
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         StreamVLN & InternVLA-N1
+      </td>
+      <td>
+         A100
+      </td>
+      <td>
+         RTX 4090 / A100
+      </td>
+      <td>
+         80GB / 24GB
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         NavDP (VN Models)
+      </td>
+      <td>
+        RTX 4090 / A100
+      </td>
+      <td>
+         RTX 3060 / A100
+      </td>
+      <td>
+         16GB / 2GB
+      </td>
+   </tr>
+   <tr align="center" valign="middle">
+      <td>
+         CMA (VLN-PE Small Models)
+      </td>
+      <td>
+         RTX 4090 / A100
+      </td>
+      <td>
+         RTX 3060 / A100
+      </td>
+      <td>
+         8GB / 1GB
+      </td>
+   </tr>
+  </tbody>
+</table>
 
-- Download the assets manually from [HuggingFace](https://huggingface.co/datasets/OpenRobotLab/GRScenes)/[ModelScope](https://www.modelscope.cn/datasets/Shanghai_AI_Laboratory/GRScenes/summary)/[OpenDataLab](https://openxlab.org.cn/datasets/OpenRobotLab/GRScenes), and then use the following command to tell GRUtopia where the assets locate if you are meant to use it with GRUtopia:
 
-  ```shell
-  $ python -m grutopia.set_assets_path
-  ```
 
-## Verify Installation
+## Quick Installation
 
-```shell
-$ python -m grutopia.demo.h1_locomotion  # start simulation
+We support two mainstream setups in this toolbox and the user can choose one given their requirements and devices.
+
+### Basic Environment
+For users that only need to run the model inference and visualize the planned trajectory results, we recommend run the simplest installation scripts:
+
+```bash
+    conda create -n internnav python=3.9
+    pip install -r basic_requirements.txt
 ```
 
-If properly installed, Isaac Sim GUI window would pop up and you can see a humanoid robot (Unitree H1) walking following a pre-defined trajectory in Isaac Sim.
+### Habitat Environment
+For users that would like to train models or evaluate on Habitat without physics simulation, we recommend the following setup and easier environment installation.
 
-<video width="720" height="405" controls>
-    <source src="../../../_static/video/h1_locomotion.webm" type="video/webm">
-</video>
+#### Prerequisite
+- Python 3.9
+- Pytorch 2.1.2
+- CUDA 12.4
+- GPU: NVIDIA A100 or higher (optional for VLA training)
 
-> **NOTE**: A slowdown is expected during first execution.
-> Isaac sim requires some one-time startup setup the first time you start it.
-> The process could take up to 5 minutes. This is expected behavior, and should only occur once!
+```bash
+    conda install habitat-sim==0.2.4 withbullet headless -c conda-forge -c aihabitat
+    git clone --branch v0.2.4 https://github.com/facebookresearch/habitat-lab.git
+    cd habitat-lab
+    pip install -e habitat-lab  # install habitat_lab
+    pip install -e habitat-baselines # install habitat_baselines
+    pip install -r habitat_requirements.txt
+```
+
+### Isaac Sim Environment
+For users that would like to evaluate the whole navigation system with VLN-PE on Isaac Sim, we recommend the following setup with NVIDIA RTX series GPUs for better rendering support.
+
+#### Prerequisite
+- Python 3.10 or higher
+- CUDA 12.4
+- GPU: NVIDIA RTX 4090 or higher (optional for VLA testing)
+
+```bash
+    # TODO: pull the docker with Isaac Sim and GRUtopia
+    pip install -r isaac_requirements.txt --no-deps
+```
+```bash
+# Make the script executable
+chmod +x install.sh
+
+# View available options
+./install.sh --help
+```
+
+
+## Verification(TBD)
+
+Please download our latest pretrained [checkpoint]() and run the following script to inference with visualization results.
+
+```bash
+    ./scripts/demo/internvla_n1.py --rgb_pkl ${SAVED_RGB_PKL} --depth_pkl ${SAVED_DEPTH_PKL} --output_path ${EXPECT_OUTPUT_PATH}
+```
+
+If it installed properly, you can find the evaluation results and the visualization in the `eval_results/internNav` directory:
+
+🎉 Congratulations! You have successfully installed InternNav.
+
+## Dataset Preparation
+
+Please download the [InternData-N1]() and organize the data structure as follows.
+
+```bash
+data/
+├── scene_datasets/
+│   └── mp3d/
+│       ├── 17DRP5sb8fy/
+│       ├── 1LXtFkjw3qL/
+│       └── ...
+├── vln_n1/
+│   ├── datasets/
+│   │   ├── train/
+│   │   ├── val_seen/
+│   │   │   └── val_seen.json.gz
+│   │   └── val_unseen/
+│   │       └── val_unseen.json.gz
+├── └── traj_data/
+│       ├── images/
+│       └── annotations.json
+├── vln_ce/
+│   ├── datasets/
+│   └── traj_data/
+└── vln_pe/
+    ├── datasets/
+    └── traj_data/
+```

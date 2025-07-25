@@ -13,6 +13,5 @@ myst:
 :maxdepth: 2
 
 installation
-finetune
-evaluation
+train_eval
 ```
