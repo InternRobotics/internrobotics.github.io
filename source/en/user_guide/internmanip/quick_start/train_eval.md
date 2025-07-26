@@ -355,7 +355,6 @@ InternManip offers implementations of multiple manipulation policy models—**GR
 The available `${MODEL}`, `${DATASET}`, `${BENCHMARK}` and their results are summarized in the following tables:
 
 ### CALVIN (ABC-D) Benchmark
-<<<<<<< HEAD
 | Model  | Dataset/Benchmark | Score (Main Metric) | Model Weights |
 | ------------ | ---- | ------------- | ------- |
 | `gr00t_n1` | `calvin_abcd` | | |
@@ -363,15 +362,6 @@ The available `${MODEL}`, `${DATASET}`, `${BENCHMARK}` and their results are sum
 | `pi0` | `calvin_abcd` | | |
 | `dp_clip` | `calvin_abcd` | | |
 | `act_clip` | `calvin_abcd` | | |
-=======
-| Model  | Dataset/Benchmark | Score | Model Weights |
-| ------------ | ---- | ------------- | ------- |
-| `gr00t-n1` | `calvin-abcd` |  | [`calvin-abcd/gr00t-n1`](#) |
-| `gr00t-n1.5` | `calvin-abcd` |  | [`calvin-abcd/gr00t-n1.5`](#) |
-| `pi-0` | `calvin-abcd` |  | [`calvin-abcd/pi-0`](#)|
-| `dp-clip` | `calvin-abcd` |  | [`calvin-abcd/dp-clip`](#)|
-| `act-clip` | `calvin-abcd` |  | [`calvin-abcd/act-clip`](#)|
->>>>>>> [docs] pass pre-commit hook
 
 ### Simpler-Env Benchmark
 | Model  | Dataset/Benchmark | Success Rate | Model Weights |
