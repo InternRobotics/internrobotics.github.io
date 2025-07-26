@@ -3,20 +3,102 @@
 
 This document presents how to train and evaluate models for different systems with InternNav.
 
+## Whole-system
+
+### Evaluation
+Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments). Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
+
+#### Evaluation on isaac sim
+The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
+
+First start the ray server:
+```bash
+ray disable-usage-stats
+ray stop
+ray start --head
+```
+
+Then change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
+```bash
+INTERNUTOPIA_ASSETS_PATH=/path/to/InternUTopiaAssets MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
+```
+
+Finally, start the client:
+```bash
+python -m internnav.agent.utils.server --config scripts/eval/configs/h1_internvla_n1_cfg.py
+```
+
+The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 3 hours at RTX4090 platform.
+
+
+#### Evaluation on habitat
+Evaluate on Single-GPU:
+
+```bash
+python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1 --continuous_traj --output_path result/InternVLA-N1/val_unseen_32traj_8steps
+```
+
+For multi-gpu inference, currently we only support inference on SLURM.
+
+```bash
+./scripts/eval/eval_dual_system.sh
+```
+
 
 ## System1
 
 ### Training
 
+Download the training data from [Hugging Face](https://huggingface.co/datasets/InternRobotics/InternData-N1/), and extract them into the `data/datasets/` directory.
+
 ```bash
-    ./scripts/train/vn_train.sh --name "$NAME" --model-name navdp
+./scripts/train/start_train.sh --name "$NAME" --model-name navdp
 ```
 
 ### Evaluation
 
-Currently, we support the evaluation of diverse System1 baselines separately in [NavDP](https://github.com/OpenRobotLab/NavDP) to make it simplest to use and deploy. Please refer to [NavDP](https://github.com/OpenRobotLab/NavDP) for more details.
+We support the evaluation of diverse System-1 baselines separately in [NavDP](https://github.com/InternRobotics/NavDP/tree/navdp_benchmark) to make it easy to use and deploy.
+To install the environment, we provide a quick start below:
+#### Step 0: Create the conda environment
+```bash
+conda create -n isaaclab python=3.10
+conda activate isaaclab
+```
+#### Step 1: Install Isaacsim 4.2
+```bash
+pip install --upgrade pip
+pip install isaacsim==4.2.0.2 isaacsim-extscache-physics==4.2.0.2 isaacsim-extscache-kit==4.2.0.2 isaacsim-extscache-kit-sdk==4.2.0.2 --extra-index-url https://pypi.nvidia.com
+# (optional) you can check the installation by running the following
+isaacsim omni.isaac.sim.python.kit
+```
 
-For vision language navigation(VLN), please refer to [VLN Evaluation](vln_evaluation.md).
+#### Step 2: Install IsaacLab 1.2.0
+```bash
+git clone https://github.com/isaac-sim/IsaacLab.git
+cd IsaacLab/
+git checkout tags/v1.2.0
+# (optional) you can check the installation by running the following
+./isaaclab.sh -p source/standalone/tutorials/00_sim/create_empty.py
+```
+
+#### Step 3: Install the dependencies for InternVLA-N1(S1)
+```bash
+git clone https://github.com/OpenRobotLab/NavDP.git
+cd NavDP
+git checkout navdp_benchmark
+pip install -r requirements.txt
+```
+#### Step 4: Start the InternVLA-N1(S1) server
+```bash
+cd system1_baselines/navdp
+python navdp_server.py --port {PORT} --checkpoint {CHECKPOINT_path}
+```
+
+#### Step 5: Running the Evaluation
+```bash
+python eval_pointgoal_wheeled.py --port {PORT} --scene_dir {SCENE_DIR}
+```
+
 
 ## System2
 
@@ -25,6 +107,7 @@ For vision language navigation(VLN), please refer to [VLN Evaluation](vln_evalua
 Please download the following VLN-CE datasets and insert them into the `data` folder following the same structure.
 
 1. **VLN-CE Episodes**
+
    Download the VLN-CE episodes:
    - [r2r](https://drive.google.com/file/d/18DCrNcpxESnps1IbXVjXSbGLDzcSOqzD/view) (rename R2R_VLNCE_v1/ -> r2r/)
    - [rxr](https://drive.google.com/file/d/145xzLjxBaNTbVgBfQ8e9EsBAV8W-SM0t/view) (rename RxR_VLNCE_v0/ -> rxr/)
@@ -32,77 +115,65 @@ Please download the following VLN-CE datasets and insert them into the `data` fo
 
    Extract them into the `data/datasets/` directory.
 
-2. **Collected Trajectory Data**
-  We provide pre-collected observation-action trajectory data for training. These trajectories were collected using the **training episodes** from **R2R** and **RxR** under the Matterport3D environment. For the **EnvDrop** subset, please refer to [DATASET.md](https://huggingface.co/datasets/cywan/StreamVLN-Trajectory-Data/blob/main/README.md) for instructions on how to collect it yourself.
-  Download the observation-action trajectory data from [Hugging Face](https://huggingface.co/datasets/cywan/StreamVLN-Trajectory-Data), and extract it to `data/trajectory_data/`.
+2. **InternData-N1**
 
+  We provide pre-collected observation-action trajectory data for training. These trajectories were collected using the **training episodes** from **R2R** and **RxR** under the Matterport3D environment. Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) and [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1).
 The final folder structure should look like this:
-
 ```bash
 data/
-├── datasets/
-│   ├── r2r/
+├── scene_data/
+│   ├── mp3d_pe/
+│   │   ├──17DRP5sb8fy/
+│   │   ├── 1LXtFkjw3qL/
+│   │   └── ...
+│   ├── mp3d_ce/
+│   └── mp3d_n1/
+├── vln_pe/
+│   ├── raw_data/
 │   │   ├── train/
 │   │   ├── val_seen/
+│   │   │   └── val_seen.json.gz
 │   │   └── val_unseen/
-│   ├── rxr/
-│   │   ├── train/
-│   │   ├── val_seen/
-│   │   └── val_unseen/
-│   └── envdrop/
-│       ├── envdrop.json.gz
-│       └── ...
-├── scene_datasets/
-│   └── mp3d/
-│       ├── 17DRP5sb8fy/
-│       ├── 1LXtFkjw3qL/
-│       └── ...
-└── trajectory_data/
-    ├── R2R/
-    │   ├── images/
-    │   └── annotations.json
-    ├── RxR/
-    │   ├── images/
-    │   └── annotations.json
-    └── EnvDrop/
-        ├── images/
-        └── annotations.json
+│   │       └── val_unseen.json.gz
+├── └── traj_data/
+│       └── mp3d/
+│           └── trajectory_0/
+│               ├── data/
+│               ├── meta/
+│               └── videos/
+├── vln_ce/
+│   ├── raw_data/
+│   └── traj_data/
+└── vln_n1/
+    └── traj_data/
 ```
 
 ### Training
 
-Currently, we do not support directly training VLAs due to the complexity of entangling different requirements for training LLMs and simulation. Please refer to [StreamVLN](https://github.com/OpenRobotLab/StreamVLN) for training details.
+Currently, we only support training of small VLN models (CMA, RDP, Seq2Seq) in this repo. For the trainning of LLM-based VLN (Navid, StreamVLN, etc), please refer to [StreamVLN](https://github.com/OpenRobotLab/StreamVLN) for training details.
 
+```base
+# train cma model
+./scripts/train/start_train.sh --name cma_train --model cma
+
+# train rdp model
+./scripts/train/start_train.sh --name rdp_train --model rdp
+
+# train seq2seq model
+./scripts/train/start_train.sh --name seq2seq_train --model seq2seq
+```
 ### Evaluation
 
+Currently we only support evaluate single System2 on Habitat:
+
+Evaluate on Single-GPU:
+
 ```bash
-    # Evaluate the StreamVLN model
-    sh scripts/eval/streamvln_eval_multi_gpu.sh
+python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1-S2 --mode system2 --output_path results/InternVLA-N1-S2/val_unseen \
 ```
 
-## Whole-system
-
-### Training
-
-Currently, we only support training small models such as Seq2Seq, CMA and RDP on VLN-PE.
+For multi-gpu inference, currently we only support inference on SLURM.
 
 ```bash
-    ./scripts/train/vln_pe_train.sh --name "$NAME" --model-name seq2seq # or "cma", "rdp"
-```
-
-### Evaluation
-
-The user can either use script:
-
-```bash
-    ./scripts/eval/vln_pe_eval.sh --grutopia_assets_path path/to/grutopia_assets --config path/to/config
-```
-
-or use source code for evaluation:
-
-```bash
-    # start server
-    python InternNav/agent/utils/server.py --config path/to/config
-    # run evaluation
-    GRUTOPIA_ASSETS_PATH=path/to/grutopia_assets python scripts/eval/eval.py --config path/to/config
+./scripts/eval/eval_system2.sh
 ```

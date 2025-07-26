@@ -4,7 +4,7 @@ This tutorial introduces the structure and implementation of both System 1 (navd
 
 ---
 
-## System 1: navdp
+## System 1: Navdp
 
 <!-- navdp content start -->
 
@@ -124,6 +124,6 @@ To customize the backbone, decoder, or heads, refer to `navdp_policy.py` and `na
 
 ---
 
-## System 2: *
+## System 2: InternVLA-N1-S2
 
 *TODO

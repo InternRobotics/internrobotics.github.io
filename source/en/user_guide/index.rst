@@ -21,5 +21,3 @@ User Guide
    :maxdepth: 3
 
    internmanip/index
-
-

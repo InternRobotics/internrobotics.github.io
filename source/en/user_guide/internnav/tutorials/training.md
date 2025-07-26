@@ -4,7 +4,7 @@ This tutorial provides a detailed guide for training both System 1 (navdp) and S
 
 ---
 
-## System 1: navdp
+## System 1: Navdp
 
 <!-- navdp content start -->
 
@@ -114,6 +114,6 @@ For customizing the model structure or dataset format, see [model.md](./model.md
 
 ---
 
-## System 2:
+## System 2: InternVLA-N1-S2
 
 *TODO
