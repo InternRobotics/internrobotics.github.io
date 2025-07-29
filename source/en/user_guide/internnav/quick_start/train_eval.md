@@ -20,12 +20,12 @@ ray start --head
 
 Then change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
-INTERNUTOPIA_ASSETS_PATH=/path/to/InternUTopiaAssets MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
+python -m internnav.agent.utils.server --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
 Finally, start the client:
 ```bash
-python -m internnav.agent.utils.server --config scripts/eval/configs/h1_internvla_n1_cfg.py
+INTERNUTOPIA_ASSETS_PATH=/path/to/InternUTopiaAssets MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 3 hours at RTX4090 platform.
