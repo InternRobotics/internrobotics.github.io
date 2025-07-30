@@ -1,6 +1,6 @@
 # Model
 
-This tutorial introduces the structure and implementation of both System 1 (navdp) and System 2 (rdp) policy models in the InterNav framework.
+This tutorial introduces the structure and implementation of both System 1 (navdp) and System 2 (rdp) policy models in the internNav framework.
 
 ---
 
@@ -8,13 +8,13 @@ This tutorial introduces the structure and implementation of both System 1 (navd
 
 <!-- navdp content start -->
 
-This tutorial introduces the structure and implementation of the navdp policy model in the InterNav framework, helping you understand and customize each module.
+This tutorial introduces the structure and implementation of the navdp policy model in the internNav framework, helping you understand and customize each module.
 
 ---
 
 ### Model Structure Overview
 
-The navdp policy model in InterNav mainly consists of the following parts:
+The navdp policy model in internNav mainly consists of the following parts:
 
 - **RGBD Encoder (NavDP_RGBD_Backbone)**: Extracts multi-frame RGB+Depth features.
 - **Goal Point/Image Encoder**: Encodes goal point or goal image information.
@@ -98,8 +98,6 @@ def forward(self, goal_point, goal_image, input_images, input_depths, output_act
     return action_pred, value_pred
 ```
 
----
-
 ### Key Code Snippets
 
 #### Load Model
@@ -116,14 +114,50 @@ To customize the backbone, decoder, or heads, refer to `navdp_policy.py` and `na
 ---
 
 ### Reference
-- [navdp_policy.py](../../internnav/model/basemodel/navdp/navdp_policy.py)
-- [navdp_backbone.py](../../internnav/model/encoder/navdp_backbone.py)
-- [navdp.py config](../../scripts/train/configs/navdp.py)
+- [diffusion policy](https://github.com/real-stanford/diffusion_policy)
 
 <!-- navdp content end -->
 
 ---
 
-## System 2: InternVLA-N1-S2
+## Dual System: InternVLA-N1
+This tutorial provides a detailed guide for training the InternVLA-N1 policy model within the internNav framework.
 
-*TODO
+1. Qwen2.5-VL Backbone
+The system 2 model is built on Qwen2.5-VL, a state-of-the-art vision-language model:
+
+```python
+class InternVLAN1ForCausalLM(Qwen2_5_VLForConditionalGeneration, InternVLAN1MetaForCausalLM):
+    config_class = InternVLAN1ModelConfig
+
+    def __init__(self, config):
+        Qwen2_5_VLForConditionalGeneration.__init__(self, config)
+        config.model_type == "internvla_n1"
+
+        self.model = InternVLAN1Model(config)
+        self.rope_deltas = None
+        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+        self.post_init()
+```
+Qwen2.5-VL supports multi-turn conversations, image understanding, and text generation. We finetune the qwenVL model on the self-collected navigation dataset.
+
+2. Latent Queries
+Our model learns a set of latent queries to query the latent vector of Qwen2.5-VL, which is used to model trajectory context.
+```python
+self.latent_queries = nn.Parameter(torch.randn(1, config.n_query, config.hidden_size))
+```
+
+3. NavDP Integration
+Embeds the System 1 (NavDP) policy for low-level trajectory generation:
+
+```python
+def build_navdp(navdp_cfg):
+    navdp = NavDP_Policy_DPT_CriticSum_DAT(navdp_pretrained=navdp_cfg.navdp_pretrained)
+    navdp.load_model()
+    return navdp
+```
+NavDP converts high-level waypoints from the language model to continuous action sequences.
+
+
+### Reference
+[Qwen2.5-VL Documentation](https://lmdeploy.readthedocs.io/en/latest/multi_modal/qwen2_5_vl.html)

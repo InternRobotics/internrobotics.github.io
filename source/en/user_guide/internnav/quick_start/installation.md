@@ -14,17 +14,9 @@
 # Installation Guide
 
 😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
-
-
-<!-- > 💡NOTE \
-> 🙋 **[First-time users:](#-lightweight-installation-recommended-for-beginners)** Skip GenManip for now — it requires installing NVIDIA [⚙️ Isaac Sim](#), which can be complex.
-Start with **CALVIN** or **SimplerEnv** for easy setup and full training/eval support.\
-> 🧠 **[Advanced users:](#-full-installation-advanced-users)** Feel free to use all benchmarks, including **GenManip** with Isaac Sim support. -->
-
-<!-- > For 🙋**first-time** users, we recommend skipping the GenManip benchmark, as it requires installing NVIDIA [⚙️ Isaac Sim](#) for simulation (which can be complex).
-Instead, start with **CALVIN** or **SimplerEnv** — both are easy to set up and fully support training and evaluation. -->
-
-<!-- This guide provides comprehensive instructions for installing and setting up the InternManip robot manipulation learning suite. Please read through the following prerequisites carefully before proceeding with the installation. -->
+```
+Detailed technical report will be released in about two weeks.
+```
 
 ## Prerequisites
 
@@ -176,6 +168,10 @@ We provide a flexible installation tool for users who want to use InternNav for 
 
 
 ## Quick Installation
+Clone the InternNav repository:
+```bash
+git clone https://github.com/InternRobotics/InternNav.git --recursive
+```
 
 Our toolchain provides two Python environment solutions to accommodate different usage scenarios with the InternNav-N1 series model:
 
@@ -187,43 +183,39 @@ Choose the environment that best fits your specific needs to optimize your exper
 ### Isaac Sim Environment
 #### Prerequisite
 - Ubuntu 20.04, 22.04
-- Conda
 - Python 3.10.16 (3.10.* should be ok)
 - NVIDIA Omniverse Isaac Sim 4.5.0
 - NVIDIA GPU (RTX 2070 or higher)
 - NVIDIA GPU Driver (recommended version 535.216.01+)
 - PyTorch 2.5.1, 2.6.0 (recommended)
 - CUDA 11.8, 12.4 (recommended)
-- Docker (Optional)
-- NVIDIA Container Toolkit (Optional)
 
 Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
-To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
+<!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
 ```bash
 docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 docker run -it --name internutopia-container registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
-```
+``` -->
 #### Conda installation
 ```bash
-$ conda create -n <env> python=3.10 libxcb=1.14
+conda create -n <env> python=3.10 libxcb=1.14
 
 # Install InternUtopia through pip.(2.1.1 and 2.2.0 recommended)
-$ conda activate <env>
-$ pip install internutopia
+conda activate <env>
+pip install internutopia
 
 # Configure the conda environment.
-$ python -m internutopia.setup_conda_pypi
-$ conda deactivate && conda activate <env>
+python -m internutopia.setup_conda_pypi
+conda deactivate && conda activate <env>
 ```
 For InternUtopia installation, you can find more detailed [docs](https://internrobotics.github.io/user_guide/internutopia/get_started/installation.html) in [InternUtopia](https://github.com/InternRobotics/InternUtopia?tab=readme-ov-file).
 ```bash
 # Install PyTorch based on your CUDA version
-$ pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
+pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
 
 # Install other deps
-$ pip install -r isaac_requirements.txt
-
+pip install -r requirements/isaac_requirements.txt
 ```
 
 
@@ -238,45 +230,80 @@ If you need to train or evaluate models on [Habitat](#optional-habitat-environme
 - GPU: NVIDIA A100 or higher (optional for VLA training)
 
 ```bash
+conda create -n <env> python=3.9
+conda activate <env>
+```
+Install habitat sim and habitat lab:
+```bash
 conda install habitat-sim==0.2.4 withbullet headless -c conda-forge -c aihabitat
 git clone --branch v0.2.4 https://github.com/facebookresearch/habitat-lab.git
 cd habitat-lab
 pip install -e habitat-lab  # install habitat_lab
 pip install -e habitat-baselines # install habitat_baselines
-pip install -r habitat_requirements.txt
+```
+Install pytorch and other requirements:
+```bash
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url ​https://download.pytorch.org/whl/cu124
+pip install -r requirements/habitat_requirements.txt
 ```
 
 
 ## Verification
 
-Please download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory. Download the VLN-CE dataset from [huggingface](). The final folder structure should look like this:
+### Data/Checkpoints Preparation
+To get started, we need to prepare the data and checkpoints.
+1. **InternVLA-N1 pretrained Checkpoints**
+Please download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
+2. **DepthAnything v2 Checkpoints**
+Please download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
+3. **Matterport3D Scenes**
+Download the MP3D scenes from [official project pages](https://niessner.github.io/Matterport/) and place them under `data/scene_datasets/mp3d`.
+4. **VLN-CE Episodes**
+   - [r2r](https://drive.google.com/file/d/18DCrNcpxESnps1IbXVjXSbGLDzcSOqzD/view) (rename R2R_VLNCE_v1/ -> r2r/)
+   - [rxr](https://drive.google.com/file/d/145xzLjxBaNTbVgBfQ8e9EsBAV8W-SM0t/view) (rename RxR_VLNCE_v0/ -> rxr/)
+   - [envdrop](https://drive.google.com/file/d/1fo8F4NKgZDH-bPSdVU3cONAkt5EW-tyr/view) (rename R2R_VLNCE_v1-3_preprocessed/envdrop/ -> envdrop/)
+The final folder structure should look like this:
 
 ```bash
 InternNav/
-|-- data/
-|   |-- datasets
-        |-- vln
-        |-- vln_datasets
-    |-- scene_datasets
-    |-- hm3d
-    |-- mp3d
+├── data/
+│   ├── datasets/
+│   │   ├── r2r/
+│   │   │   ├── train/
+│   │   │   ├── val_seen/
+│   │   │   ├── val_unseen/
+│   │   ├── rxr/
+│   │   │   ├── train/
+│   │   │   ├── val_seen/
+│   │   │   ├── val_unseen/
+│   │   ├── envdrop/
+│   │   │   ├── train/
+│   │   │   ├── val_seen/
+│   │   │   ├── val_unseen/
+│   ├── scene_datasets/
+│   │   ├── mp3d
+│   │   │   ├──17DRP5sb8fy/
+│   │   │   ├── 1LXtFkjw3qL/
+│   │   │   └── ...
+├── src/
+│   ├── ...
 
-|-- src/
-|   |-- ...
-
-|-- checkpoints/
-|   |-- InternVLA-N1/
-|   |   |-- model-00001-of-00004.safetensors
-|   |   |-- config.json
-|   |   |-- ...
-|   |-- InternVLA-N1-S2
-|   |   |-- model-00001-of-00004.safetensors
-|   |   |-- config.json
-|   |   |-- ...
+├── checkpoints/
+│   ├── InternVLA-N1/
+│   │   ├── model-00001-of-00004.safetensors
+│   │   ├── config.json
+│   │   ├── ...
+│   ├── InternVLA-N1-S2
+│   │   ├── model-00001-of-00004.safetensors
+│   │   ├── config.json
+│   │   ├── ...
+│   │   depth_anything_v2_vits.pth
 ```
+### Gradio demo
 
-Replace the 'model_path' variable in 'vln_ray_backend.py' with the path of InternVLA-N1 checkpoint.
+Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_ray_backend.py' with the path of InternVLA-N1 checkpoint.
 ```bash
+conda activate <habitat-env>
 srun -p {partition_name} --cpus-per-task 16 --gres gpu:1 python3 scripts/eval/vln_ray_backend.py
 ```
 Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL in the gradio client (navigation_ui.py) to the server's IP address. Start the gradio.
@@ -294,8 +321,11 @@ Click the 'Start Navigation Simulation' button to send a VLN request to the back
 
 
 
-## Dataset Preparation
-We also prepare high-quality data for trainning system1/system2. To set up the trainning dataset, please follow the steps below:
+## InternData-N1 Dataset Preparation
+```
+Due to network throttling restrictions on HuggingFace, InternData-N1 has not been fully uploaded yet. Please wait patiently for several days.
+```
+We also prepare high-quality data for **training** system1/system2 and **evaluation** on isaac sim environment. To set up the dataset, please follow the steps below:
 
 1. Download Datasets
 - Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) for:
@@ -327,13 +357,60 @@ data/
 │   │       └── val_unseen.json.gz
 ├── └── traj_data/
 │       └── mp3d/
-│           └── trajectory_0/
-│               ├── data/
-│               ├── meta/
-│               └── videos/
+│           └── 17DRP5sb8fy/
+│           └── 1LXtFkjw3qL/
+│           └── ...
 ├── vln_ce/
 │   ├── raw_data/
 │   └── traj_data/
 └── vln_n1/
     └── traj_data/
+```
+
+If you want to evaluate on habitat environment and finish the data preparation mentioned [above](#DataCheckpoints-Preparation), the final data structure should look like this:
+```bash
+data/
+├── scene_data/
+│   ├── mp3d_pe/
+│   │   ├──17DRP5sb8fy/
+│   │   ├── 1LXtFkjw3qL/
+│   │   └── ...
+│   ├── mp3d_ce/
+│   └── mp3d_n1/
+├── vln_pe/
+│   ├── raw_data/
+│   │   ├── train/
+│   │   ├── val_seen/
+│   │   │   └── val_seen.json.gz
+│   │   └── val_unseen/
+│   │       └── val_unseen.json.gz
+├── └── traj_data/
+│       └── mp3d/
+│           └── 17DRP5sb8fy/
+│           └── 1LXtFkjw3qL/
+│           └── ...
+│
+├── vln_ce/
+│   ├── raw_data/
+│   └── traj_data/
+└── vln_n1/
+│    └── traj_data/
+├── datasets/
+│   ├── r2r/
+│   ├── ├── train/
+│   ├── ├── val_seen/
+│   ├── ├── val_unseen/
+│   ├── rxr/
+│   ├── ├── train/
+│   ├── ├── val_seen/
+│   ├── ├── val_unseen/
+│   ├── envdrop/
+│   ├── ├── train/
+│   ├── ├── val_seen/
+│   ├── ├── val_unseen/
+├── scene_datasets
+│   ├── mp3d
+│   │   ├──17DRP5sb8fy/
+│   │   ├── 1LXtFkjw3qL/
+│   │   └── ...
 ```

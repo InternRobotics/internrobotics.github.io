@@ -116,4 +116,4 @@ For customizing the model structure or dataset format, see [model.md](./model.md
 
 ## System 2: InternVLA-N1-S2
 
-*TODO
+Currently we don't support the training of InternVLA-N1-S2 in this repository.
