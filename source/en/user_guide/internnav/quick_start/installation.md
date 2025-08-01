@@ -256,35 +256,32 @@ To get started, we need to prepare the data and checkpoints.
 Please download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
 Please download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
-3. **Matterport3D Scenes**
-Download the MP3D scenes from [official project pages](https://niessner.github.io/Matterport/) and place them under `data/scene_datasets/mp3d`.
-4. **VLN-CE Episodes**
-   - [r2r](https://drive.google.com/file/d/18DCrNcpxESnps1IbXVjXSbGLDzcSOqzD/view) (rename R2R_VLNCE_v1/ -> r2r/)
-   - [rxr](https://drive.google.com/file/d/145xzLjxBaNTbVgBfQ8e9EsBAV8W-SM0t/view) (rename RxR_VLNCE_v0/ -> rxr/)
-   - [envdrop](https://drive.google.com/file/d/1fo8F4NKgZDH-bPSdVU3cONAkt5EW-tyr/view) (rename R2R_VLNCE_v1-3_preprocessed/envdrop/ -> envdrop/)
+3. **InternData-N1 VLN-CE Episodes**
+Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) for `vln-ce`. Extract them into the `data/vln_ce/` directory.
+4. **Scene-N1**
+Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
+
 The final folder structure should look like this:
 
 ```bash
 InternNav/
 ├── data/
-│   ├── datasets/
-│   │   ├── r2r/
-│   │   │   ├── train/
-│   │   │   ├── val_seen/
-│   │   │   ├── val_unseen/
-│   │   ├── rxr/
-│   │   │   ├── train/
-│   │   │   ├── val_seen/
-│   │   │   ├── val_unseen/
-│   │   ├── envdrop/
-│   │   │   ├── train/
-│   │   │   ├── val_seen/
-│   │   │   ├── val_unseen/
-│   ├── scene_datasets/
-│   │   ├── mp3d
-│   │   │   ├──17DRP5sb8fy/
-│   │   │   ├── 1LXtFkjw3qL/
-│   │   │   └── ...
+│   ├── vln_ce/
+│   │   ├── raw_data/
+│   │   │   ├── r2r
+│   │   │   │   ├── train
+│   │   │   │   ├── val_seen
+│   │   │   │   │   └── val_seen.json.gz
+│   │   │   │   └── val_unseen
+│   │   │   │       └── val_unseen.json.gz
+│   │   └── traj_data/
+│   ├── scene_data/
+│   │   ├── mp3d_ce/
+│   │   │   ├── mp3d/
+│   │   │   │   ├── 17DRP5sb8fy/
+│   │   │   │   ├── 1LXtFkjw3qL/
+│   │   │   │   └── ...
+
 ├── src/
 │   ├── ...
 
@@ -308,12 +305,12 @@ srun -p {partition_name} --cpus-per-task 16 --gres gpu:1 python3 scripts/eval/vl
 ```
 Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL in the gradio client (navigation_ui.py) to the server's IP address. Start the gradio.
 ```bash
-python navigation_ui.py
+python scripts/eval/navigation_ui.py
 ```
-Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Then open a browser and enter the Gradio address (such as http://0.0.0.0:5700). We can see the interface as shown below.
+Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser and enter the Gradio address (such as http://0.0.0.0:5700). We can see the interface as shown below.
 ![img.png](../../../_static/image/gradio_interface.jpg)
 
-Click the 'Start Navigation Simulation' button to send a VLN request to the backend. The backend will submit a task to ray server and simulate the VLN task with InternVLA-N1 models. Wait about 3 minutes, the VLN task will be finished and return a result video. We can see the result video in the gradio like this.
+Click the 'Start Navigation Simulation' button to send a VLN request to the backend. The backend will submit a task to ray server and simulate the VLN task with InternVLA-N1 models. Wait about 1 minutes, the VLN task will be finished and return a result video. We can see the result video in the gradio like this.
 ![img.png](../../../_static/image/gradio_result.jpg)
 
 
@@ -343,10 +340,14 @@ After downloading, organize the datasets into the following structure:
 data/
 ├── scene_data/
 │   ├── mp3d_pe/
-│   │   ├──17DRP5sb8fy/
+│   │   ├── 17DRP5sb8fy/
 │   │   ├── 1LXtFkjw3qL/
 │   │   └── ...
 │   ├── mp3d_ce/
+│   │   ├── mp3d/
+│   │   │   ├── 17DRP5sb8fy/
+│   │   │   ├── 1LXtFkjw3qL/
+│   │   │   └── ...
 │   └── mp3d_n1/
 ├── vln_pe/
 │   ├── raw_data/
@@ -362,55 +363,14 @@ data/
 │           └── ...
 ├── vln_ce/
 │   ├── raw_data/
+│   │   ├── r2r
+│   │   │   ├── train
+│   │   │   ├── val_seen
+│   │   │   │   └── val_seen.json.gz
+│   │   │   └── val_unseen
+│   │   │       └── val_unseen.json.gz
 │   └── traj_data/
 └── vln_n1/
     └── traj_data/
 ```
 
-If you want to evaluate on habitat environment and finish the data preparation mentioned [above](#DataCheckpoints-Preparation), the final data structure should look like this:
-```bash
-data/
-├── scene_data/
-│   ├── mp3d_pe/
-│   │   ├──17DRP5sb8fy/
-│   │   ├── 1LXtFkjw3qL/
-│   │   └── ...
-│   ├── mp3d_ce/
-│   └── mp3d_n1/
-├── vln_pe/
-│   ├── raw_data/
-│   │   ├── train/
-│   │   ├── val_seen/
-│   │   │   └── val_seen.json.gz
-│   │   └── val_unseen/
-│   │       └── val_unseen.json.gz
-├── └── traj_data/
-│       └── mp3d/
-│           └── 17DRP5sb8fy/
-│           └── 1LXtFkjw3qL/
-│           └── ...
-│
-├── vln_ce/
-│   ├── raw_data/
-│   └── traj_data/
-└── vln_n1/
-│    └── traj_data/
-├── datasets/
-│   ├── r2r/
-│   ├── ├── train/
-│   ├── ├── val_seen/
-│   ├── ├── val_unseen/
-│   ├── rxr/
-│   ├── ├── train/
-│   ├── ├── val_seen/
-│   ├── ├── val_unseen/
-│   ├── envdrop/
-│   ├── ├── train/
-│   ├── ├── val_seen/
-│   ├── ├── val_unseen/
-├── scene_datasets
-│   ├── mp3d
-│   │   ├──17DRP5sb8fy/
-│   │   ├── 1LXtFkjw3qL/
-│   │   └── ...
-```

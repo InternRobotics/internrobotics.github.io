@@ -1,22 +1,22 @@
 # Training
 
-This tutorial provides a detailed guide for training both System 1 (navdp) and System 2 (rdp) policy models within the InterNav framework.
+This tutorial provides a detailed guide for training both System 1 (NavDP) and whole system (InternVLA-N1-S2) policy models within the InterNav framework.
 
 ---
 
-## System 1: Navdp
+## System 1: NavDP
 
-<!-- navdp content start -->
+<!-- NavDP content start -->
 
-This tutorial provides a detailed guide for training the navdp policy model within the InterNav framework. It covers the **training workflow**, **configuration and parameters**, **command-line usage**, and **troubleshooting**.
+This tutorial provides a detailed guide for training the NavDP policy model within the InterNav framework. It covers the **training workflow**, **configuration and parameters**, **command-line usage**, and **troubleshooting**.
 
 ---
 
 ### Overview of the Training Process
 
-The navdp training process in InterNav includes the following steps:
+The NavDP training process in InterNav includes the following steps:
 
-1. **Model Initialization**: Load navdp configuration and initialize model structure and parameters.
+1. **Model Initialization**: Load NavDP configuration and initialize model structure and parameters.
 2. **Dataset Loading**: Configure dataset paths and preprocessing, build the DataLoader.
 3. **Training Parameter Setup**: Set batch size, learning rate, optimizer, and other hyperparameters.
 4. **Distributed Training Environment Initialization**: Multi-GPU training is supported out of the box.
@@ -32,7 +32,7 @@ Ensure you have installed InterNav and its dependencies, and have access to a mu
 
 #### 2. Configuration Check
 
-The navdp training configuration file is located at:
+The NavDP training configuration file is located at:
 
 ```bash
 InternNav/scripts/train/configs/navdp.py
@@ -72,7 +72,7 @@ torchrun \
 
 ### Training Parameters and Configuration
 
-The main training parameters for navdp are set in `scripts/train/configs/navdp.py`. Common parameters include:
+The main training parameters for NavDP are set in `scripts/train/configs/navdp.py`. Common parameters include:
 
 | Parameter         | Description                | Example |
 |-------------------|---------------------------|---------|
@@ -110,7 +110,7 @@ For more parameters, see the comments in the configuration file.
 
 For customizing the model structure or dataset format, see [model.md](./model.md) and [dataset.md](./dataset.md).
 
-<!-- navdp content end -->
+<!-- NavDP content end -->
 
 ---
 

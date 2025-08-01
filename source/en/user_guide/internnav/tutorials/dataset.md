@@ -5,7 +5,7 @@ You’ll learn:
 
 - 📁 [How to structure the dataset](#dataset-format)
 - 🔁 [How to convert popular datasets like VLN-CE](#convert-to-lerobotdataset)
-- 🎮 [How to collect your own demonstrations in GRUtopia](#collect-demonstration-dataset-in-grutopia)
+- 🎮 [How to collect your own demonstrations in InternUtopia](#collect-demonstration-dataset-in-internutopia)
 
 
 These steps ensure compatibility with our training and evaluation framework across all supported benchmarks.
@@ -428,6 +428,6 @@ InternNav adopts the [LeRobot](https://github.com/huggingface/lerobot) format fo
 
 
 
-## Collect Demonstration Dataset in GRUtopia
+## Collect Demonstration Dataset in InternUtopia
 
-Support for collecting demos via GRUtopia simulation is coming soon — stay tuned!
+Support for collecting demos via InternUtopia simulation is coming soon — stay tuned!

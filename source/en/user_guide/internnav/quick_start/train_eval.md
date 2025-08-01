@@ -28,7 +28,7 @@ Finally, start the client:
 INTERNUTOPIA_ASSETS_PATH=/path/to/InternUTopiaAssets MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
-The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 3 hours at RTX4090 platform.
+The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
 
 
 #### Evaluation on habitat
@@ -49,7 +49,7 @@ For multi-gpu inference, currently we only support inference on SLURM.
 
 ### Training
 
-Download the training data from [Hugging Face](https://huggingface.co/datasets/InternRobotics/InternData-N1/), and extract them into the `data/datasets/` directory.
+Download the training data from [Hugging Face](https://huggingface.co/datasets/InternRobotics/InternData-N1/), and organize them in the form mentioned in [installation](./installation.md).
 
 ```bash
 ./scripts/train/start_train.sh --name "$NAME" --model-name navdp
@@ -123,10 +123,14 @@ The final folder structure should look like this:
 data/
 ├── scene_data/
 │   ├── mp3d_pe/
-│   │   ├──17DRP5sb8fy/
+│   │   ├── 17DRP5sb8fy/
 │   │   ├── 1LXtFkjw3qL/
 │   │   └── ...
 │   ├── mp3d_ce/
+│   │   ├── mp3d/
+│   │   │   ├── 17DRP5sb8fy/
+│   │   │   ├── 1LXtFkjw3qL/
+│   │   │   └── ...
 │   └── mp3d_n1/
 ├── vln_pe/
 │   ├── raw_data/
@@ -143,6 +147,12 @@ data/
 │               └── videos/
 ├── vln_ce/
 │   ├── raw_data/
+│   │   ├── r2r
+│   │   │   ├── train
+│   │   │   ├── val_seen
+│   │   │   │   └── val_seen.json.gz
+│   │   │   └── val_unseen
+│   │   │       └── val_unseen.json.gz
 │   └── traj_data/
 └── vln_n1/
     └── traj_data/

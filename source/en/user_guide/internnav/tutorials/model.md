@@ -1,20 +1,20 @@
 # Model
 
-This tutorial introduces the structure and implementation of both System 1 (navdp) and System 2 (rdp) policy models in the internNav framework.
+This tutorial introduces the structure and implementation of both System 1 (NavDP) and whole-system (InternVLA-N1) policy models in the internNav framework.
 
 ---
 
-## System 1: Navdp
+## System 1: NavDP
 
-<!-- navdp content start -->
+<!-- NavDP content start -->
 
-This tutorial introduces the structure and implementation of the navdp policy model in the internNav framework, helping you understand and customize each module.
+This tutorial introduces the structure and implementation of the NavDP policy model in the internNav framework, helping you understand and customize each module.
 
 ---
 
 ### Model Structure Overview
 
-The navdp policy model in internNav mainly consists of the following parts:
+The NavDP policy model in internNav mainly consists of the following parts:
 
 - **RGBD Encoder (NavDP_RGBD_Backbone)**: Extracts multi-frame RGB+Depth features.
 - **Goal Point/Image Encoder**: Encodes goal point or goal image information.
@@ -116,7 +116,7 @@ To customize the backbone, decoder, or heads, refer to `navdp_policy.py` and `na
 ### Reference
 - [diffusion policy](https://github.com/real-stanford/diffusion_policy)
 
-<!-- navdp content end -->
+<!-- NavDP content end -->
 
 ---
 
