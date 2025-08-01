@@ -244,9 +244,9 @@ chmod +x install.sh
 ```bash
 ./install.sh --all
 ```
-> 💡 Tips: 
+> 💡 Tips:
 > Before installing genmanip, please ensure that Anaconda and Isaac Sim 4.5.0 are properly set up on your system. You can download the standalone version from [👉 Download Isaac Sim 4.5.0 (RC36)](https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone%404.5.0-rc.36%2Brelease.19112.f59b3005.gl.linux-x86_64.release.zip)
-> 
+>
 > After downloading, extract the archive to a suitable directory (e.g., ~/tools/isaac-sim-4.5.0). You should set the path to your local Isaac Sim installation during running `install.sh`.
 
 

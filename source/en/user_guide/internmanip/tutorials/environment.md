@@ -95,9 +95,9 @@ eval_cfg = EvalCfg(
 ## 3. I/O Specifications: Environment Outputs and Action Data Formats
 
 ### 3.1 when robote_type is **franka**
-  
+
 **Observation Structure**
-  
+
 ```python
 observations: List[Dict] = [
     {
@@ -138,7 +138,7 @@ observations: List[Dict] = [
 ]
 ```
 
-**Action Space Specifications**  
+**Action Space Specifications**
 Agents must output `List[Union[List[float], dict]] = [action_1, action_2 , ...]` of the same length as the input observations.
 ```python
 actions: List[Union[List[float], dict]] = [
@@ -169,13 +169,13 @@ List[float] # (9,) or (13,) -> panda or robotiq
     'gripper_action': Union[List[float], int], # (2,) or (6,) -> panda or robotiq || -1 or 1 -> open or close
 }
 ```
-  
----  
-  
+
+---
+
 ### 3.2 when robote_type is **aloha_split**
-  
+
 **Observation Structure**
-  
+
 ```python
 observations: List[Dict] = [
     {
@@ -217,7 +217,7 @@ observations: List[Dict] = [
 ]
 ```
 
-**Action Space Specifications**  
+**Action Space Specifications**
 Agents must output `List[dict] = [action_1, action_2 , ...]` of the same length as the input observations.
 ```python
 actions: List[dict] = [
@@ -249,5 +249,5 @@ The `action_x` supports any of the following formats:
     'right_gripper_action': Union[List[float], int], # (2,)|| -1 or 1 -> open or close
 }
 ```
-  
+
 **None Handling Protocol**: If observation element is `None` or invalid value, corresponding action must be `[]`.
