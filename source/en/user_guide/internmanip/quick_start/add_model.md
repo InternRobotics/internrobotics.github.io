@@ -1,133 +1,190 @@
-# ✍🏻 Create a New Model (WIP, Adjusting according to the new architecture)
+# ✍🏻 Create a New Model
 
-This section guides you through the process of adding a new end2end model to the InternManip framework.
+
+This guide shows you, step by step, how to plug a **new end‑to‑end policy model** into the InternManip framework. Follow the checklist below and you will be able to train your custom model with the stock training script (`scripts/train/train.py`)—no core code edits required.
+
+
 
 ## File Structure and Why
 
-Currently, the leading manipulation models try to leverage the existing pretrained large models for better generalization. They (for instance, **GR00T-N1** and **Pi-0**) often consist of a pretrained VLM backbone and a small downstream action expert that maps extracted hidden context to action space. In this way, we organize the model files into three main components:
-- **Backbone**: The pretrained VLM backbone, which is responsible for understanding the visual and textual inputs.
-- **Action Head**: The downstream action expert that takes the context from the backbone and maps it to the action space.
-- **Policy Model**: The base model that integrates the backbone and action head into a single end-to-end model.
+Currently, leading manipulation models strive to leverage existing pretrained large models for better generalization. For example, **GR00T-N1** and **Pi-0** typically consist of a pretrained VLM backbone and a compact downstream action expert that maps extracted context to the action space. Reflecting this design, InternManip organizes model files into three main components:
 
-Specifically, the model definitions are located in the `internmanip/model` directory, there are three subfolders under this directory:
-```plaintext
+- **Backbone**: The pretrained VLM backbone responsible for understanding visual or textual inputs.
+- **Action Head**: The downstream expert that consumes backbone features and predicts actions.
+- **Policy Model**: The wrapper that integrates the backbone and action head into a single end-to-end policy.
+
+Model definitions reside in the `internmanip/model` directory, which contains three sub-folders:
+
+```text
 internmanip
 ├── model
-│   ├── action_head
-│   ├── backbone
-│   ├── basemodel
-│   │   ├── base.py
-│   │   ├── ...
-│   ├── ...
-├── ...
+│   ├── action_head        # task‑specific experts
+│   ├── backbone           # pretrained encoders (ViT, CLIP, …)
+│   └── basemodel          # full end‑to‑end policies
+│       └── base.py        # <‑‑ universal interface
+...
+└── configs
+    └── model              # config classes (inherits PretrainedConfig)
+scripts
+    └── train              # trainers, entry points
 ```
 
-To create a new model, you need to implement a new model class derived from the `BasePolicyModel` class in `internmanip/model/basemodel/base.py`. It looks like this:
+## 1. Outline
+To integrate a new model into the framework, you need to create the following files:
+
+1. A **Config** that stores architecture related hyper‑parameters.
+2. A **Model** class that inherits `BasePolicyModel` and implements the model structure.
+3. A **data\_collator** that shapes raw samples into model‑ready tensors.
+
+Finally, you need to **register** the model with the framework and you can start training your model. We will guide you through the process step by step.
+
+
+## 2. Create the Model Configuration File
+
+The config file is used to store the architecture related hyper-parameters. Here is some basic information you need to know:
+You shall add the model configuration file in `internmanip/configs/model/{model_name}_cfg.py`, which should inherit `transformers.PretrainedConfig`.
+
+The following is **an example** of a model configuration file:
+
 ```python
-from transformers import PreTrainedModel
+from transformers import PretrainedConfig
 
-from internmanip.configs.model.model_cfg import ModelCfg
+class CustomPolicyConfig(PretrainedConfig):
+    """Configuration for CustomPolicy."""
+    model_type = "custom_model"
 
-class BasePolicyModel(PreTrainedModel):
-    policy_models = {}
+    def __init__(self,
+                 vit_name="google/vit-base-patch16-224-in21k",
+                 freeze_vit=True,
+                 hidden_dim=256,
+                 output_dim=8,
+                 dropout=0.0,
+                 n_obs_steps=1,
+                 horizon=10,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.vit_name = vit_name
+        self.freeze_vit = freeze_vit
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+        self.dropout = dropout
+        self.n_obs_steps = n_obs_steps
+        self.horizon = horizon
 
-    def __init__(self, config: ModelCfg):
-        super().__init__(config)
-        self.config = config
-
-    def forward(self, *args, **kwargs):
-        raise NotImplementedError("Forward method not implemented.")
-
-    def inference(self, *args, **kwargs):
-        raise NotImplementedError("inference method not implemented.")
-
+    def transform(self) -> Tuple[List[Transform], List[int], List[int]]:
+        transforms = None
+        return transforms, list(range(self.n_obs_steps)), list(range(self.horizon))
 ```
-where you need to implement the `__init__`, `forward`, and `inference` methods. The `forward` method is used for training, while the `inference` method is used for inference.
 
-## Implementation Steps
-As a quick start, we will use a very simple model with a ViT visual encoder and two layers of MLP as an example.
+As shown in the example above, the config class defines key architectural hyperparameters—such as the backbone model name, whether to freeze the backbone, the hidden/output dimensions of the action head, and more. You are free to extend this config with any additional parameters required by your custom model.
 
-1. Create a new file for your model in the `internmanip/model/basemodel` directory, for example `custom_model.py`.
-2. Import the necessary modules and classes, implement `__init__`, `forward`, and `inference` methods, and register your model class with the `BasePolicyModel` class:
+Additionally, you can implement a **model-specific `transform` method** within the config class. This method allows you to apply custom data transformations that are *not* included in the dataset-specific transform list defined in `internmanip/configs/dataset/data_config.py`.
+
+During training, the script `scripts/train/train.py` will automatically call this method and apply your custom transform alongside the default ones. Your `transform` method should follow the same input/output format as dataset-specific transform. For implementation guidance, refer to examples in the `internmanip/dataset/transform` directory.
+
+
+## 3. Implement the Model
+
+In this class to implement the model, you need to inherit `BasePolicyModel` and register it with `@BasePolicyModel.register("custom_model")`.
+
+The model configuration file will be passed to the `__init__` method of the model class to initialize the model. With in the `__init__` method, you should define the model structure and initialize the model.
+
+You should also implement the `forward` method to define the model forward pass. The `forward` method should return a dictionary of tensors, which will be used to compute the loss. The `inference` method is used to generate the action from the model.
+
 ```python
-from pydantic import BaseModel
-from typing import Dict, Any, Optional
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from transformers import ViTModel, ViTConfig   # pip install transformers
-
-
 from internmanip.model.basemodel.base import BasePolicyModel
-
-
-class CustomPolicyConfig(BaseModel):
-    """Configuration for Custom Policy Model."""
-    vit_name: str = "google/vit-base-patch16-224-in21k"  # or any HF ViT
-    freeze_vit: bool = True
-    input_dim: int
-    hidden_dim: int = 256
-    output_dim: int
-    dropout: float = 0.0
-
+from transformers import ViTModel, ViTConfig
+import torch.nn as nn, torch.nn.functional as F, torch
+from typing import Dict
+from internmanip.configs.model.custom_policy_cfg import CustomPolicyConfig
 
 @BasePolicyModel.register("custom_model")
-class CustomModel(BasePolicyModel):
-    """Two-layer MLP policy."""
+class CustomPolicyModel(BasePolicyModel):
+    """ViT backbone + 2‑layer MLP head."""
 
     def __init__(self, config: CustomPolicyConfig):
-        super().__init__()
+        super().__init__(config)
         self.config = config
+        name = "custom_model"
 
-        # 1. ViT visual encoder
+        # 1 Backbone
         vit_conf = ViTConfig.from_pretrained(config.vit_name)
         self.vit = ViTModel.from_pretrained(config.vit_name, config=vit_conf)
         if config.freeze_vit:
             for p in self.vit.parameters():
                 p.requires_grad = False
 
-        # 2. Two-layer MLP head
-        vit_out_dim = vit_conf.hidden_size   # 768 for base
+        # 2 Action Head
         self.mlp = nn.Sequential(
-            nn.Linear(vit_out_dim, config.hidden_dim),
+            nn.Linear(vit_conf.hidden_size, config.hidden_dim),
             nn.ReLU(),
             nn.Dropout(config.dropout),
             nn.Linear(config.hidden_dim, config.output_dim),
         )
 
+    # —— Training / Inference ——
+    def forward(self, batch: dict[str, Tensor], noise=None, time=None) -> tuple[Tensor, dict[str, Tensor]]:
+        imgs, tgt = batch["images"], batch.get("actions")
+        feats = self.vit(imgs).last_hidden_state[:, 0]  # CLS token
+        pred = self.mlp(feats)
+        out = {"prediction": pred}
+        if train and tgt is not None:
+            out["loss"] = F.mse_loss(pred, tgt.view_as(pred))
+        return out
 
-    def forward(self, batch: Dict[str, torch.Tensor], train: bool = True, **kwargs) -> Dict[str, torch.Tensor]:
-        """
-        Unified forward pass for both training and inference.
-        When train=True we also return the loss.
-        """
-        images = batch["images"]         # (B, 3, 224, 224)
-        vit_out = self.vit(images).last_hidden_state[:, 0] # (B, 768) - CLS token output
-        pred = self.mlp(vit_out)
-
-        outputs = {"prediction": pred}
-
-        if train:
-            # Assume the batch contains a key named "actions" that holds the GT
-            if pred.shape != targets.shape:
-                targets = targets.view_as(pred)
-            loss = F.mse_loss(pred, targets)
-            outputs["loss"] = loss
-
-        return outputs
-
-    def inference(self, batch: Dict[str, torch.Tensor], **kwargs) -> Dict[str, torch.Tensor]:
-        """Inference-specific forward pass (no loss)."""
-        return self.forward(batch, train=False, **kwargs)
-
-```
-3. Now you can train your just customized model on `genmanip-demo` dataset with the following command:
-```bash
-torchrun --nnodes 1 --nproc_per_node 1 \       # number of processes per node, e.g., 1
-   scripts/train/train.py \
-   --model_name custom_model \     # model name
-   --dataset-path genmanip-demo \  # registered dataset name or custom path
-   --data-config genmanip-v1       # registered data config
+    def inference(self, batch: dict[str, Tensor], **kwargs) -> Tensor:
+        actions = self.forward(batch, noise=None, time=None)["prediction"]
+        return actions
 ```
 
-For more advanced tutorials, please refer to the [Model](../tutorials/model.md) section.
+In the example above, the model is composed of a ViT backbone and a simple 2-layer MLP action head. The `forward` method handles loss computation during training, while the `inference` method generates actions during evaluation.
+
+When designing your own model, you can follow this backbone–head pattern or adopt a completely different architecture. If needed, you can define custom `backbone` and `action_head` modules—typically by subclassing `nn.Module`. Just ensure that your model's `inference` output has the shape `(n_actions, action_dim)`.
+
+
+## 4. Write a Data Collator
+
+You need to define a data_collator function that converts a list of raw samples from default data loader into a single batch dictionary that is compatible with the model's `forward` method.
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+@DataCollatorRegistry.register("custom_model")
+def custom_data_collator(samples):
+    imgs = torch.stack([s["image"] for s in samples])
+    acts = torch.stack([s["action"] for s in samples])
+    return {"images": imgs, "actions": acts}
+```
+
+> **Why?** The built‑in `BaseTrainer` accepts any callable named `data_collator` so long as it returns a dictionary of tensors compatible with your model’s `forward` signature.
+
+
+## 5. Register Everything
+
+Add the following **one-time** registration lines (typically at the end of your model file) to enable seamless dynamic loading with `AutoConfig` and `AutoModel`:
+
+```python
+from transformers import AutoConfig, AutoModel
+
+AutoConfig.register("custom_model", CustomPolicyConfig)
+AutoModel.register(CustomPolicyConfig, CustomPolicyModel)
+```
+
+Make sure the string `"custom_model"` passed to `AutoConfig.register` matches the model name used in both your `CustomPolicyModel` definition and the data collator registration.
+
+Don't forget to register the module in your __init__.py, so that your custom model gets imported and initialized properly during runtime. For example:
+
+```python
+# In internmanip/model/basemodel/__init__.py
+from internmanip.model.basemodel.base import BasePolicyModel
+
+__all__ = ["BasePolicyModel"]
+# Import all model modules to ensure registration logic is executed
+from internmanip.model.basemodel.custom import custom_model  # <- Your custom model module
+```
+
+Once registered, InternManip’s trainer can instantiate your model and you can start training.
+
+📚 For more details related to training and evaluation, please refer to [train_eval.md](./train_eval.md) and [training.md](../tutorials/training.md).

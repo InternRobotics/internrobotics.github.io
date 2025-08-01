@@ -12,5 +12,6 @@ myst:
 :maxdepth: 2
 
 quick_start/index
+contribute_guide
 tutorials/index
 ```

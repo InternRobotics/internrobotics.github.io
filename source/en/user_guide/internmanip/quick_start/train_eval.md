@@ -25,6 +25,13 @@ This document guides you through:
 
 ## Minimal Validation Training
 
+Before running any script, make sure to activate your virtual environment and correctly set the `PYTHONPATH`. This ensures that all local modules can be correctly discovered and executed:
+```bash
+source .venv/{environment_name}/bin/activate
+export PYTHONPATH="$(pwd):$PYTHONPATH"
+```
+
+
 We provide several built-in policies such as **GR00T-N1**, **GR00T-N1.5**, **Pi-0**, **DP-CLIP**, and **ACT-CLIP**.
 To quickly verify your setup, you can train the **DP-CLIP** model on the `genmanip-demo` dataset (300 demonstrations of the instruction *"Move the milk carton to the top of the ceramic bowl"*).
 This requires **1 GPU with at least 24GB memory**:
@@ -38,10 +45,10 @@ torchrun --nnodes 1 --nproc_per_node 1 \       # number of processes per node, e
 > 😄 When you run the script, it will prompt you to log in to Weights & Biases (WandB). This integration allows you to monitor your training process in real time via the WandB dashboard.
 
 
-The script will also automatically download all required models and datasets from Hugging Face into the Hugging Face cache directory (by default located at `~/.cache/huggingface/`). If you're concerned about storage space or want to customize the cache location, you can set the cache directory using an environment variable:
+The script will also automatically download all required models and datasets from Hugging Face into the Hugging Face cache directory (by default located at `~/.cache/huggingface/`). If you're concerned about storage space or want to customize the cache location, you can now specify it directly in the YAML configuration file using the `hf_cache_dir` field:
 
 ```bash
-export HF_HOME=your/custom/cache/path
+hf_cache_dir: /your/custom/cache/path
 ```
 > 💡 Note! The download process may take some time depending on your network speed—please be patient.
 
@@ -98,9 +105,6 @@ We also provide Slurm scripts for multi-node training.
 ```bash
 #!/bin/bash
 set -e
-
-export PYTHONPATH="$(pwd):$PYTHONPATH"
-source .venv/pi0/bin/activate
 
 master_addr=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 

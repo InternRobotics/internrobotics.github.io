@@ -13,7 +13,7 @@
 
 # 🛠️ Installation Guide
 ```{important}
-We are actively fixing mistakes in the document. If you find any errors in the documentation, please feel free to [open an issue](https://github.com/InternRobotics/internrobotics.github.io/issues). Your help in improving the document is greatly appreciated 🥰.
+We are actively fixing mistakes in the document. If you find any errors in the documentation, please feel free to [open an issue](https://github.com/InternRobotics/InternRobotics-doc/issues). Your help in improving the document is greatly appreciated 🥰.
 ```
 
 😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
@@ -271,7 +271,7 @@ Examples:
 #### Selective Installation:
 ```bash
 # Install only specific components
-./install.sh --gr00t --genmanip
+./install.sh --model --genmanip
 ```
 
 #### Activate Virtual Environment
@@ -284,8 +284,8 @@ ls .venv/
 # Activate a specific environment
 source .venv/{environment_name}/bin/activate
 
-# Example: Activate GR00T environment
-source .venv/gr00t/bin/activate
+# Example: Activate model environment
+source .venv/model/bin/activate
 
 # Deactivate environment
 deactivate
@@ -297,15 +297,94 @@ Optionally, users can customize the virtual environments directory path by passi
 ./install.sh --venv-dir ./my_envs --model
 ```
 
+### ⚠️ Troubleshooting
+**1. Tips for Slow or Unstable Networks**
+
+If you encounter errors such as timeouts or incomplete downloads, especially in network-restricted or low-bandwidth environments, we recommend the following approaches.
+- By default, `uv pip` uses relatively short HTTP timeouts. To extend the timeout, set the following environment variable before installation:
+    ```bash
+    export UV_HTTP_TIMEOUT=600  # Timeout in seconds (10 minutes)
+    ```
+- To ensure successful installation without network interruptions, you can download some large packages first and then install them locally:
+    ```bash
+    uv pip download -d ./wheelhouse "some-large-package"
+    uv pip install --no-index --find-links=./wheelhouse "some-large-package"
+    ```
+
+
+**2. GCC Fails to Compile Due to Missing Dependencies**
+
+When compiling C++ components (e.g., `building ManiSkill2_real2sim`), you might encounter errors related to GCC or missing shared libraries. This guide walks you through how to resolve them without root/sudo permissions.
+
+- Step 1: Use a modern GCC (recommended ≥ 9.3.0). Older system compilers (e.g., GCC 5.x or 7.x) may not support required C++ standards. It's recommended to switch to GCC 9.3.0 or newer:
+    ```bash
+    export LD_LIBRARY_PATH=${PATH_TO}/gcc/gcc-9.3.0/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export PATH=${PATH_TO}/gcc/gcc-9.3.0/bin:$PATH
+    ```
+    > ⚠️ Note: Simply using a newer compiler might not be enough — it may depend on shared libraries that are not available on your system.
+- Step 2: Manually install required libraries. If you encounter errors like: `error while loading shared libraries: libmpc.so.2 (libmpfr.so.1, libgmp.so.3)`. If you do have `sudo` privileges, the easiest way is to install the required libraries system-wide using your system package manager.
+    ```bash
+    sudo apt update
+    sudo apt install gcc-9 g++-9
+    ```
+    Or, you need to manually compile and install the following dependencies locally:
+    ```bash
+    INSTALL_DIR=$HOME/local
+    mkdir -p "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
+
+    wget https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.xz
+    tar -xf gmp-6.2.1.tar.xz && cd gmp-6.2.1
+    ./configure --prefix="$INSTALL_DIR"
+    make -j$(nproc)
+    make install
+    cd "$INSTALL_DIR"
+
+    wget https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
+    tar -xf mpfr-4.2.1.tar.xz && cd mpfr-4.2.1
+    ./configure --prefix="$INSTALL_DIR" --with-gmp="$INSTALL_DIR"
+    make -j$(nproc)
+    make install
+    cd "$INSTALL_DIR"
+
+    echo "📦 Installing MPC..."
+    wget https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
+    tar -xf mpc-1.3.1.tar.gz && cd mpc-1.3.1
+    ./configure --prefix="$INSTALL_DIR" --with-gmp="$INSTALL_DIR" --with-mpfr="$INSTALL_DIR"
+    make -j$(nproc)
+    make install
+    ```
+- Step 3 (Optional): Fix Missing `.so` Versions. Sometimes you have the correct library version (e.g., `libgmp.so.10`), but GCC expects an older symlink name (e.g., `libgmp.so.3`). You can fix missing library versions with symlinks.
+- Step 4: Export the Library Path. Make sure the compiler can find your locally installed shared libraries:
+    ```bash
+    export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
+    ```
+
 
 ## Verification (WIP)
 
-To check your installation, you can evaluate the pretrained Pi-0 on the `Simpler-Env` benchmark using the following command:
+You can evaluate the pretrained **GR00t-N1** model on the `Simpler-Env` benchmark using a **client-server** architecture. This requires two separate terminal sessions:
+
+**🖥 Terminal 1: Launch the policy server (model side)**
+
+Activate the environment for the model, and start the policy server:
 ```bash
+source .venv/model/bin/activate
+python scripts/eval/start_policy_server.py
+```
+This will start the policy server that listens for observation inputs and sends back action predictions.
+
+**🖥 Terminal 2: Launch the evaluator (benchmark side)**
+
+Activate the environment for Simpler-Env, and run the evaluator:
+```bash
+source .venv/simpler-env/bin/activate
 python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py
 ```
 
-If it installed properly, you can find the evaluation results and the visualization in the `eval_results/bridgedata_v2/pi0` directory:
+This will run the evaluation loop that sends observations to the model server and executes returned actions in the environment.
+
+If it installed properly, you can find the evaluation results and the visualization in the `logs/demo/gr00t_n1_on_simpler` directory:
 
 <!-- <p align="center">
 <video width="640" height="480" controls>
@@ -319,7 +398,11 @@ If it installed properly, you can find the evaluation results and the visualizat
 </p>
 🎉 Congratulations! You have successfully installed InternManip.
 
-## Dataset Preparation (WIP)
+
+> ⚠️ Note: The visualization results are only intended to verify the environment setup. You do not need to pay attention to the model’s grasp success rate shown in the videos.
+
+
+## Dataset Preparation
 
 ### Automatic Download
 Datasets, model weights, and benchmark assets are automatically downloaded when running the code for the first time. The default download location is `${repo_root}/data`. The system will prompt you to download required datasets.
@@ -333,6 +416,6 @@ If you prefer manual dataset preparation:
 1. **Visit our platform:** [Dataset Platform](https://huggingface.co/InternRobotics)
 2. **Download datasets** based on your needs:
    - [GenManip-v1](https://huggingface.co/datasets/InternRobotics/InternData-GenmanipTest)
-   - [CALVIN](https://huggingface.co/datasets/InternRobotics/InternData-Calvin_ABC)
+   - [CALVIN_ABC](https://huggingface.co/datasets/InternRobotics/InternData-Calvin_ABC)
    - [Google-Robot](https://huggingface.co/datasets/InternRobotics/InternData-fractal20220817_data)
    - [BridgeData-v2](https://huggingface.co/datasets/InternRobotics/InternData-BridgeV2)
