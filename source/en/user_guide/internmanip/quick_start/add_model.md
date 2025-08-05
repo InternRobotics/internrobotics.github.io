@@ -41,8 +41,25 @@ Finally, you need to **register** the model with the framework and you can start
 
 ## 2. Create the Model Configuration File
 
-The config file is used to store the architecture related hyper-parameters. Here is some basic information you need to know:
-You shall add the model configuration file in `internmanip/configs/model/{model_name}_cfg.py`, which should inherit `transformers.PretrainedConfig`.
+Each model in our framework should define its architecture-related hyperparameters in a **configuration file**. 
+These configuration classes inherit from `transformers.PretrainedConfig`, which provides serialization, deserialization, and compatibility with HuggingFace’s model loading utilities.
+
+You should place your model’s config file in:
+```bash
+internmanip/configs/model/{model_name}_cfg.py
+```
+
+**🧱 About transformers.PretrainedConfig**
+
+[`PretrainedConfig`](https://huggingface.co/docs/transformers/main_classes/configuration) is the base class for all HuggingFace model configurations. It supports:
+- Loading/saving config files via .from_pretrained() and .save_pretrained()
+- Managing default values
+- Providing shared arguments across training, inference, and serialization
+
+
+<!-- The config file is used to store the architecture related hyper-parameters. Here is some basic information you need to know:
+You shall add the model configuration file in `internmanip/configs/model/{model_name}_cfg.py`, which should inherit `transformers.PretrainedConfig`. -->
+
 
 The following is **an example** of a model configuration file:
 
@@ -53,32 +70,41 @@ class CustomPolicyConfig(PretrainedConfig):
     """Configuration for CustomPolicy."""
     model_type = "custom_model"
 
-    def __init__(self,
-                 vit_name="google/vit-base-patch16-224-in21k",
-                 freeze_vit=True,
-                 hidden_dim=256,
-                 output_dim=8,
-                 dropout=0.0,
-                 n_obs_steps=1,
-                 horizon=10,
-                 **kwargs):
+    """Model-specific parameters"""
+    vit_name = "google/vit-base-patch16-224-in21k"
+    freeze_vit = True
+    hidden_dim = 256
+    output_dim = 8
+    dropout = 0.0
+    n_obs_steps = 1
+    horizon = 10
+
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.vit_name = vit_name
-        self.freeze_vit = freeze_vit
-        self.hidden_dim = hidden_dim
-        self.output_dim = output_dim
-        self.dropout = dropout
-        self.n_obs_steps = n_obs_steps
-        self.horizon = horizon
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def transform(self) -> Tuple[List[Transform], List[int], List[int]]:
+        """
+        This method defines the input processing logic for the model.
+        
+        It must return a 3-tuple:
+        - `transforms`: A list of preprocessing or augmentation operations applied to raw inputs.
+        - `obs_indices`: A list of time step indices used as observation input.
+        - `action_indices`: A list of time step indices the model needs to predict (action horizon).
+
+        You can customize `transforms` to include resizing, normalization, cropping, etc.
+        """
         transforms = None
         return transforms, list(range(self.n_obs_steps)), list(range(self.horizon))
 ```
+> 🔧 Important: All config classes must implement a transform() method that returns a 3-tuple.
 
 As shown in the example above, the config class defines key architectural hyperparameters—such as the backbone model name, whether to freeze the backbone, the hidden/output dimensions of the action head, and more. You are free to extend this config with any additional parameters required by your custom model.
 
-Additionally, you can implement a **model-specific `transform` method** within the config class. This method allows you to apply custom data transformations that are *not* included in the dataset-specific transform list defined in `internmanip/configs/dataset/data_config.py`.
+**🔧 About `transforms`**
+
+Additionally, you can implement a **model-specific `transform` method** within the config class. This method allows you to apply custom data transformations that are ***not*** included in the dataset-specific transform list defined in `internmanip/configs/dataset/data_config.py`.
 
 During training, the script `scripts/train/train.py` will automatically call this method and apply your custom transform alongside the default ones. Your `transform` method should follow the same input/output format as dataset-specific transform. For implementation guidance, refer to examples in the `internmanip/dataset/transform` directory.
 
@@ -98,14 +124,21 @@ import torch.nn as nn, torch.nn.functional as F, torch
 from typing import Dict
 from internmanip.configs.model.custom_policy_cfg import CustomPolicyConfig
 
-@BasePolicyModel.register("custom_model")
 class CustomPolicyModel(BasePolicyModel):
     """ViT backbone + 2‑layer MLP head."""
 
-    def __init__(self, config: CustomPolicyConfig):
+    config_class = CustomPolicyConfig
+    name = "custom_model"
+
+    def __init__(
+        self, 
+        config: Optional[CustomPolicyConfig] = None,
+        *args,
+        **kwargs
+    ):
         super().__init__(config)
         self.config = config
-        name = "custom_model"
+        
 
         # 1 Backbone
         vit_conf = ViTConfig.from_pretrained(config.vit_name)
@@ -150,8 +183,9 @@ You need to define a data_collator function that converts a list of raw samples 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from internmanip.configs.model.custom_cfg import CustomPolicyConfig
 
-@DataCollatorRegistry.register("custom_model")
+@DataCollatorRegistry.register(CustomPolicyConfig.model_type)
 def custom_data_collator(samples):
     imgs = torch.stack([s["image"] for s in samples])
     acts = torch.stack([s["action"] for s in samples])
@@ -174,7 +208,7 @@ AutoModel.register(CustomPolicyConfig, CustomPolicyModel)
 
 Make sure the string `"custom_model"` passed to `AutoConfig.register` matches the model name used in both your `CustomPolicyModel` definition and the data collator registration.
 
-Don't forget to register the module in your __init__.py, so that your custom model gets imported and initialized properly during runtime. For example:
+Don't forget to register the module in your `__init__.py`, so that your custom model gets imported and initialized properly during runtime. For example:
 
 ```python
 # In internmanip/model/basemodel/__init__.py

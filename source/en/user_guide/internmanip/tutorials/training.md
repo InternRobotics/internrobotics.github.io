@@ -26,7 +26,18 @@ We provide multiple policy models through a unified interface in `scripts/train/
 - `dp_clip`
 - `act_clip`
 
-Some models support granular control over which components to fine-tune:
+
+All models are pre-registered and can be instantiated via a unified `AutoModel` interface. The instantiation logic supports both training from scratch and loading from pretrained checkpoints:
+```python
+if config.base_model_path is None:
+    model_cfg = AutoConfig.for_model(config.model_type, **kwargs)
+    model = AutoModel.from_config(model_cfg, **kwargs)
+else:
+    # If using a HuggingFace model repo, make sure it only contains one model checkpoint
+    model = AutoModel.from_pretrained(config.base_model_path, **kwargs)
+```
+
+The `kwargs` dictionary is used to control fine-grained model behaviors and training modes. For example, you can selectively fine-tune different components of the model:
 
 ```python
 model = model_cls.from_pretrained(
@@ -38,7 +49,7 @@ model = model_cls.from_pretrained(
 )
 ```
 
-If you want to add your own model, refer to [this document](./model.md).
+If you want to add your own model, refer to [this document](../quick_start/add_model.md).
 
 <!-- ### Dataset Configuration -->
 
@@ -143,11 +154,17 @@ embodiment_tag = EmbodimentTag(config.embodiment_tag)
 
 train_dataset = LeRobotSingleDataset(
     dataset_path=config.dataset_path,
-    embodiment_tags=embodiment_tag,
     modality_configs=modality_configs,
-    transform=transforms,
+    transforms=transforms,
+    embodiment_tag=embodiment_tag,
+    video_backend=config.video_backend,
+    cache_dir=config.HF_cache_dir,
+    skip_unlabeled=config.skip_unlabeled
 )
 ```
+
+This design supports modular and extensible dataset loading, making it easy to adapt to new robot embodiments and modality configurations. 
+The `transforms` can be customized to match the model’s input requirements.
 
 ### Important Hyperparameters
 
@@ -158,26 +175,28 @@ This makes it easier to manage, share, and reproduce training configurations.
 Example usage:
 
 ```bash
-python scripts/train/train.py --config configs/train/pi0_genmanip.yaml
-
+python scripts/train/train.py --config configs/train/pi0_genmanip_v1.yaml
+```
 
 #### Policy and Dataset
 ```python
-policy = ""    # Options: pi0, gr00t_n1, gr00t_n1_5, dp_clip, pi0fast, act_clip
-dataset_path = "genmanip-demo"
-data_config = "genmanip-v1"     # Data configuration name from DATA_CONFIG_MAP
-output_dir = ""                 # Directory to save model checkpoints
+model_type = "pi0"               # Options: pi0, gr00t_n1, gr00t_n1_5, dp_clip, pi0fast, act_clip
+dataset_path = "InternRobotics/InternData-GenmanipTest"
+HF_cache_dir = None              # Path to user-defined HF cache
+output_dir = "Checkpoints/runs"  # Directory to save model checkpoints
+data_config = "genmanip_v1"      # Data configuration name from DATA_CONFIG_MAP
 ```
 
 #### Training parameters
 
 ```python
 batch_size = 16                  # Batch size per GPU
-gradient_accumulation_steps = 1  # Gradient accumulation steps
 max_steps = 10000                # Maximum training steps
-save_steps = 500                 # Save checkpoints every 500 steps
 num_gpus = 1                     # Number of GPUs for training
+save_steps = 500                 # Save checkpoints every 500 steps
 resume_from_checkpoint = False   # Resume from a checkpoint if available
+gradient_accumulation_steps = 1  # Gradient accumulation steps
+skip_unlabeled = False           # Whether to skip unlabeled data
 ```
 
 #### Learning Rate & Optimizer
@@ -211,9 +230,9 @@ lora_dropout = 0.1    # Dropout rate
 
 #### Data Loading
 ```python
-embodiment_tag = "gr1"      # Embodiment tag (e.g., gr1, new_embodiment)
-video_backend = "torchcodec"    # Video backend: decord, torchvision_av, opencv, or torchcodec
-dataloader_num_workers = 8  # Number of workers for data loading
+embodiment_tag = "new_embodiment"  # Embodiment tag (e.g., gr1, new_embodiment)
+video_backend = "torchcodec"       # Video backend: decord, torchvision_av, opencv, or torchcodec
+dataloader_num_workers = 8         # Number of workers for data loading
 ```
 > ⚠️ Note: The default torchcodec works for most video data. Decord supports H.264 videos but cannot handle AV1 format. When processing AV1 videos, torchvision_av may cause communication deadlocks on multi-node setups. [See more video standrads](https://github.com/huggingface/lerobot/tree/main/benchmarks/video).
 

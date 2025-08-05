@@ -1,14 +1,13 @@
-# Model
+# Model (WIP)
 
 This document provides a overview of the modular model structure used in our robotic manipulation framework. It explains each component’s purpose and configuration, enabling users to:
 
 - [**✍️ Make customizations:**](#contents) Adjust parameters such as select_layer, tune_llm, or change the action horizon.
-
 - [**🆕 Add custom models:**](#add-a-custom-model) Add new backbones, action heads, or policy models by following the provided templates.
 
 
 **Overview:**
-- **VLM Backbone**: Processes camera observations and natural language instructions into contextual embeddings.
+- **Backbone**: Processes camera observations and natural language instructions into contextual embeddings.
 - **Action Head**: Converts backbone features into executable robot actions, often via diffusion-based generative modeling.
 - **Policy Model**: Orchestrates the backbone and action head, managing data flow and inference to produce final robot commands.
 
@@ -25,55 +24,11 @@ We provide a modular model structure that consists of the following components:
 
 ## Contents
 
-### VLM Backbone
+### Backbone
 
-We provide some kinds of the backbone: `DiffusionRgbEncoder`, `ACTBackbone`, `EagleBackbone` and `EagleBackbone1_5`.
+We provide some kinds of the backbone: `EagleBackbone`, `EagleBackbone1_5`, `DiffusionRgbEncoder`, `PaliGemmaWithExpertModel`, and `ACTBackbone`, .
 
-#### DiffusionRgbEncoder
 
-The Diffusion Vision Backbone is designed specifically for diffusion policy implementations. It provides efficient visual feature extraction optimized for robotic manipulation tasks.
-
-It has several steps to process the input:
-
-1. **Image Preprocessing**: Optional cropping and normalization
-2. **Backbone Feature Extraction**: Pretrained CNN feature extraction
-3. **Spatial Softmax Pooling**: Converts feature maps to spatial keypoints
-4. **Final Linear Projection**: Maps keypoints to output feature dimensions
-
-##### Key Features
-
-- Automatically adapts to different input image dimensions
-- Leverages torchvision pretrained models
-- Generates focused attention points for manipulation tasks
-
-##### Usage
-
-###### Basic Initialization
-
-```python
-from grmanipulation.configs.model.dp_cfg import DiffusionConfig
-from grmanipulation.model.backbone.diffusion_vision_backbone import DiffusionRgbEncoder
-
-config = DiffusionConfig(
-    vision_backbone='resnet50',
-    pretrained_backbone_weights=None,  # Train from scratch
-    crop_shape=(256, 256),
-    crop_is_random=True,
-    spatial_softmax_num_keypoints=64,
-    use_group_norm=True,  # Replace BatchNorm with GroupNorm
-    image_features=(3, 480, 640)  # Original image dimensions
-)
-
-encoder = DiffusionRgbEncoder(config)
-```
-
-###### Forward Pass
-
-```python
-images = torch.randn(8, 3, 480, 640)
-features = encoder(images)
-# Output shape: [8, 64] where 64 = spatial_softmax_num_keypoints * 2
-```
 
 #### EagleBackbone
 
@@ -98,7 +53,7 @@ It has several steps to process the input:
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.backbone.eagle_backbone import EagleBackbone
+from internmanip.model.backbone.eagle_backbone import EagleBackbone
 
 backbone = EagleBackbone(
     select_layer=12,          # Use first 12 LLM layers
@@ -136,7 +91,7 @@ A simplified version designed for Eagle 1.5 models with streamlined configuratio
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.backbone.eagle_backbone import EagleBackbone1_5
+from internmanip.model.backbone.eagle_backbone import EagleBackbone1_5
 
 # Basic usage
 backbone = EagleBackbone1_5(
@@ -159,6 +114,98 @@ vl_input = {
 }
 output = backbone(vl_input)
 ```
+
+#### DiffusionRgbEncoder
+
+The Diffusion Vision Backbone is designed specifically for diffusion policy implementations. It provides efficient visual feature extraction optimized for robotic manipulation tasks.
+
+It has several steps to process the input:
+
+1. **Image Preprocessing**: Optional cropping and normalization
+2. **Backbone Feature Extraction**: Pretrained CNN feature extraction
+3. **Spatial Softmax Pooling**: Converts feature maps to spatial keypoints
+4. **Final Linear Projection**: Maps keypoints to output feature dimensions
+
+##### Key Features
+
+- Automatically adapts to different input image dimensions
+- Leverages torchvision pretrained models
+- Generates focused attention points for manipulation tasks
+
+##### Usage
+
+###### Basic Initialization
+
+```python
+from internmanip.configs.model.dp_cfg import DiffusionConfig
+from internmanip.model.backbone.diffusion_vision_backbone import DiffusionRgbEncoder
+
+config = DiffusionConfig(
+    vision_backbone='resnet50',
+    pretrained_backbone_weights=None,  # Train from scratch
+    crop_shape=(256, 256),
+    crop_is_random=True,
+    spatial_softmax_num_keypoints=64,
+    use_group_norm=True,  # Replace BatchNorm with GroupNorm
+    image_features=(3, 480, 640)  # Original image dimensions
+)
+
+encoder = DiffusionRgbEncoder(config)
+```
+
+###### Forward Pass
+
+```python
+images = torch.randn(8, 3, 480, 640)
+features = encoder(images)
+# Output shape: [8, 64] where 64 = spatial_softmax_num_keypoints * 2
+```
+
+#### PaliGemmaWithExpertModel
+
+A hybrid backbone combining PaliGemma and Gemma Expert for enhanced multimodal reasoning. This model merges visual grounding with language modeling using shared and expert-specific transformer layers.
+
+
+##### Key Features
+
+1. Dual Transformer Architecture: Combines `PaliGemma` (VLM) and `Gemma Expert` (LLM).
+2. Expert-tuned Attention Layers: Joint attention computation across base and expert models.
+3. Vision-Language Embedding Support: Includes `embed_image()` and `embed_language_tokens()` interfaces.
+4. Custom bfloat16 Precision Control: Converts selected submodules to bfloat16 with compatibility for physical intelligence models.
+5. Selective Freezing: Fine-grained control over training of visual encoder and/or base model.
+
+##### Usage
+
+###### Basic Initialization
+
+```python
+from internmanip.model.paligemma_with_expert import PaliGemmaWithExpertModel
+from internmanip.configs.paligemma_with_expert_config import PaliGemmaWithExpertConfig
+
+config = PaliGemmaWithExpertConfig(
+    paligemma_config=...,
+    gemma_expert_config=...,
+    freeze_vision_encoder=True,
+    train_expert_only=False,
+    attention_implementation='eager',  # or 'fa2', 'flex'
+)
+
+model = PaliGemmaWithExpertModel(config)
+```
+
+###### Forward Pass
+```python
+# input_embeds: List of tensors from vision and language encoders
+outputs, cache = model(
+    attention_mask=...,
+    position_ids=...,
+    past_key_values=...,  # optional for autoregressive decoding
+    inputs_embeds=[vision_embeds, language_embeds],
+    use_cache=True,
+    fill_kv_cache=False,
+)
+```
+
 
 #### ACTBackbone
 
@@ -192,8 +239,8 @@ It has several steps to process the input:
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.backbone.act_backbone import ACTBackbone
-from grmanipulation.model.basemodel.act_detr.configuration_act import ACTConfig
+from internmanip.model.backbone.act_backbone import ACTBackbone
+from internmanip.model.basemodel.act_detr.configuration_act import ACTConfig
 
 config = ACTConfig()
 config.dim_model = 256
@@ -207,7 +254,7 @@ config.feedforward_activation = "relu"
 config.use_vae = False
 
 # Set up input/output features
-from grmanipulation.model.types import PolicyFeature, FeatureType
+from internmanip.model.types import PolicyFeature, FeatureType
 input_features = {
     'observation.state': PolicyFeature(type=FeatureType.STATE, shape=(8,)),
     'observation.environment_state': PolicyFeature(type=FeatureType.ENV, shape=(10,))
@@ -240,69 +287,9 @@ encoder_out = backbone.encode_features(batch, latent_sample)
 
 Action Head is responsible for converting the high-level contextual features from the VLM backbone into executable robot actions. It uses a flow-matching based approach for robust action generation.
 
-We provides some kinds of action head: `DiffusionActionHead`, `ACTActionHead`, `FlowmatchingActionHead` and `FlowmatchingActionHead_1_5`.
+We provides some kinds of action head: `FlowmatchingActionHead`, `FlowmatchingActionHead_1_5`, `DiffusionActionHead`, `PI0FlowMatching` and `ACTActionHead`.
 
-#### DiffusionActionHead
 
-The `DiffusionActionHead` class uses a 1D convolutional UNet to generate robot actions through denoising diffusion, following the Diffusion Policy framework.
-
-##### Key Features
-
-- DDPM/DDIM noise scheduling with configurable timesteps and beta parameters
-- Multi-modal conditioning supporting vision, state, and language inputs
-- 1D Convolutional UNet with FiLM modulation for temporal action sequence generation
-- Language conditioning via CLIP embeddings with trainable projection layers
-- Flexible observation encoding with support for multiple camera views and separate encoders
-
-##### Usage
-
-###### Basic Initialization
-
-```python
-from grmanipulation.model.action_head.diffusion_action_head import DiffusionActionHead
-from grmanipulation.configs.model.dp_cfg import DiffusionConfig
-
-config = DiffusionConfig(
-    action_dim=7,                           # Robot action dimension
-    horizon=16,                             # Action sequence length
-    n_obs_steps=2,                          # Number of observation steps
-    n_action_steps=8,                       # Number of action steps to execute
-    robot_state_dim=14,                     # Robot state dimension
-    num_train_timesteps=100,                # Training denoising timesteps
-    num_inference_steps=10,                 # Inference denoising steps
-    use_language_conditioning=True,         # Enable language conditioning
-    language_model_name="openai/clip-vit-base-patch32",
-    noise_scheduler_type="DDPM"             # or "DDIM"
-)
-
-action_head = DiffusionActionHead(config)
-```
-
-###### Training
-
-```python
-batch = {
-    "observation.state": robot_states,      # (B, n_obs_steps, state_dim)
-    "observation.images": rgb_images,       # (B, n_obs_steps, num_cameras, C, H, W)
-    "language": language_instructions,      # List[str] or str
-    "action": target_actions,               # (B, horizon, action_dim)
-    "action_is_pad": padding_mask           # (B, horizon)
-}
-
-loss_dict = action_head.compute_loss(batch)
-loss = loss_dict["loss"]
-loss.backward()
-```
-
-###### Inference
-
-```python
-with torch.no_grad():
-    all_actions = action_head.generate_all_actions(batch)
-    # Returns: (B, horizon, action_dim)
-    executable_actions = action_head.generate_actions(batch)
-    # Returns: (B, n_action_steps, action_dim)
-```
 
 #### FlowmatchingActionHead
 
@@ -321,7 +308,7 @@ The main flow matching action head that uses a DiT (Diffusion Transformer) model
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.action_head.flow_matching_action_head import FlowmatchingActionHead, FlowmatchingActionHeadConfig
+from internmanip.model.action_head.flow_matching_action_head import FlowmatchingActionHead, FlowmatchingActionHeadConfig
 
 config = FlowmatchingActionHeadConfig(
     action_dim=7,                    # Robot action dimension
@@ -368,7 +355,7 @@ Enhanced version with additional backbone processing capabilities and batch expa
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.action_head.flow_matching_action_head import FlowmatchingActionHead_1_5, FlowmatchingActionHeadConfig_1_5
+from internmanip.model.action_head.flow_matching_action_head import FlowmatchingActionHead_1_5, FlowmatchingActionHeadConfig_1_5
 
 # Configuration with additional features
 config = FlowmatchingActionHeadConfig_1_5(
@@ -398,7 +385,109 @@ with torch.no_grad():
     result = action_head.get_action(backbone_output, action_input)
     # Returns: {"action_pred": generated_actions}
 ```
-#### ACTActionHead
+
+#### DiffusionActionHead
+
+The `DiffusionActionHead` class uses a 1D convolutional UNet to generate robot actions through denoising diffusion, following the Diffusion Policy framework.
+
+##### Key Features
+
+- DDPM/DDIM noise scheduling with configurable timesteps and beta parameters
+- Multi-modal conditioning supporting vision, state, and language inputs
+- 1D Convolutional UNet with FiLM modulation for temporal action sequence generation
+- Language conditioning via CLIP embeddings with trainable projection layers
+- Flexible observation encoding with support for multiple camera views and separate encoders
+
+##### Usage
+
+###### Basic Initialization
+
+```python
+from internmanip.model.action_head.diffusion_action_head import DiffusionActionHead
+from internmanip.configs.model.dp_cfg import DiffusionConfig
+
+config = DiffusionConfig(
+    action_dim=7,                           # Robot action dimension
+    horizon=16,                             # Action sequence length
+    n_obs_steps=2,                          # Number of observation steps
+    n_action_steps=8,                       # Number of action steps to execute
+    robot_state_dim=14,                     # Robot state dimension
+    num_train_timesteps=100,                # Training denoising timesteps
+    num_inference_steps=10,                 # Inference denoising steps
+    use_language_conditioning=True,         # Enable language conditioning
+    language_model_name="openai/clip-vit-base-patch32",
+    noise_scheduler_type="DDPM"             # or "DDIM"
+)
+
+action_head = DiffusionActionHead(config)
+```
+
+###### Training
+
+```python
+batch = {
+    "observation.state": robot_states,      # (B, n_obs_steps, state_dim)
+    "observation.images": rgb_images,       # (B, n_obs_steps, num_cameras, C, H, W)
+    "language": language_instructions,      # List[str] or str
+    "action": target_actions,               # (B, horizon, action_dim)
+    "action_is_pad": padding_mask           # (B, horizon)
+}
+
+loss_dict = action_head.compute_loss(batch)
+loss = loss_dict["loss"]
+loss.backward()
+```
+
+###### Inference
+
+```python
+with torch.no_grad():
+    all_actions = action_head.generate_all_actions(batch)
+    # Returns: (B, horizon, action_dim)
+    executable_actions = action_head.generate_actions(batch)
+    # Returns: (B, n_action_steps, action_dim)
+```
+
+#### PI0FlowMatching
+
+This model enables end-to-end multimodal action generation through diffusion-style flow matching, using PaliGemma for perception and Gemma Expert for reasoning.
+
+##### Key Features
+
+- Multi-Stage Embedding: Separately processes prefix (image & language) and suffix (robot state, actions, timestep).
+- Diffusion-Based Control: Implements action prediction via learned denoising steps over time.
+- Dual-Transformer Backbone: Combines PaliGemma with an Expert Gemma head for expert-guided decoding.
+- Pretrained Vision-Language Model: Leverages the power of PaliGemma for grounded understanding.
+- Fine-Grained Attention Control: Per-token control over attention and padding across all modalities.
+
+#### Usage
+##### Training Forward Pass
+```python
+loss = policy(
+    images,        # List[Tensor]: shape [B, C, H, W]
+    img_masks,     # List[Tensor]: shape [B] (bool)
+    lang_tokens,   # Tensor: [B, T]
+    lang_masks,    # Tensor: [B, T] (bool)
+    state,         # Tensor: [B, T, state_dim]
+    actions,       # Tensor: [B, T, action_dim]
+)
+# Output: [B, T, action_dim], per-step loss
+```
+
+##### Action Sampling
+```python
+actions = policy.sample_actions(
+    images,
+    img_masks,
+    lang_tokens,
+    lang_masks,
+    state
+)
+# Output: [B, T, action_dim], denoised predicted actions
+```
+Internally runs an Euler integrator over diffusion steps to progressively refine the action trajectory.
+
+### ACTActionHead
 
 The `ACTActionHead` is designed specifically for the ACT framework, responsible for converting encoded features from the ACT backbone into executable robot actions through transformer-based decoding and optional VAE encoding.
 
@@ -429,8 +518,8 @@ It has several steps to process the input:
 ###### Basic Initialization
 
 ```python
-from grmanipulation.model.action_head.act_action_head import ACTActionHead
-from grmanipulation.model.basemodel.act_detr.configuration_act import ACTConfig
+from internmanip.model.action_head.act_action_head import ACTActionHead
+from internmanip.model.basemodel.act_detr.configuration_act import ACTConfig
 
 config = ACTConfig()
 config.dim_model = 256
@@ -445,7 +534,7 @@ config.feedforward_activation = "relu"
 config.use_vae = False
 
 # Set up input/output features
-from grmanipulation.model.types import PolicyFeature, FeatureType
+from internmanip.model.types import PolicyFeature, FeatureType
 input_features = {
     'observation.state': PolicyFeature(type=FeatureType.STATE, shape=(8,)),
     'observation.environment_state': PolicyFeature(type=FeatureType.ENV, shape=(10,))
@@ -496,7 +585,7 @@ with torch.no_grad():
     # Returns: (batch_size, chunk_size, action_dim) tensor
 ```
 
-## ACT Model Architecture Analysis
+<!-- ## ACT Model Architecture Analysis
 
 The ACT (Action Chunking Transformer) framework introduces a transformer-based approach to robotic manipulation, distinct from diffusion-based methods. Here's a detailed analysis of its architecture and principles:
 
@@ -585,7 +674,7 @@ Action Decoding:
 - **Real-time Control**: ACT's direct prediction enables faster inference
 - **Complex Manipulation**: Action chunking captures sophisticated action sequences
 - **Multimodal Tasks**: Robust handling of vision, state, and language inputs
-- **Research Applications**: Modular design facilitates experimentation
+- **Research Applications**: Modular design facilitates experimentation -->
 
 ## Add a Custom Model
 
@@ -593,7 +682,7 @@ The Policy Model serves as the top-level orchestrator that integrates VLM backbo
 
 You need to implement a policy model to drive the robot.
 
-Create a new Python file in `grmanipulation/model/basemodel/` directory. Here is a template for a custom policy model:
+Create a new Python file in `internmanip/model/basemodel/` directory. Here is a template for a custom policy model:
 
 ```python
 from pydantic import BaseModel
@@ -601,8 +690,8 @@ from typing import Dict, Any, Optional
 import torch
 import torch.nn as nn
 
-from grmanipulation.dataset.transform.base import BatchFeature
-from grmanipulation.model.basemodel.base import BasePolicyModel
+from internmanip.dataset.transform.base import BatchFeature
+from internmanip.model.basemodel.base import BasePolicyModel
 
 
 class CustomPolicyConfig(BaseModel):

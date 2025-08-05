@@ -7,7 +7,7 @@ The process involves two main steps: **[ensuring the dataset format](#dataset-st
 
 ## Dataset Structure
 
-All datasets must follow the [LeRobotDataset Format](#https://github.com/huggingface/lerobot) to ensure compatibility with the data loaders and training pipelines.
+All datasets must follow the [LeRobotDataset Format](https://github.com/huggingface/lerobot) to ensure compatibility with the data loaders and training pipelines.
 The expected structure is:
 
 

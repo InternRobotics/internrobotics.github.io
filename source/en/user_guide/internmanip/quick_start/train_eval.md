@@ -33,13 +33,13 @@ export PYTHONPATH="$(pwd):$PYTHONPATH"
 
 
 We provide several built-in policies such as **GR00T-N1**, **GR00T-N1.5**, **Pi-0**, **DP-CLIP**, and **ACT-CLIP**.
-To quickly verify your setup, you can train the **DP-CLIP** model on the `genmanip-demo` dataset (300 demonstrations of the instruction *"Move the milk carton to the top of the ceramic bowl"*).
+To quickly verify your setup, you can train the **Pi-0** model on the `genmanip-demo` dataset (300 demonstrations of the instruction *"Move the milk carton to the top of the ceramic bowl"*).
 This requires **1 GPU with at least 24GB memory**:
 
 ```bash
 torchrun --nnodes 1 --nproc_per_node 1 \       # number of processes per node, e.g., 1
    scripts/train/train.py \
-   --config run_configs/train/dp_clip_genmanip_v1.yaml # Config file that specifies which model to train on which dataset, along with hyperparameters
+   --config run_configs/train/pi0_genmanip_v1.yaml # Config file that specifies which model to train on which dataset, along with hyperparameters
 ```
 
 > 😄 When you run the script, it will prompt you to log in to Weights & Biases (WandB). This integration allows you to monitor your training process in real time via the WandB dashboard.
@@ -131,6 +131,7 @@ srun bash train_pi0_genmanip_slurm.sh
 ```bash
 sbatch multinode_submit.slurm
 ```
+> 💡 Tips: The recommended training setup is a global batch size of 2048 for 50,000 steps, which typically takes approximately 500 GPU hours (Assuming each node has 8 GPUs).
 
 ## Customizing Training with Your Own YAML Config
 
@@ -148,11 +149,8 @@ base_model_path: lerobot/pi0          # (Optional) Overrides the model checkpoin
 **💡 Notes:**
 
 - `model_type`: Must match the name of a model that has already been registered within InternManip.
-
 - `dataset_path`: Can be a HuggingFace ID (e.g., `InternRobotics/InternData-GenmanipTest`) or a local directory where the dataset is downloaded.
-
 - `data_config`: Refers to a dataset configuration preset (e.g., for preprocessing or loading behavior), also pre-registered in the codebase.
-
 - `base_model_path`: This is optional. If the selected `model_type` is supported and known, InternManip will automatically resolve and download the correct checkpoint from HuggingFace. If you’ve already downloaded a model locally or want to use a custom one, you can specify the path here directly.
 
 By editing or extending this YAML file, you can quickly try different models, datasets, or training setups — all without modifying the training script.
@@ -165,7 +163,6 @@ By editing or extending this YAML file, you can quickly try different models, da
 When creating your own YAML config file for training or evaluation, you can directly refer to the following officially supported values:
 
 - Use values from the `${model_type}` and `${base_model_path}` columns below to populate the corresponding fields in your YAML.
-
 - Similarly, values from the `${data_config}` and `${dataset_path}` columns can be used to specify the dataset configuration and loading path.
 
 <!-- This ensures consistency with the models and datasets that have been pre-registered within InternManip. -->
@@ -274,15 +271,29 @@ python scripts/eval/start_evaluator.py \
    --config scripts/eval/config/pi0_on_genmanip.py
 ``` -->
 
-## Evaluation and Benchmarking (WIP)
+## Evaluation and Benchmarking
 
 
-By default, the inference of model will be running in the main loop sharing the same process with the `env`. You can evaluate `pi0` on the `Genmanip` benchmark in a single process using the following command:
+The default evaluation setup adopts a client-server architecture where the policy (model) and the environment run in separate processes. This improves compatibility and modularity for large-scale benchmarks.
+You can evaluate `pi0` on the `genmanip` benchmark in a single process using the following command:
 
+
+**🖥 Terminal 1: Launch the Policy Server (Model Side)**
+
+Activate the environment for the model and start the policy server:
 ```bash
-python scripts/eval/start_evaluator.py \
-   --config scripts/eval/config/pi0_on_genmanip.py
+source .venv/model/bin/activate
+python scripts/eval/start_policy_server.py
 ```
+This server listens for observation inputs from the environment and responds with action predictions from the model.
+
+**🖥 Terminal 2: Launch the Evaluator (Environment Side)**
+```bash
+source .venv/simpler_env/bin/activate
+python scripts/eval/start_evaluator.py --config run_configs/eval/pi0_on_genmanip.py --server
+```
+
+This client sends observations to the model server, receives actions, and executes them in the environment.
 
 
 <!-- ### 1. Client-Server Setup
@@ -327,7 +338,7 @@ The terminal prints SR (Success Rate) information for each episode and task:
 - **Intermediate results**: RGB images (if `is_save_img=True`), robot state information.
 - **Result summary**: A `result.json` file containing task-level and episode-level success rates (same as terminal output). -->
 
-You can view the images generated during evaluation in the `eval_results` directory.
+You can view the images generated during evaluation in the `logs/demo/gr00t_n1_on_simpler` directory.
 
 
 

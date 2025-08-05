@@ -1,4 +1,4 @@
-# Evaluation
+# Evaluation (WIP)
 
 This document provides the guide of evaluation workflow and custom development.
 
@@ -45,18 +45,32 @@ Specific Environments (SimplerEnv, CalvinEnv, GenmanipEnv) + Specific Agents (Pi
 
 The evaluation system is launched through `start_evaluator.py`:
 
+#### 🖥 Terminal 1: Launch the Policy Server (Model Side)
+
+Activate the environment for the model and start the policy server:
+```bash
+# Client-server mode
+source .venv/model/bin/activate
+python scripts/eval/start_policy_server.py
+```
+This server listens for observation inputs from the environment and responds with action predictions from the model.
+#### 🖥 Terminal 2: Launch the Evaluator (Environment Side)
+```bash
+source .venv/simpler_env/bin/activate
+python scripts/eval/start_evaluator.py --config run_configs/eval/pi0_on_genmanip.py --server
+```
+
+Alternative usage scenarios apart from the client-server model:
+
 ```bash
 # Basic evaluation
-python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_calvin.py
+python scripts/eval/start_evaluator.py --config <config>
 
 # Distributed evaluation
-python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_calvin.py --distributed
-
-# Client-server mode
-python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_calvin.py --server
+python scripts/eval/start_evaluator.py --config <config> --distributed
 
 # Combined modes
-python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_calvin.py --distributed --server
+python scripts/eval/start_evaluator.py --config <config> --distributed --server
 ```
 
 Each evaluator follows this workflow:
@@ -159,10 +173,11 @@ class EvalCfg(BaseModel):
 
 ```python
 eval_cfg = EvalCfg(
-    eval_type="calvin",              # Evaluator type
+    eval_type="simpler",             # Evaluator type
     agent=AgentCfg(...),             # Agent configuration
     env=EnvCfg(...),                 # Environment configuration
-    logging_dir="logs/eval/calvin",  # Logging directory
+    logging_dir="logs/eval/simpler", # Logging directory
+    distributed_cfg=DistributedCfg(...),
 )
 ```
 
@@ -170,16 +185,19 @@ eval_cfg = EvalCfg(
 
 ```python
 agent=AgentCfg(
-    agent_type="seer",                    # Agent type
-    model_name_or_path="path/to/model",   # Model path
-    model_kwargs={                        # Model parameters
-        "device_id": 0,
-        "sequence_length": 10,
-        "hidden_dim": 512,
-        "num_layers": 6,
-        "learning_rate": 1e-4,
-        "batch_size": 32,
+    agent_type="gr00t_n1",                # Agent type
+    base_model_path="path/to/model",      # Model path
+    agent_settings={                      # Model parameters
+        'policy_setup': 'bridgedata_v2',
+        'action_scale': 1.0,
+        'exec_horizon': 1,
+        'action_ensemble_temp': -0.8,
+        'embodiment_tag': 'new_embodiment',
+        'denoising_steps': 16,
         # ...
+    },
+    model_kwargs={
+        'HF_cache_dir': None,
     },
     server_cfg=ServerCfg(                 # Server configuration (optional)
         server_host="localhost",
@@ -193,12 +211,9 @@ agent=AgentCfg(
 
 ```python
 env=EnvCfg(
-    env_type="calvin",                    # Environment type
-    device_id=0,                          # Device ID
-    config_path="path/to/config.yaml",    # Environment config file
-    env_settings=CalvinEnvSettings(       # Environment-specific settings
-        num_sequences=100,
-    )
+    env_type="simpler",                    # Environment type
+    device_id=0,                           # Device ID
+    episodes_config_path=[...]
 )
 ```
 
@@ -215,15 +230,16 @@ distributed_cfg=DistributedCfg(
 
 ## [Optional] Distributed Evaluation
 
-### 1. Ray Cluster Setup
+### Ray Cluster Setup
 
 Distributed evaluation is based on the Ray framework, supporting the following deployment modes:
 
 - **Single Machine Multi-Process**: `ray_head_ip="auto"`
 - **Multi-Machine Cluster**: `ray_head_ip="10.150.91.18"`
 
+<!---
 ### 2. Workflow
-[WIP]
+[WIP]--->
 
 
 ## [Optional] Use Multiple Evaluators to Speed Up
@@ -272,38 +288,3 @@ python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_cal
 - [Optional] View the task progress or resource monitor:
 
 The Ray framework provides a dashboard to view its task scheduling progress and resource usage. Access it on this address `{ray_head_ip}:8265`.
-
-## [Optional] Enable the Client-Server Evaluation Mode
-
-In some cases, we need to enable the client-server evaluation mode to isolate the conda environments of the agents and simulator environments.
-
-- Customize the [`ServerCfg`](../../internmanip/configs/agent/server_cfg.py) first:
-
-```python
-# Example configuration, `ServerCfg` should be defined inside the `AgentCfg` within the `EvalCfg`
-from internmanip.configs import *
-
-eval_cfg = EvalCfg(
-    eval_type="calvin",
-    agent=AgentCfg(
-        ...,
-        server_cfg=ServerCfg(
-            server_host="localhost",
-            server_port=5000,
-        ),
-    ),
-    env=EnvCfg(
-        ...
-    ),
-)
-```
-
-- Start a server process [NOTE: This step may be skipped in later codes]:
-```bash
-python scripts/eval/start_policy_server.py
-```
-
-- Enable client-server evaluation mode before starting the evaluator pipeline:
-```bash
-python scripts/eval/start_evaluator.py --config scripts/eval/configs/seer_on_calvin.py --server
-```

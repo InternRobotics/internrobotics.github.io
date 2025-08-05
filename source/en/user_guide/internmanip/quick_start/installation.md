@@ -391,7 +391,7 @@ This will start the policy server that listens for observation inputs and sends 
 Activate the environment for Simpler-Env, and run the evaluator:
 ```bash
 source .venv/simpler-env/bin/activate
-python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py
+python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py --server
 ```
 
 This will run the evaluation loop that sends observations to the model server and executes returned actions in the environment.

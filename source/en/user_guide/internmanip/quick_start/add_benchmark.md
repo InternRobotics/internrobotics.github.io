@@ -1,12 +1,15 @@
 # 🥇 Add a New Benchmark
 
 
-This guide walks you through adding a custom agent and custom evaluation benchmark to the InternManip framework.
+This guide walks you through **adding a custom benchmark** into the InternManip framework, including defining your own `Agent` and `Evaluator` classes, as well as registering and launching them.
 
-### 1. Implement Your Model Agent
+### 1. Define a Custom Agent
 
 
-To support a new model in InternManip, define a subclass of [`BaseAgent`](../../internmanip/agent/base.py). You must implement two core methods:
+In the updated design, an **Agent** is tied to the **benchmark (evaluation environment)** rather than to a specific policy model. It is responsible for interfacing between the environment and the control policy, handling observation preprocessing and action postprocessing, and coordinating resets.
+
+
+All agents must inherit from [`BaseAgent`](../../internmanip/agent/base.py) and implement the following two methods:
 
 - `step()`: given an observation, returns an action.
 - `reset()`: resets internal states, if needed.
@@ -106,7 +109,10 @@ eval_cfg = EvalCfg(
     agent=AgentCfg(
         agent_type="custom_agent", # Corresponds to the name registered in AgentRegistry
         base_model_path="path/to/model",
-        model_kwargs={...},
+        agent_settings={...},
+        model_kwargs={
+            'HF_cache_dir': None,
+        },
         server_cfg=ServerCfg(  # Optional server configuration
             server_host="localhost",
             server_port=5000,
@@ -132,4 +138,4 @@ eval_cfg = EvalCfg(
 python scripts/eval/start_evaluator.py \
   --config scripts/eval/configs/custom_on_custom.py
 ```
-Use `--distributed` for Ray-based multi-GPU, and `--server` for client-server mode.
+> 💡 Use `--server` for client-server mode, and `--distributed` for Ray-based multi-GPU (WIP).
