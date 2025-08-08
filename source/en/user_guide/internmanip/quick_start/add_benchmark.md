@@ -133,7 +133,7 @@ eval_cfg = EvalCfg(
 )
 ```
 
-## 5. Launch the Evaluator
+### 5. Launch the Evaluator
 ```python
 python scripts/eval/start_evaluator.py \
   --config scripts/eval/configs/custom_on_custom.py

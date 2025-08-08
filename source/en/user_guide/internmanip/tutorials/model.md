@@ -22,15 +22,14 @@ We provide a modular model structure that consists of the following components:
 - **Action Head**: A head that generates actions based on the processed features from the preceding layers.
 - **Policy Model**: A policy model that aggregates the above modules and drives the robot to perform tasks. -->
 
-## Contents
 
-### Backbone
+## Backbone
 
 We provide some kinds of the backbone: `EagleBackbone`, `EagleBackbone1_5`, `DiffusionRgbEncoder`, `PaliGemmaWithExpertModel`, and `ACTBackbone`, .
 
 
 
-#### EagleBackbone
+### EagleBackbone
 
 The Eagle Backbone serves as the foundational component that processes multimodal inputs (vision and language) and generates unified feature representations suitable for downstream tasks.
 
@@ -41,16 +40,16 @@ It has several steps to process the input:
 3. **Multimodal Fusion**: Combines visual and textual features using attention mechanisms
 4. **Output Generation**: Produces unified feature representations
 
-##### Key Features
+#### Key Features
 
 - Configurable layer selection for LLM truncation
 - Visual and language model fine-tuning control
 - Built-in image preprocessing with EagleProcessor
 - Support for vision reprojection and resolution scaling
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.backbone.eagle_backbone import EagleBackbone
@@ -67,7 +66,7 @@ backbone = EagleBackbone(
 )
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 batch_features = backbone.prepare_input(batch_dict)
@@ -75,20 +74,20 @@ output = backbone(batch_features)
 # Returns: {"backbone_features": embeddings, "backbone_attention_mask": mask}
 ```
 
-#### EagleBackbone1_5
+### EagleBackbone1_5
 
 A simplified version designed for Eagle 1.5 models with streamlined configuration.
 
-##### Key Features
+#### Key Features
 
 - Simplified initialization with fewer parameters
 - Automatic parameter tracking and warnings
 - Prefix-based input filtering for multi-modal inputs
 - Fixed 2048 → 1536 dimension projection
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.backbone.eagle_backbone import EagleBackbone1_5
@@ -102,7 +101,7 @@ backbone = EagleBackbone1_5(
 )
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 # Forward pass expects eagle_ prefixed inputs
@@ -115,7 +114,7 @@ vl_input = {
 output = backbone(vl_input)
 ```
 
-#### DiffusionRgbEncoder
+### DiffusionRgbEncoder
 
 The Diffusion Vision Backbone is designed specifically for diffusion policy implementations. It provides efficient visual feature extraction optimized for robotic manipulation tasks.
 
@@ -126,15 +125,15 @@ It has several steps to process the input:
 3. **Spatial Softmax Pooling**: Converts feature maps to spatial keypoints
 4. **Final Linear Projection**: Maps keypoints to output feature dimensions
 
-##### Key Features
+#### Key Features
 
 - Automatically adapts to different input image dimensions
 - Leverages torchvision pretrained models
 - Generates focused attention points for manipulation tasks
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.configs.model.dp_cfg import DiffusionConfig
@@ -153,7 +152,7 @@ config = DiffusionConfig(
 encoder = DiffusionRgbEncoder(config)
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 images = torch.randn(8, 3, 480, 640)
@@ -161,12 +160,12 @@ features = encoder(images)
 # Output shape: [8, 64] where 64 = spatial_softmax_num_keypoints * 2
 ```
 
-#### PaliGemmaWithExpertModel
+### PaliGemmaWithExpertModel
 
 A hybrid backbone combining PaliGemma and Gemma Expert for enhanced multimodal reasoning. This model merges visual grounding with language modeling using shared and expert-specific transformer layers.
 
 
-##### Key Features
+#### Key Features
 
 1. Dual Transformer Architecture: Combines `PaliGemma` (VLM) and `Gemma Expert` (LLM).
 2. Expert-tuned Attention Layers: Joint attention computation across base and expert models.
@@ -174,9 +173,9 @@ A hybrid backbone combining PaliGemma and Gemma Expert for enhanced multimodal r
 4. Custom bfloat16 Precision Control: Converts selected submodules to bfloat16 with compatibility for physical intelligence models.
 5. Selective Freezing: Fine-grained control over training of visual encoder and/or base model.
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.paligemma_with_expert import PaliGemmaWithExpertModel
@@ -193,7 +192,7 @@ config = PaliGemmaWithExpertConfig(
 model = PaliGemmaWithExpertModel(config)
 ```
 
-###### Forward Pass
+##### Forward Pass
 ```python
 # input_embeds: List of tensors from vision and language encoders
 outputs, cache = model(
@@ -207,7 +206,7 @@ outputs, cache = model(
 ```
 
 
-#### ACTBackbone
+### ACTBackbone
 
 The ACT (Action Chunking Transformer) Backbone is designed specifically for the ACT framework, which processes multimodal inputs including robot states, environment states, and visual observations to generate contextual embeddings for action prediction.
 
@@ -219,7 +218,7 @@ It has several steps to process the input:
 4. **Transformer Encoding**: Uses a transformer encoder to fuse all features into unified representations
 5. **Positional Embedding**: Applies 2D sinusoidal positional embeddings for visual features and learned embeddings for state features
 
-##### Key Features
+#### Key Features
 
 - **Modular Design**: Separates image processing, state processing, and transformer encoding
 - **Multi-modal Fusion**: Combines visual, state, and latent features through attention mechanisms
@@ -227,16 +226,16 @@ It has several steps to process the input:
 - **VAE Integration**: Optional variational autoencoder for latent space modeling
 - **Configurable Architecture**: Adjustable transformer layers, attention heads, and feature dimensions
 
-##### Architecture Components
+#### Architecture Components
 
 - **Image Backbone**: Pretrained CNN (ResNet variants) for visual feature extraction
 - **State Projections**: Linear layers for robot and environment state processing
 - **Transformer Encoder**: Multi-layer transformer for feature fusion
 - **Positional Embeddings**: 2D sinusoidal embeddings for visual features, learned embeddings for states
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.backbone.act_backbone import ACTBackbone
@@ -267,7 +266,7 @@ config.set_input_output_features(input_features, output_features)
 backbone = ACTBackbone(config)
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 batch = {
@@ -283,7 +282,7 @@ encoder_out = backbone.encode_features(batch, latent_sample)
 # Returns: (seq_len, batch_size, dim_model) tensor
 ```
 
-### Action Head
+## Action Head
 
 Action Head is responsible for converting the high-level contextual features from the VLM backbone into executable robot actions. It uses a flow-matching based approach for robust action generation.
 
@@ -291,11 +290,11 @@ We provides some kinds of action head: `FlowmatchingActionHead`, `FlowmatchingAc
 
 
 
-#### FlowmatchingActionHead
+### FlowmatchingActionHead
 
 The main flow matching action head that uses a DiT (Diffusion Transformer) model to generate robot actions through denoising diffusion.
 
-##### Key Features
+#### Key Features
 
 - Flow matching training with Beta distribution noise scheduling
 - Multi-embodiment support with category-specific encoders/decoders
@@ -303,9 +302,9 @@ The main flow matching action head that uses a DiT (Diffusion Transformer) model
 - Cross-attention between state-action embeddings and vision-language features
 - Configurable projector and diffusion model fine-tuning
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.action_head.flow_matching_action_head import FlowmatchingActionHead, FlowmatchingActionHeadConfig
@@ -323,7 +322,7 @@ config = FlowmatchingActionHeadConfig(
 action_head = FlowmatchingActionHead(config)
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 backbone_output = {"backbone_features": vl_embeddings, "backbone_attention_mask": mask}
@@ -332,7 +331,7 @@ output = action_head(backbone_output, action_input)
 # Returns: {"loss": mse_loss, "predictions": predicted_velocity}
 ```
 
-###### Inference
+##### Inference
 
 ```python
 with torch.no_grad():
@@ -340,19 +339,19 @@ with torch.no_grad():
     # Returns: {"action_pred": generated_actions}
 ```
 
-#### FlowmatchingActionHead_1_5
+### FlowmatchingActionHead_1_5
 
 Enhanced version with additional backbone processing capabilities and batch expansion support.
 
-##### Key Features
+#### Key Features
 
 - Vision-language layer normalization and self-attention processing
 - Batch expansion for data augmentation during training
 - Improved backbone feature processing pipeline
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.action_head.flow_matching_action_head import FlowmatchingActionHead_1_5, FlowmatchingActionHeadConfig_1_5
@@ -371,14 +370,14 @@ config = FlowmatchingActionHeadConfig_1_5(
 action_head = FlowmatchingActionHead_1_5(config)
 ```
 
-###### Forward pass
+##### Forward pass
 
 ```python
 output = action_head(backbone_output, action_input)
 # Returns: {"loss": mse_loss, "predictions": predicted_velocity}
 ```
 
-###### Inference
+##### Inference
 
 ```python
 with torch.no_grad():
@@ -386,11 +385,11 @@ with torch.no_grad():
     # Returns: {"action_pred": generated_actions}
 ```
 
-#### DiffusionActionHead
+### DiffusionActionHead
 
 The `DiffusionActionHead` class uses a 1D convolutional UNet to generate robot actions through denoising diffusion, following the Diffusion Policy framework.
 
-##### Key Features
+#### Key Features
 
 - DDPM/DDIM noise scheduling with configurable timesteps and beta parameters
 - Multi-modal conditioning supporting vision, state, and language inputs
@@ -398,9 +397,9 @@ The `DiffusionActionHead` class uses a 1D convolutional UNet to generate robot a
 - Language conditioning via CLIP embeddings with trainable projection layers
 - Flexible observation encoding with support for multiple camera views and separate encoders
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.action_head.diffusion_action_head import DiffusionActionHead
@@ -422,7 +421,7 @@ config = DiffusionConfig(
 action_head = DiffusionActionHead(config)
 ```
 
-###### Training
+##### Training
 
 ```python
 batch = {
@@ -438,7 +437,7 @@ loss = loss_dict["loss"]
 loss.backward()
 ```
 
-###### Inference
+##### Inference
 
 ```python
 with torch.no_grad():
@@ -448,11 +447,11 @@ with torch.no_grad():
     # Returns: (B, n_action_steps, action_dim)
 ```
 
-#### PI0FlowMatching
+### PI0FlowMatching
 
 This model enables end-to-end multimodal action generation through diffusion-style flow matching, using PaliGemma for perception and Gemma Expert for reasoning.
 
-##### Key Features
+#### Key Features
 
 - Multi-Stage Embedding: Separately processes prefix (image & language) and suffix (robot state, actions, timestep).
 - Diffusion-Based Control: Implements action prediction via learned denoising steps over time.
@@ -498,7 +497,7 @@ It has several steps to process the input:
 3. **Action Prediction**: Final linear projection to output robot actions
 4. **Positional Embedding**: Learned positional embeddings for action sequence generation
 
-##### Key Features
+#### Key Features
 
 - **VAE Integration**: Optional variational autoencoder for latent space modeling
 - **Transformer Decoder**: Multi-layer transformer decoder for action sequence generation
@@ -506,16 +505,16 @@ It has several steps to process the input:
 - **Flexible Conditioning**: Supports various input modalities (state, image, language)
 - **Temporal Ensembling**: Optional temporal ensemble for improved action consistency
 
-##### Architecture Components
+#### Architecture Components
 
 - **VAE Encoder**: BERT-style encoder for latent space modeling (optional)
 - **Transformer Decoder**: Multi-layer decoder with cross-attention to encoder features
 - **Action Head**: Linear projection layer for final action prediction
 - **Positional Embeddings**: Learned embeddings for action sequence positions
 
-##### Usage
+#### Usage
 
-###### Basic Initialization
+##### Basic Initialization
 
 ```python
 from internmanip.model.action_head.act_action_head import ACTActionHead
@@ -547,7 +546,7 @@ config.set_input_output_features(input_features, output_features)
 action_head = ACTActionHead(config)
 ```
 
-###### Forward Pass
+##### Forward Pass
 
 ```python
 # For training with VAE
@@ -567,7 +566,7 @@ actions = action_head.decode_actions(encoder_out, batch_size, device)
 # Returns: (batch_size, chunk_size, action_dim) tensor
 ```
 
-###### Inference
+##### Inference
 
 ```python
 with torch.no_grad():

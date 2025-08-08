@@ -166,7 +166,7 @@ train_dataset = LeRobotSingleDataset(
 This design supports modular and extensible dataset loading, making it easy to adapt to new robot embodiments and modality configurations. 
 The `transforms` can be customized to match the model’s input requirements.
 
-### Important Hyperparameters
+## Important Hyperparameters
 
 
 In `scripts/train/train.py`, the training scheduler is now configurable through a YAML file using `TrainingArguments` from the 🤗 `transformers` library.
@@ -178,7 +178,7 @@ Example usage:
 python scripts/train/train.py --config configs/train/pi0_genmanip_v1.yaml
 ```
 
-#### Policy and Dataset
+### Policy and Dataset
 ```python
 model_type = "pi0"               # Options: pi0, gr00t_n1, gr00t_n1_5, dp_clip, pi0fast, act_clip
 dataset_path = "InternRobotics/InternData-GenmanipTest"
@@ -187,7 +187,7 @@ output_dir = "Checkpoints/runs"  # Directory to save model checkpoints
 data_config = "genmanip_v1"      # Data configuration name from DATA_CONFIG_MAP
 ```
 
-#### Training parameters
+### Training parameters
 
 ```python
 batch_size = 16                  # Batch size per GPU
@@ -199,7 +199,7 @@ gradient_accumulation_steps = 1  # Gradient accumulation steps
 skip_unlabeled = False           # Whether to skip unlabeled data
 ```
 
-#### Learning Rate & Optimizer
+### Learning Rate & Optimizer
 
 Use cosine annealing with warm-up:
 
@@ -210,7 +210,7 @@ warmup_ratio = 0.05      # Warm-up ratio for total steps
 ```
 
 
-#### Model Fine-tuning
+### Model Fine-tuning
 ```python
 base_model_path = ""          # Path or HuggingFace model ID for base model
 tune_llm = False              # Fine-tune language model backbone
@@ -221,14 +221,14 @@ use_pretrained_model = False  # Use a pretrained model or not
 ```
 
 
-#### LoRA Configuration
+### LoRA Configuration
 ```python
 lora_rank = 0         # Rank of LORA
 lora_alpha = 16       # Alpha value
 lora_dropout = 0.1    # Dropout rate
 ```
 
-#### Data Loading
+### Data Loading
 ```python
 embodiment_tag = "new_embodiment"  # Embodiment tag (e.g., gr1, new_embodiment)
 video_backend = "torchcodec"       # Video backend: decord, torchvision_av, opencv, or torchcodec
@@ -238,7 +238,7 @@ dataloader_num_workers = 8         # Number of workers for data loading
 
 
 
-#### Miscellaneous
+### Miscellaneous
 ```python
 augsteps = 4         # Number of augmentation steps
 report_to = "wandb"  # Logging backend: wandb or tensorboard

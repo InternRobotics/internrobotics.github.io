@@ -283,7 +283,7 @@ You can evaluate `pi0` on the `genmanip` benchmark in a single process using the
 Activate the environment for the model and start the policy server:
 ```bash
 source .venv/model/bin/activate
-python scripts/eval/start_policy_server.py
+python scripts/eval/start_agent_server.py
 ```
 This server listens for observation inputs from the environment and responds with action predictions from the model.
 

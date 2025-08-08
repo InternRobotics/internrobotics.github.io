@@ -35,6 +35,7 @@ InternManip works across most hardware setups.
 Just note the following exceptions:
 - **GenManip Benchmark** must run on **NVIDIA RTX series GPUs** (e.g., RTX 4090).
 - GR00T requires **CUDA 12.4 installed system-wide (not via Conda)**.
+- **Miniconda**.
 
 ### Overall Requirements
 - **OS:** Ubuntu 20.04/22.04
@@ -308,72 +309,18 @@ Optionally, users can customize the virtual environments directory path by passi
 ./install.sh --venv-dir ./my_envs --model
 ```
 
-### ⚠️ Troubleshooting
-**1. Tips for Slow or Unstable Networks**
 
-If you encounter errors such as timeouts or incomplete downloads, especially in network-restricted or low-bandwidth environments, we recommend the following approaches.
-- By default, `uv pip` uses relatively short HTTP timeouts. To extend the timeout, set the following environment variable before installation:
-    ```bash
-    export UV_HTTP_TIMEOUT=600  # Timeout in seconds (10 minutes)
-    ```
-- To ensure successful installation without network interruptions, you can download some large packages first and then install them locally:
-    ```bash
-    uv pip download -d ./wheelhouse "some-large-package"
-    uv pip install --no-index --find-links=./wheelhouse "some-large-package"
-    ```
+```{tips}
+Since we install packages via `uv`, if there are network fluctuations causing some packages to fail installing, the process will skip them and still output `✅ install finished`. This does not guarantee that all packages were installed successfully. Therefore, please **check the logs carefully** after installation to see if there are any errors.
+```
 
 
-**2. GCC Fails to Compile Due to Missing Dependencies**
-
-When compiling C++ components (e.g., `building ManiSkill2_real2sim`), you might encounter errors related to GCC or missing shared libraries. This guide walks you through how to resolve them without root/sudo permissions.
-
-- Step 1: Use a modern GCC (recommended ≥ 9.3.0). Older system compilers (e.g., GCC 5.x or 7.x) may not support required C++ standards. It's recommended to switch to GCC 9.3.0 or newer:
-    ```bash
-    export LD_LIBRARY_PATH=${PATH_TO}/gcc/gcc-9.3.0/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-    export PATH=${PATH_TO}/gcc/gcc-9.3.0/bin:$PATH
-    ```
-    > ⚠️ Note: Simply using a newer compiler might not be enough — it may depend on shared libraries that are not available on your system.
-- Step 2: Manually install required libraries. If you encounter errors like: `error while loading shared libraries: libmpc.so.2 (libmpfr.so.1, libgmp.so.3)`. If you do have `sudo` privileges, the easiest way is to install the required libraries system-wide using your system package manager.
-    ```bash
-    sudo apt update
-    sudo apt install gcc-9 g++-9
-    ```
-    Or, you need to manually compile and install the following dependencies locally:
-    ```bash
-    INSTALL_DIR=$HOME/local
-    mkdir -p "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
-
-    wget https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.xz
-    tar -xf gmp-6.2.1.tar.xz && cd gmp-6.2.1
-    ./configure --prefix="$INSTALL_DIR"
-    make -j$(nproc)
-    make install
-    cd "$INSTALL_DIR"
-
-    wget https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
-    tar -xf mpfr-4.2.1.tar.xz && cd mpfr-4.2.1
-    ./configure --prefix="$INSTALL_DIR" --with-gmp="$INSTALL_DIR"
-    make -j$(nproc)
-    make install
-    cd "$INSTALL_DIR"
-
-    echo "📦 Installing MPC..."
-    wget https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
-    tar -xf mpc-1.3.1.tar.gz && cd mpc-1.3.1
-    ./configure --prefix="$INSTALL_DIR" --with-gmp="$INSTALL_DIR" --with-mpfr="$INSTALL_DIR"
-    make -j$(nproc)
-    make install
-    ```
-- Step 3 (Optional): Fix Missing `.so` Versions. Sometimes you have the correct library version (e.g., `libgmp.so.10`), but GCC expects an older symlink name (e.g., `libgmp.so.3`). You can fix missing library versions with symlinks.
-- Step 4: Export the Library Path. Make sure the compiler can find your locally installed shared libraries:
-    ```bash
-    export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
-    ```
+```{important}
+If you encounter any issues during the installation, please first check the [Troubleshooting](#troubleshooting) section.
+```
 
 
-
-## Verification (WIP)
+## Verification
 
 You can evaluate the pretrained **GR00t-N1** model on the `Simpler-Env` benchmark using a **client-server** architecture. This requires two separate terminal sessions:
 
@@ -382,7 +329,7 @@ You can evaluate the pretrained **GR00t-N1** model on the `Simpler-Env` benchmar
 Activate the environment for the model, and start the policy server:
 ```bash
 source .venv/model/bin/activate
-python scripts/eval/start_policy_server.py
+python scripts/eval/start_agent_server.py
 ```
 This will start the policy server that listens for observation inputs and sends back action predictions.
 
@@ -503,9 +450,42 @@ sudo apt install libvulkan1
 sudo ldconfig
 ```
 
-### 4. GCC Fails to Compile Due to Missing Dependencies
+### 4. Handling `RuntimeError: vk::PhysicalDevice::createDeviceUnique: ErrorExtensionNotPresent` in SimplerEnv Benchmark
 
-When compiling C++ components (e.g., `building ManiSkill2_real2sim`), you might encounter errors related to GCC or missing shared libraries. This guide walks you through how to resolve them without root/sudo permissions.
+
+This error is a tricky issue caused by a failed GPU driver installation when running the SimplerEnv benchmark. Many users have reported this problem in the [SimplerEnv GitHub issue #68](https://github.com/simpler-env/SimplerEnv/issues/68).
+
+You may try the suggested solutions there, but they do not always work reliably. Therefore, we provide an alternative approach if you can use container images.
+
+#### Alternative Solution Using Apptainer Container
+- Install Apptainer on your system if you haven't already.
+- Download a prebuilt container image with SimplerEnv installed from our [Hugging Face repository](https://huggingface.co/InternRobotics/Manishill2/tree/main).
+- Run the evaluation inside the container using a command similar to the following:
+    ```bash
+    apptainer exec --bind /mnt:/mnt --nv path_to_maniskill2.sif path_to_your_python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py --server
+    ```
+    Replace path_to_maniskill2.sif with the actual path to the downloaded container image, and path_to_your_python with the Python interpreter you want to use inside the container.
+
+
+### 5. Failed to Install `pyzmq` When Building Model Dependency
+
+
+When installing the `model` environment and encountering the following error:
+```bash
+Resolved 162 packages in 4.80s
+× Failed to build `pyzmq==27.0.1`
+├─▶ The build backend returned an error
+╰─▶ Call to `scikit_build_core.build.build_wheel` failed (exit status: 1)
+```
+A recommended approach is to build from source by running:
+```bash
+./install.sh --model_bfs
+```
+If this fails with GCC-related errors, please refer to the troubleshooting advice below.
+
+### 6. GCC Fails to Compile Due to Missing Dependencies
+
+When compiling C++ components (e.g., `building ManiSkill2_real2sim` or `pyzmq`), you might encounter errors related to GCC or missing shared libraries. This guide walks you through how to resolve them without root/sudo permissions.
 
 - Step 1: Use a modern GCC (recommended ≥ 9.3.0). Older system compilers (e.g., GCC 5.x or 7.x) may not support required C++ standards. It's recommended to switch to GCC 9.3.0 or newer:
     ```bash
@@ -531,7 +511,7 @@ When compiling C++ components (e.g., `building ManiSkill2_real2sim`), you might 
     make install
     cd "$INSTALL_DIR"
 
-    wget https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
+    wget https://www.mpfr.org/mpfr-4.2.1/mpfr-4.2.1.tar.xz
     tar -xf mpfr-4.2.1.tar.xz && cd mpfr-4.2.1
     ./configure --prefix="$INSTALL_DIR" --with-gmp="$INSTALL_DIR"
     make -j$(nproc)
