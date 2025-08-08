@@ -450,24 +450,10 @@ sudo apt install libvulkan1
 sudo ldconfig
 ```
 
-### 4. Handling `RuntimeError: vk::PhysicalDevice::createDeviceUnique: ErrorExtensionNotPresent` in SimplerEnv Benchmark
 
 
-This error is a tricky issue caused by a failed GPU driver installation when running the SimplerEnv benchmark. Many users have reported this problem in the [SimplerEnv GitHub issue #68](https://github.com/simpler-env/SimplerEnv/issues/68).
 
-You may try the suggested solutions there, but they do not always work reliably. Therefore, we provide an alternative approach if you can use container images.
-
-#### Alternative Solution Using Apptainer Container
-- Install Apptainer on your system if you haven't already.
-- Download a prebuilt container image with SimplerEnv installed from our [Hugging Face repository](https://huggingface.co/InternRobotics/Manishill2/tree/main).
-- Run the evaluation inside the container using a command similar to the following:
-    ```bash
-    apptainer exec --bind /mnt:/mnt --nv path_to_maniskill2.sif path_to_your_python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py --server
-    ```
-    Replace path_to_maniskill2.sif with the actual path to the downloaded container image, and path_to_your_python with the Python interpreter you want to use inside the container.
-
-
-### 5. Failed to Install `pyzmq` When Building Model Dependency
+### 4. Failed to Install `pyzmq` When Building Model Dependency
 
 
 When installing the `model` environment and encountering the following error:
@@ -483,7 +469,7 @@ A recommended approach is to build from source by running:
 ```
 If this fails with GCC-related errors, please refer to the troubleshooting advice below.
 
-### 6. GCC Fails to Compile Due to Missing Dependencies
+### 5. GCC Fails to Compile Due to Missing Dependencies
 
 When compiling C++ components (e.g., `building ManiSkill2_real2sim` or `pyzmq`), you might encounter errors related to GCC or missing shared libraries. This guide walks you through how to resolve them without root/sudo permissions.
 
@@ -530,3 +516,19 @@ When compiling C++ components (e.g., `building ManiSkill2_real2sim` or `pyzmq`),
     ```bash
     export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
     ```
+### 6. Handling `RuntimeError: vk::PhysicalDevice::createDeviceUnique: ErrorExtensionNotPresent` in SimplerEnv Benchmark
+
+
+This error is a tricky issue caused by a failed GPU driver installation when running the SimplerEnv benchmark. Many users have reported this problem in the [SimplerEnv GitHub issue #68](https://github.com/simpler-env/SimplerEnv/issues/68).
+
+You may try the suggested solutions there, but they do not always work reliably. Therefore, we provide an alternative approach if you can use container images.
+
+#### Alternative Solution Using Apptainer Container
+- Make sure you have installed `simpler_env`.
+- Install Apptainer on your system if you haven't already.
+- Download a prebuilt container image with SimplerEnv installed from our [Hugging Face repository](https://huggingface.co/InternRobotics/Manishill2/tree/main).
+- Run the evaluation inside the container using a command similar to the following:
+    ```bash
+    apptainer exec --bind /mnt:/mnt --nv path_to_maniskill2.sif path_to_your_python scripts/eval/start_evaluator.py --config run_configs/examples/internmanip_demo.py --server
+    ```
+    Replace path_to_maniskill2.sif with the actual path to the downloaded container image, and path_to_your_python with the Python interpreter you want to use inside the container.
