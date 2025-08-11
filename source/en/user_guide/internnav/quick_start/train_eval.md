@@ -174,6 +174,7 @@ Currently, we only support training of small VLN models (CMA, RDP, Seq2Seq) in t
 ```
 ### Evaluation
 
+#### InternVLA-N1-S2
 Currently we only support evaluate single System2 on Habitat:
 
 Evaluate on Single-GPU:
@@ -187,3 +188,40 @@ For multi-gpu inference, currently we only support inference on SLURM.
 ```bash
 ./scripts/eval/eval_system2.sh
 ```
+
+#### Baseline Models
+We provide three small VLN baselines (Seq2Seq, CMA, RDP) for evaluation in the InterUtopia (Isaac-Sim) environment.
+
+Download the baseline models:
+```bash
+# ddppo-models
+$ mkdir -p checkpoints/ddppo-models
+$ wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo/ddppo-models/gibson-4plus-mp3d-train-val-test-resnet50.pth
+# longclip-B
+$ huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
+# download r2r finetuned baseline checkpoints
+$ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
+```
+Start the Ray server:
+```bash
+ray disable-usage-stats
+ray stop
+ray start --head
+```
+
+Start the evaluation server:
+```bash
+python -m internnav.agent.utils.server --config scripts/eval/configs/h1_xxx_cfg.py
+```
+
+Start Evaluation:
+```bash
+# seq2seq model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py 
+# cma model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py 
+# rdp model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py 
+```
+
+The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file. 
