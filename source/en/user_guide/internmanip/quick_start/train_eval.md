@@ -277,6 +277,35 @@ python scripts/eval/start_evaluator.py \
 The default evaluation setup adopts a client-server architecture where the policy (model) and the environment run in separate processes. This improves compatibility and modularity for large-scale benchmarks.
 You can evaluate `pi0` on the `genmanip` benchmark in a single process using the following command:
 
+**Configuring Evaluation: Key Setup and Model Checkpoint**
+
+The evaluation requires properly configuring the evaluation config file. Below is an example of a config instance.
+Please pay special attention to modifying the `base_model_path` field, which should point to your finetuned model checkpoint.
+
+```python
+from internmanip.configs import *
+from pathlib import Path
+
+eval_cfg = EvalCfg(
+    eval_type='genmanip',
+    agent=AgentCfg(
+        agent_type='pi0',
+        base_model_path='/PATH/TO/YOUR/CHECKPOINT',  # <--- MODIFY THIS PATH
+        agent_settings={...},
+        model_kwargs={...},
+        server_cfg=ServerCfg(...),
+    ),
+    env=EnvCfg(...),
+)
+```
+
+
+```{important}
+You must modify the `base_model_path` to the path of your own finetuned checkpoint, which is different from the HuggingFace loaded checkpoint — you should **NOT** use the unfinetuned checkpoint directly for evaluation!
+```
+
+Also, note that the evaluation data for `genmanip` is different from the training data, so please be careful to distinguish between them when running evaluations.
+
 
 **🖥 Terminal 1: Launch the Policy Server (Model Side)**
 
