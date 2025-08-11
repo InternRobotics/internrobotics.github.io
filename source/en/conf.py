@@ -87,7 +87,7 @@ html_theme_options = {
     'icon_links': [
         {
             'name': 'GitHub',
-            'url': 'https://github.com/OpenRobotLab/GRUtopia.git',
+            'url': 'https://github.com/InternRobotics',
             'icon': 'fab fa-github-square',
         },
     ],

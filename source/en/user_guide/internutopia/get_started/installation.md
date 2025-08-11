@@ -70,7 +70,7 @@ Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](
 
 ### Install with Docker (Linux)
 
-Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed. You can refer to the [container installation doc](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html) of Isaac Sim for detailed instructions.
+Make sure you have [Docker](https://docs.docker.com/get-docker/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed. You can refer to the [container installation doc](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_container.html) of Isaac Sim for detailed instructions.
 
 1. Clone the InternUtopia repository to any desired location.
 
