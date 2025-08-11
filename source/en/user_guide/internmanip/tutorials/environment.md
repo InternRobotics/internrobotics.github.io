@@ -39,19 +39,19 @@ eval_cfg = EvalCfg(
         env_type="genmanip",
         env_settings=GenmanipEnvSettings(
             dataset_path="path/to/genmanip/benchmark_data",
-            eval_tasks=["task1", "task2", ...],
+            eval_tasks=[],
             res_save_path="path/to/save/results",
             is_save_img=False,
-            robot_type="franka",
+            robot_type="aloha_split",
             gripper_type="panda",
             franka_camera_enable=FrankaCameraEnable(
                 realsense=False, obs_camera=False, obs_camera_2=False
             ),
             aloha_split_camera_enable=AlohaSplitCameraEnable(
-                top_camera=True, left_camera=True, right_camera=True
+                top_camera=False, left_camera=False, right_camera=False
             ),
             depth_obs=False,
-            max_step=500,
+            max_step=1000,
             max_success_step=100,
             env_num=1,
             physics_dt=1/30,
@@ -69,15 +69,15 @@ eval_cfg = EvalCfg(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `dataset_path` | str | None | If None, it will be automatically downloaded from Hugging Face dataset [URL](https://huggingface.co/datasets/OpenRobotLab/InternBench-M1) on the first run. |
-| `eval_tasks` | list[str] | ALL_EVAL_TASKS | The relative path to the task folder under dataset_path |
+| `eval_tasks` | list[str] | [] | The relative path to the task folder under dataset_path. <br>If `[]`, all tasks in the `dataset_path` will be automatically detected. |
 | `res_save_path` | str | None | Evaluation results storage directory (disabled if None).|
 | `is_save_img` | bool | False | Enable per-step multi-camera image capture (requires disk space) |
-| `robote_type` | enum | "franka" | robot selection (`"franka"` or `"aloha_split"`) |
+| `robote_type` | enum | "aloha_split" | robot selection (`"franka"` or `"aloha_split"`) |
 | `gripper_type` | enum | "panda" | End effector selection **when robote_type is `franka`** (`"panda"` or `"robotiq"`) |
-| `franka_camera_enable` | FrankaCameraEnable | `FrankaCameraEnable(realsense=False, `<br>`obs_camera=False, `<br>`obs_camera_2=False)` | Camera activation config:<br>• `realsense`: Ego-view gripper cam<br>• `obs_camera`: Fixed rear-view cam<br>• `obs_camera_2`: Fixed front-view cam <br> Note that this only works **when robote_type is `franka`** |
-| `aloha_split_camera_enable` | AlohaSplitCameraEnable | `AlohaSplitCameraEnable(top_camera=False, `<br>`left_camera=False, `<br>`right_camera=False)` | Camera activation config:<br>• `top_camera`: Ego-view top head cam<br>• `left_camera`: Ego-view left gripper cam<br>• `right_camera`: Ego-view right gripper cam <br> Note that this only works **when robote_type is `aloha_split`** |
+| `franka_camera_enable` | FrankaCameraEnable | `FrankaCameraEnable(`<br>`realsense=False, `<br>`obs_camera=False, `<br>`obs_camera_2=False)` | Camera activation config:<br>• `realsense`: Ego-view gripper cam<br>• `obs_camera`: Fixed rear-view cam<br>• `obs_camera_2`: Fixed front-view cam <br> Note that this only works **when robote_type is `franka`** |
+| `aloha_split_camera_enable` | AlohaSplitCameraEnable | `AlohaSplitCameraEnable(`<br>`top_camera=False, `<br>`left_camera=False, `<br>`right_camera=False)` | Camera activation config:<br>• `top_camera`: Ego-view top head cam<br>• `left_camera`: Ego-view left gripper cam<br>• `right_camera`: Ego-view right gripper cam <br> Note that this only works **when robote_type is `aloha_split`** |
 | `depth_obs` | bool | False | Generate depth maps for active cameras |
-| `max_step` | int | 500 | Episode termination step threshold |
+| `max_step` | int | 1000 | Episode termination step threshold |
 | `headless` | bool | True | Disable GUI |
 
 
@@ -104,8 +104,8 @@ observations: List[Dict] = [
         "robot": {
             "robot_pose": Tuple[array, array], # (position, oritention(quaternion: (w, x, y, z)))
             "joints_state": {
-                "positions": array,
-                "velocities": array
+                "positions": array, # (9,) or (13,) -> panda or robotiq
+                "velocities": array # (9,) or (13,) -> panda or robotiq
             },
             "eef_pose": Tuple[array, array], # (position, oritention(quaternion: (w, x, y, z)))
             "sensors": {
@@ -182,8 +182,8 @@ observations: List[Dict] = [
         "robot": {
             "robot_pose": Tuple[array, array], # (position, oritention(quaternion: (w, x, y, z)))
             "joints_state": {
-                "positions": array,
-                "velocities": array
+                "positions": array, # (28,)
+                "velocities": array # (28,)
             },
             "left_eef_pose": Tuple[array, array], # (position, oritention(quaternion: (w, x, y, z))) -> left gripper eef pose
             "right_eef_pose": Tuple[array, array], # (position, oritention(quaternion: (w, x, y, z))) -> right gripper eef pose
@@ -216,6 +216,24 @@ observations: List[Dict] = [
     ...
 ]
 ```
+> **Note the following when using `observations["robot"]["joints_state"]["positions"]`.**
+> 
+> The aloha_split robot's dof names (in order) as follows: `['mobile_translate_x', 'mobile_translate_y', 'mobile_rotate', 'fl_steering_joint', 'fr_steering_joint', 'rl_steering_joint', 'rr_steering_joint', 'lifting_joint', 'fl_wheel', 'fr_wheel', 'rl_wheel', 'rr_wheel', 'fl_joint1', 'fr_joint1', 'fl_joint2', 'fr_joint2', 'fl_joint3', 'fr_joint3', 'fl_joint4', 'fr_joint4', 'fl_joint5', 'fr_joint5', 'fl_joint6', 'fr_joint6', 'fl_joint7', 'fl_joint8', 'fr_joint7', 'fr_joint8']`.
+> 
+> Thus:
+> - The left arm coordinate: `[12, 14, 16, 18, 20, 22]`
+> - The left gripper coordinate: `[24, 25]`
+> - The right arm coordinate: `[13, 15, 17, 19, 21, 23]`
+> - The right gripper coordinate: `[26, 27]`
+> 
+> Example:  
+> If you want to use the joint position values of the left arm, you should do this:
+> ```python
+> left_arm_joint_indices = [12, 14, 16, 18, 20, 22]
+> left_arm_joint_positions = [observations['robot']['joints_state']['positions'][idx] for idx in left_arm_joint_indices]
+> ```
+
+---  
 
 **Action Space Specifications**
 Agents must output `List[dict] = [action_1, action_2 , ...]` of the same length as the input observations.
