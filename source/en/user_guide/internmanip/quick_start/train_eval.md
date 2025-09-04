@@ -271,7 +271,7 @@ python scripts/eval/start_evaluator.py \
    --config scripts/eval/config/pi0_on_genmanip.py
 ``` -->
 
-## Evaluation and Benchmarking
+## Evaluation and Benchmarking (WIP)
 
 
 The default evaluation setup adopts a client-server architecture where the policy (model) and the environment run in separate processes. This improves compatibility and modularity for large-scale benchmarks.

@@ -11,7 +11,9 @@ myst:
 ```{toctree}
 :maxdepth: 2
 
+iros_challenge
 quick_start/index
-contribute_guide
 tutorials/index
+contribute_guide
+troubleshooting
 ```
