@@ -192,12 +192,43 @@ Choose the environment that best fits your specific needs to optimize your exper
 
 Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
+**Pull our latest Docker image with everything you need**
+```bash
+$ docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
+```
+
+Run the container
+```bash
+$ xhost +local:root # Allow the container to access the display
+
+$ cd PATH/TO/INTERNNAV/
+
+$ docker run --name internnav -it --rm --gpus all --network host \
+  -e "ACCEPT_EULA=Y" \
+  -e "PRIVACY_CONSENT=Y" \
+  -e "DISPLAY=${DISPLAY}" \
+  --entrypoint /bin/bash \
+  -w /root/InternNav \
+  -v /tmp/.X11-unix/:/tmp/.X11-unix \
+  -v ${PWD}:/root/InternNav \
+  -v ${HOME}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
+  -v ${HOME}/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
+  -v ${HOME}/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
+  -v ${HOME}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
+  -v ${HOME}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
+  -v ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
+  -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
+  -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
+  -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
+  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.0
+```
+
 <!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
 ```bash
 docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 docker run -it --name internutopia-container registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 ``` -->
-#### Conda installation
+#### Conda installation from Scretch
 ```bash
 conda create -n <env> python=3.10 libxcb=1.14
 
@@ -253,19 +284,42 @@ pip install -r requirements/habitat_requirements.txt
 ### Data/Checkpoints Preparation
 To get started, we need to prepare the data and checkpoints.
 1. **InternVLA-N1 pretrained Checkpoints**
-Please download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
+- Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
-Please download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
-3. **InternData-N1 VLN-CE Episodes**
-Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) for `vln-ce`. Extract them into the `data/vln_ce/` directory.
+- Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
+3. **InternData-N1 Dataset Episodes**
+- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). Extract them into the `data/vln_ce/` and `data/vln_pe/` directory.
 4. **Scene-N1**
-Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
+- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
+5. **Embodiments**
+- Download the [Embodiments](https://huggingface.co/datasets/InternRobotics/Embodiments) for the `Embodiments/`
+
+6. **Baseline models**
+```bash
+# ddppo-models
+$ mkdir -p checkpoints/ddppo-models
+$ wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo/ddppo-models/gibson-4plus-mp3d-train-val-test-resnet50.pth
+# longclip-B
+$ huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
+# download r2r finetuned baseline checkpoints
+$ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
+```
 
 The final folder structure should look like this:
 
 ```bash
 InternNav/
 ├── data/
+│   ├── scene_data/
+│   │   ├── mp3d_ce/
+│   │   │   └── mp3d/
+│   │   │       ├── 17DRP5sb8fy/
+│   │   │       ├── 1LXtFkjw3qL/
+│   │   │       └── ...
+│   │   └── mp3d_pe/
+│   │       ├──17DRP5sb8fy/
+│   │       ├── 1LXtFkjw3qL/
+│   │       └── ...
 │   ├── vln_ce/
 │   │   ├── raw_data/
 │   │   │   ├── r2r
@@ -275,26 +329,36 @@ InternNav/
 │   │   │   │   └── val_unseen
 │   │   │   │       └── val_unseen.json.gz
 │   │   └── traj_data/
-│   ├── scene_data/
-│   │   ├── mp3d_ce/
-│   │   │   ├── mp3d/
-│   │   │   │   ├── 17DRP5sb8fy/
-│   │   │   │   ├── 1LXtFkjw3qL/
-│   │   │   │   └── ...
-
-├── src/
-│   ├── ...
-
+│   └── vln_pe/
+│       ├── raw_data/    # JSON files defining tasks, navigation goals, and dataset splits
+│       │   └── r2r/
+│       │       ├── train/
+│       │       ├── val_seen/
+│       │       │   └── val_seen.json.gz
+│       │       └── val_unseen/
+│       └── traj_data/   # training sample data for two types of scenes
+│           ├── interiornav/
+│           │   └── kujiale_xxxx.tar.gz
+│           └── r2r/
+│               └── trajectory_0/
+│                   ├── data/
+│                   ├── meta/
+│                   └── videos/
 ├── checkpoints/
 │   ├── InternVLA-N1/
 │   │   ├── model-00001-of-00004.safetensors
 │   │   ├── config.json
-│   │   ├── ...
+│   │   └── ...
 │   ├── InternVLA-N1-S2
 │   │   ├── model-00001-of-00004.safetensors
 │   │   ├── config.json
-│   │   ├── ...
-│   │   depth_anything_v2_vits.pth
+│   │   └── ...
+│   depth_anything_v2_vits.pth
+│   ├── r2r
+│   │   ├── fine_tuned
+│   │   └── zero_shot
+├── internnav/
+│   └── ...
 ```
 ### Gradio demo
 
@@ -373,4 +437,3 @@ data/
 └── vln_n1/
     └── traj_data/
 ```
-

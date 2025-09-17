@@ -30,6 +30,15 @@ INTERNUTOPIA_ASSETS_PATH=/path/to/InternUTopiaAssets MESA_GL_VERSION_OVERRIDE=4.
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
 
+Also, the Baselines can directly run:
+```bash
+# seq2seq model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
+# cma model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
+# rdp model
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
+```
 
 #### Evaluation on habitat
 Evaluate on Single-GPU:
@@ -217,11 +226,11 @@ python -m internnav.agent.utils.server --config scripts/eval/configs/h1_xxx_cfg.
 Start Evaluation:
 ```bash
 # seq2seq model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py 
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
 # cma model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py 
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
 # rdp model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py 
+./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
 ```
 
-The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file. 
+The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file.

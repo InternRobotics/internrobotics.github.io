@@ -7,6 +7,7 @@ The main architecture of the evaluation code adopts a client-server model. In th
 ## Supported baselines
 - InternVLA-N1
 - CMA (Cross-Modal Attention)
+- RDP (Recurrent Diffusion Policy)
 - Navid (RSS2023)
 - Seq2Seq Policy
 
@@ -15,14 +16,15 @@ The main architecture of the evaluation code adopts a client-server model. In th
 - Matterport3D
 
 ## Evaluation Metrics
-
 The project provides comprehensive evaluation metrics:
 
-- **Success Rate (SR)**: Proportion of successful goal arrivals
-- **Success weighted by Path Length (SPL)**: Success rate weighted by path length
-- **Navigation Error (NE)**: Distance error to target point
-- **Oracle Success Rate (OSR)**: Success rate on optimal paths
-- **Trajectory Length**: Actual trajectory length
+- **Success Rate (SR)**: Proportion of episodes where the agent reaches the goal location within 3m
+- **SPL**: Success weighted by Path Length
+- **Trajectory Length (TL)**: Total length of the trajectory (m)
+- **Navigation Error (NE)**: Euclidean distance between the agent's final position and the goal (m)
+- **OS Oracle Success Rate (OSR)**: Whether any point along the predicted trajectory reaches the goal within 3m
+- **Fall Rate (FR)**: Frequency of the agent falling during navigation
+- **Stuck Rate (StR)**: Frequency of the agent becoming stuck during navigation
 
 
 # Quick Start for Evaluation
@@ -47,15 +49,15 @@ eval_cfg = EvalCfg(
     env=EnvCfg(
         env_type='vln_multi',
         env_settings={
-            'use_fabric': False,
-            'headless': True,
+            'use_fabric': True,     # improve simulation efficiency
+            'headless': True,       # display option: set to False will open isaac-sim interactive window
         },
     ),
     task=TaskCfg(
         task_name='test',
         task_settings={
-            'env_num': 1,
-            'use_distributed': False,
+            'env_num': 1,           # number of env in one isaac sim
+            'use_distributed': False,       # Ray distributed framework
             'proc_num': 1,
         },
         scene=SceneCfg(
@@ -68,11 +70,16 @@ eval_cfg = EvalCfg(
         camera_resolution=[640, 480] # (W,H)
     ),
     dataset=EvalDatasetCfg(
+        dataset_type="mp3d",
         dataset_settings={
             'base_data_dir': '/path/to/R2R_VLNCE_v1-3',
             'split_data_types': ['val_unseen'],
             'filter_stairs': True,
         },
+    eval_settings={
+        'save_to_json': False,      # evaluation result saved in separate json file
+        'vis_output': True          # save simulation progress to video under logs/
+    }
     ),
 ```
 ## 3. Launch the server
