@@ -80,14 +80,14 @@ The main training parameters for NavDP are set in `scripts/train/configs/navdp.p
 | `batch_size`      | Batch size per GPU         | 16      |
 | `lr`              | Learning rate              | 1e-4    |
 | `num_workers`     | DataLoader workers         | 8       |
-| `dataset_navdp`   | Dataset json path          | /path/to/multiview_dataset.json |
+| `dataset_navdp`   | Dataset json path          | data/datasets/navdp_dataset.json |
 | `image_size`      | Input image size           | 224     |
 | `memory_size`     | Number of history frames   | 8       |
 | `predict_size`    | Prediction steps           | 24      |
 | `temporal_depth`  | Transformer layers         | 16      |
 | `token_dim`       | Feature dimension          | 384     |
 | `dropout`         | Dropout probability        | 0.1     |
-| `finetune`        | Whether to finetune backbone | True |
+| `finetune`        | Whether to finetune backbone | False |
 
 For more parameters, see the comments in the configuration file.
 
