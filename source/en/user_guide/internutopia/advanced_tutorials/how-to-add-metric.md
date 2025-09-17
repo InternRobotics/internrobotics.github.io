@@ -7,10 +7,10 @@ Therefore, after customizing the task, you usually need to customize the metric 
 ## 1. Defining a New Metric
 Before adding a new metric, we need to clarify the following issues:
 
-- Metric Name: What will the metric be called?
-- Metric Objective: What specific Objective will the metric achieve?
-- Metric Update Method: Record the status of the metric while task is running
-- Metrics Calculation: Summarize all records at the end of the task
+- Name: What will the metric be called?
+- Objective: What specific Objective will the metric achieve?
+- Update Method: Record the status of the metric while task is running
+- Calculation: Summarize all records at the end of the task
 
 
 Here is how we define TraveledDistanceMetric based on the above issues:

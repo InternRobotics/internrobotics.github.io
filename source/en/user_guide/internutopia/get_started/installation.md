@@ -24,7 +24,7 @@ See more: [Differences Between Workstation And Docker](https://docs.omniverse.nv
 Windows support is in our roadmap. Contributions are welcome!
 
 
-### Install from source (Linux)
+### Install from source (Linux & conda)
 
 Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
@@ -42,6 +42,28 @@ Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](
    $ ./setup_conda.sh
 
    $ cd .. && conda activate internutopia  # or your conda env name
+   ```
+
+### Install from source (Linux & uv)
+
+Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed.
+
+1. Clone the InternUtopia repository with [git](https://git-scm.com).
+   ```bash
+   $ git clone git@github.com:InternRobotics/InternUtopia.git
+   ```
+
+2. Navigate to InternUtopia root path and configure the conda environment.
+
+   ```bash
+   $ cd PATH/TO/INTERNUTOPIA/ROOT
+
+   # Configure env with prompt. Need to execute every time when opening a new terminal.
+   $ ./setup_uv.sh
+
+   # run with uv
+   $ source .venv/bin/activate
+   $ python internutopia/demo/h1_locomotion.py
    ```
 
 ### Install from PyPI (Linux)
