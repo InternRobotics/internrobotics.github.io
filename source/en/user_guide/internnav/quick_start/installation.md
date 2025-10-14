@@ -13,10 +13,7 @@
 
 # Installation Guide
 
-😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly.
-```
-Detailed technical report will be released in about two weeks.
-```
+😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly. Technical report of InternVLA-N1 is available at [page](https://internrobotics.github.io/internvla-n1.github.io/).
 
 ## Prerequisites
 
@@ -256,7 +253,7 @@ If you need to train or evaluate models on [Habitat](#optional-habitat-environme
 
 #### Prerequisite
 - Python 3.9
-- Pytorch 2.1.2
+- Pytorch 2.6.0
 - CUDA 12.4
 - GPU: NVIDIA A100 or higher (optional for VLA training)
 
@@ -353,7 +350,7 @@ InternNav/
 │   │   ├── model-00001-of-00004.safetensors
 │   │   ├── config.json
 │   │   └── ...
-│   depth_anything_v2_vits.pth
+│   ├── depth_anything_v2_vits.pth
 │   ├── r2r
 │   │   ├── fine_tuned
 │   │   └── zero_shot
@@ -365,7 +362,7 @@ InternNav/
 Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_ray_backend.py' with the path of InternVLA-N1 checkpoint.
 ```bash
 conda activate <habitat-env>
-srun -p {partition_name} --cpus-per-task 16 --gres gpu:1 python3 scripts/eval/vln_ray_backend.py
+python3 scripts/eval/vln_gradio_backend.py
 ```
 Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL in the gradio client (navigation_ui.py) to the server's IP address. Start the gradio.
 ```bash
@@ -374,7 +371,7 @@ python scripts/eval/navigation_ui.py
 Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser and enter the Gradio address (such as http://0.0.0.0:5700). We can see the interface as shown below.
 ![img.png](../../../_static/image/gradio_interface.jpg)
 
-Click the 'Start Navigation Simulation' button to send a VLN request to the backend. The backend will submit a task to ray server and simulate the VLN task with InternVLA-N1 models. Wait about 1 minutes, the VLN task will be finished and return a result video. We can see the result video in the gradio like this.
+Click the 'Start Navigation Simulation' button to send a VLN request to the backend. The backend will submit a task to ray server and simulate the VLN task with InternVLA-N1 models. Wait about 2 minutes, the VLN task will be finished and return a result video. We can see the result video in the gradio like this.
 ![img.png](../../../_static/image/gradio_result.jpg)
 
 
