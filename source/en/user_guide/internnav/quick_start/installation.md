@@ -13,7 +13,7 @@
 
 # Installation Guide
 
-😄 Don’t worry — both [Quick Installation](#quick-installation) and [Dataset Preparation](#dataset-preparation) are beginner-friendly. Technical report of InternVLA-N1 is available at [page](https://internrobotics.github.io/internvla-n1.github.io/).
+This page provides detailed guidance on simulation environment setup and quantitative model evaluation. If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page. Howerver, for inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simpler [guideline](https://github.com/InternRobotics/InternNav/blob/main/scripts/eval/inference_only_demo.ipynb) to setup the environment and run inference with the model.
 
 ## Prerequisites
 
@@ -359,7 +359,7 @@ InternNav/
 ```
 ### Gradio demo
 
-Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_ray_backend.py' with the path of InternVLA-N1 checkpoint.
+Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_gradio_backend.py' with the path of InternVLA-N1 checkpoint.
 ```bash
 conda activate <habitat-env>
 python3 scripts/eval/vln_gradio_backend.py
