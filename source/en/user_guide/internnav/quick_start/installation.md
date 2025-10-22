@@ -362,11 +362,11 @@ InternNav/
 Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_gradio_backend.py' with the path of InternVLA-N1 checkpoint.
 ```bash
 conda activate <habitat-env>
-python3 scripts/eval/vln_gradio_backend.py
+python3 scripts/demo/vln_gradio_backend.py
 ```
 Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL in the gradio client (navigation_ui.py) to the server's IP address. Start the gradio.
 ```bash
-python scripts/eval/navigation_ui.py
+python scripts/demo/navigation_ui.py
 ```
 Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser and enter the Gradio address (such as http://0.0.0.0:5700). We can see the interface as shown below.
 ![img.png](../../../_static/image/gradio_interface.jpg)
