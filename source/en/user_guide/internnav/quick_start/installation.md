@@ -165,9 +165,35 @@ We provide a flexible installation tool for users who want to use InternNav for 
 
 
 ## Quick Installation
+### Install InternNav
 Clone the InternNav repository:
 ```bash
 git clone https://github.com/InternRobotics/InternNav.git --recursive
+```
+After pull the latest code, install the package:
+```bash
+pip install -e .
+```
+By default, only the core modules are installed. It allows you to inherit the base class and implement your own models or benchmarks. In order to use different functionalities of InternNav tool, several install flags are provided:
+- `[isaac]`: install all requires for [Isaac environment](#isaac-sim-environment), follow the instructions below to install the evaluation environment
+- `[habitat]`: install all requires for [Habitat environment](#habitat-environment), follow the instructions below to install the evaluation environment
+- `demo`: install all requires to run the gradio demo for visualization usage
+- `model`: install all requires to train and evaluate all provided models included cma, rdp, navdp, internvla_n1
+- `internvla_n1`: quick installation of internvla_n1 to inference
+
+usage example:
+```bash
+pip install -e .[model]
+pip install -e .[isaac,demo]
+pip install -e .[internvla_n1,habitat]
+```
+### Install Models
+For quick usage and deploy models, InternNav provide client-server design for easy use of model prediction. More details can be find at [inference_only_demo](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb) and [real_world_agent_demo](). Install the requires:
+```bash
+# create a new conda env, the model server can be isolated from the evaluation env
+conda create -n <env> python=3.10 libxcb=1.14
+pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
+pip install -e .[model]
 ```
 
 Our toolchain provides two Python environment solutions to accommodate different usage scenarios with the InternNav-N1 series model:
@@ -177,7 +203,7 @@ Our toolchain provides two Python environment solutions to accommodate different
 
 Choose the environment that best fits your specific needs to optimize your experience with the InternNav-N1 model. Note that both environments support the training of the system1 model NavDP.
 
-### Isaac Sim Environment
+### Install with Isaac Sim Environment
 #### Prerequisite
 - Ubuntu 20.04, 22.04
 - Python 3.10.16 (3.10.* should be ok)
@@ -189,7 +215,7 @@ Choose the environment that best fits your specific needs to optimize your exper
 
 Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
-**Pull our latest Docker image with everything you need**
+**Pull our latest Docker image with everything you need** (~17GB)
 ```bash
 $ docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
 ```
@@ -217,7 +243,7 @@ $ docker run --name internnav -it --rm --gpus all --network host \
   -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
   -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
   -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
-  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.0
+  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
 ```
 
 <!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
@@ -243,13 +269,14 @@ For InternUtopia installation, you can find more detailed [docs](https://internr
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
 
 # Install other deps
-pip install -r requirements/isaac_requirements.txt
+cd Path/to/InternNav/
+pip install -e .[isaac,model]
 ```
 
 
 If you need to train or evaluate models on [Habitat](#optional-habitat-environment) without physics simulation, we recommend the following setup and easier environment installation.
 
-### Habitat Environment
+### Install with Habitat Environment
 
 #### Prerequisite
 - Python 3.9
@@ -272,7 +299,8 @@ pip install -e habitat-baselines # install habitat_baselines
 Install pytorch and other requirements:
 ```bash
 pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
-pip install -r requirements/habitat_requirements.txt
+cd Path/to/InternNav/
+pip install -e .[habitat,internvla_n1]
 ```
 
 
