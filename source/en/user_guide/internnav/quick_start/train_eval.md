@@ -1,7 +1,78 @@
 # Training and Evaluation
 
-
 This document presents how to train and evaluate models for different systems with InternNav.
+
+## Verification
+
+### Data/Checkpoints Preparation
+To get started, we need to prepare the data and checkpoints.
+1. **InternVLA-N1 pretrained Checkpoints**
+- Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
+2. **DepthAnything v2 Checkpoints**
+- Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
+3. **InternData-N1 Dataset Episodes**
+- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). Extract them into the `data/vln_ce/` and `data/vln_pe/` directory.
+4. **Scene-N1**
+- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
+5. **Embodiments**
+- Download the [Embodiments](https://huggingface.co/datasets/InternRobotics/Embodiments) for the `Embodiments/`
+
+The final folder structure should look like this:
+
+```bash
+InternNav/
+├── data/
+|   ├── Embodiments/
+│   ├── scene_data/
+│   │   ├── mp3d_ce/
+│   │   │   └── mp3d/
+│   │   │       ├── 17DRP5sb8fy/
+│   │   │       ├── 1LXtFkjw3qL/
+│   │   │       └── ...
+│   │   └── mp3d_pe/
+│   │       ├──17DRP5sb8fy/
+│   │       ├── 1LXtFkjw3qL/
+│   │       └── ...
+│   ├── vln_ce/
+│   │   ├── raw_data/
+│   │   │   ├── r2r
+│   │   │   │   ├── train
+│   │   │   │   ├── val_seen
+│   │   │   │   │   └── val_seen.json.gz
+│   │   │   │   └── val_unseen
+│   │   │   │       └── val_unseen.json.gz
+│   │   └── traj_data/
+│   └── vln_pe/
+│       ├── raw_data/    # JSON files defining tasks, navigation goals, and dataset splits
+│       │   └── r2r/
+│       │       ├── train/
+│       │       ├── val_seen/
+│       │       │   └── val_seen.json.gz
+│       │       └── val_unseen/
+│       └── traj_data/   # training sample data for two types of scenes
+│           ├── interiornav/
+│           │   └── kujiale_xxxx.tar.gz
+│           └── r2r/
+│               └── trajectory_0/
+│                   ├── data/
+│                   ├── meta/
+│                   └── videos/
+├── checkpoints/
+│   ├── InternVLA-N1/
+│   │   ├── model-00001-of-00004.safetensors
+│   │   ├── config.json
+│   │   └── ...
+│   ├── InternVLA-N1-S2
+│   │   ├── model-00001-of-00004.safetensors
+│   │   ├── config.json
+│   │   └── ...
+│   ├── depth_anything_v2_vits.pth
+│   ├── r2r
+│   │   ├── fine_tuned
+│   │   └── zero_shot
+├── internnav/
+│   └── ...
+```
 
 ## Whole-system
 
@@ -26,16 +97,6 @@ MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/c
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
-
-Also, the Baselines can directly run:
-```bash
-# seq2seq model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
-# cma model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
-# rdp model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
-```
 
 #### Evaluation on habitat
 Evaluate on Single-GPU:
@@ -107,62 +168,6 @@ python eval_pointgoal_wheeled.py --port {PORT} --scene_dir {SCENE_DIR}
 
 
 ## System2
-
-### Data Preparation
-
-Please download the following VLN-CE datasets and insert them into the `data` folder following the same structure.
-
-1. **VLN-CE Episodes**
-
-   Download the VLN-CE episodes:
-   - [r2r](https://drive.google.com/file/d/18DCrNcpxESnps1IbXVjXSbGLDzcSOqzD/view) (rename R2R_VLNCE_v1/ -> r2r/)
-   - [rxr](https://drive.google.com/file/d/145xzLjxBaNTbVgBfQ8e9EsBAV8W-SM0t/view) (rename RxR_VLNCE_v0/ -> rxr/)
-   - [envdrop](https://drive.google.com/file/d/1fo8F4NKgZDH-bPSdVU3cONAkt5EW-tyr/view) (rename R2R_VLNCE_v1-3_preprocessed/envdrop/ -> envdrop/)
-
-   Extract them into the `data/datasets/` directory.
-
-2. **InternData-N1**
-
-  We provide pre-collected observation-action trajectory data for training. These trajectories were collected using the **training episodes** from **R2R** and **RxR** under the Matterport3D environment. Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) and [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1).
-The final folder structure should look like this:
-```bash
-data/
-├── scene_data/
-│   ├── mp3d_pe/
-│   │   ├── 17DRP5sb8fy/
-│   │   ├── 1LXtFkjw3qL/
-│   │   └── ...
-│   ├── mp3d_ce/
-│   │   ├── mp3d/
-│   │   │   ├── 17DRP5sb8fy/
-│   │   │   ├── 1LXtFkjw3qL/
-│   │   │   └── ...
-│   └── mp3d_n1/
-├── vln_pe/
-│   ├── raw_data/
-│   │   ├── train/
-│   │   ├── val_seen/
-│   │   │   └── val_seen.json.gz
-│   │   └── val_unseen/
-│   │       └── val_unseen.json.gz
-├── └── traj_data/
-│       └── mp3d/
-│           └── trajectory_0/
-│               ├── data/
-│               ├── meta/
-│               └── videos/
-├── vln_ce/
-│   ├── raw_data/
-│   │   ├── r2r
-│   │   │   ├── train
-│   │   │   ├── val_seen
-│   │   │   │   └── val_seen.json.gz
-│   │   │   └── val_unseen
-│   │   │       └── val_unseen.json.gz
-│   └── traj_data/
-└── vln_n1/
-    └── traj_data/
-```
 
 ### Training
 

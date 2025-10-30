@@ -13,6 +13,7 @@ myst:
 :maxdepth: 2
 
 installation
+simulation
+interndata
 train_eval
-create_model
 ```

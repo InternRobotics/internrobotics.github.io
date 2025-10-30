@@ -13,7 +13,15 @@
 
 # Installation Guide
 
-This page provides detailed guidance on simulation environment setup and quantitative model evaluation. If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page. However, for inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simpler [guideline](https://github.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb) to setup the environment and run inference with the model.
+This page provides detailed guidance on quantitative model evaluation. For inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simple guideline to setup the environment and run inference with the model.
+
+If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page, and finish the following simulation environment setup. 
+
+For more advanced examples, refer to these demos:
+
+-  [**Internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
+-  [**Real-World Unitree Go2 Deploy Script**](https://github.com/kew6688/InternNav/tree/main/scripts/realworld)
+
 
 ## Prerequisites
 
@@ -170,7 +178,7 @@ Clone the **InternNav** repository:
 ```bash
 git clone https://github.com/InternRobotics/InternNav.git --recursive
 ```
-After pull the latest code, install InternNav v0.1.2:
+After pull the latest code, install InternNav:
 ```bash
 pip install -e .
 ```
@@ -181,25 +189,12 @@ To enable additional functionalities, several install flags are available:
 
 | Flag             | Description                                                                                                                                 |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[isaac]`        | Install dependencies for the [Isaac environment](#isaac-sim-environment). Follow the setup instructions below for environment installation. |
-| `[habitat]`      | Install dependencies for the [Habitat environment](#habitat-environment). Follow the setup instructions below for environment installation. |
-| `[demo]`         | Install dependencies to run the **Gradio demo** for visualization and quick testing.                                                        |
 | `[model]`        | Install all dependencies for training and evaluating models (CMA, RDP, NavDP, InternVLA-N1).                                                |
-| `[internvla_n1]` | Quick installation of **InternVLA-N1** for Habitat.                                                                                         |
+| `[isaac]`        | Install dependencies for the [Isaac environment](./installation.md).                                                                        |
+| `[habitat]`      | Install dependencies for the [Habitat environment](./installation.md).                                                                      |
 
 
-Usage examples:
-```bash
-pip install -e .[model]
-pip install -e .[isaac,demo]
-pip install -e .[internvla_n1,habitat]
-```
 ### Install Models
-InternNav adopts a **client–server design** to simplify model deployment and prediction.
-For quick usage, refer to these demos:
-
-- 📘 [**internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
-- 🚀 [**Real-World Deploy Code**](https://github.com/InternRobotics/InternNav/tree/main/scripts/realworld) *(demo coming soon)*
 
 Create a dedicated conda environment for model deployment:
 ```bash
@@ -223,206 +218,101 @@ Our toolchain provides two Python environment solutions to accommodate different
 
 Choose the environment that best fits your specific needs to optimize your experience with the InternNav-N1 model. Note that both environments support the training of the system1 model NavDP.
 
-### Install with Isaac Sim Environment
-
-#### Install from Docker Image
-To help you get started quickly, we've prepared a **Docker image** pre-configured with Isaac Sim 4.5, InternUtopia and models. A detailed guideline can be found at [challenge](https://github.com/InternRobotics/InternNav/tree/main/scripts/iros_challenge#-environment-setup) page.
-
-You can pull the image (~17GB) and run evaluations in the container using the following command:
-```bash
-docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
-```
-
-Run the container by:
-```bash
-xhost +local:root # Allow the container to access the display
-
-cd PATH/TO/INTERNNAV/  # where the latest code pulled
-
-docker run --name internnav -it --rm --gpus all --network host \
-  -e "ACCEPT_EULA=Y" \
-  -e "PRIVACY_CONSENT=Y" \
-  -e "DISPLAY=${DISPLAY}" \
-  --entrypoint /bin/bash \
-  -w /root/InternNav \
-  -v /tmp/.X11-unix/:/tmp/.X11-unix \
-  -v ${PWD}:/root/InternNav \
-  -v ${HOME}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
-  -v ${HOME}/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
-  -v ${HOME}/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
-  -v ${HOME}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
-  -v ${HOME}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
-  -v ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
-  -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
-  -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
-  -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
-  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
-```
-After the container started, you can quickly start the env and install the InternNav:
-```bash
-conda activate internutopia
-pip install -e .[isaac,model]
-```
-<!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
-```bash
-docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
-docker run -it --name internutopia-container registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
-``` -->
-#### Conda installation from Scretch
-**Prerequisite**
-- Ubuntu 20.04, 22.04
-- Python 3.10.16 (3.10.* should be ok)
-- NVIDIA Omniverse Isaac Sim 4.5.0
-- NVIDIA GPU (RTX 2070 or higher)
-- NVIDIA GPU Driver (recommended version 535.216.01+)
-- PyTorch 2.5.1, 2.6.0 (recommended)
-- CUDA 11.8, 12.4 (recommended)
-
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-
-
-```bash
-conda create -n <env> python=3.10 libxcb=1.14
-
-# Install InternUtopia through pip.(2.1.1 and 2.2.0 recommended)
-conda activate <env>
-pip install internutopia
-
-# Configure the conda environment.
-python -m internutopia.setup_conda_pypi
-conda deactivate && conda activate <env>
-```
-For InternUtopia installation, you can find more detailed [docs](https://internrobotics.github.io/user_guide/internutopia/get_started/installation.html) in [InternUtopia](https://github.com/InternRobotics/InternUtopia?tab=readme-ov-file).
-```bash
-# Install PyTorch based on your CUDA version
-pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
-
-# Install other deps
-cd Path/to/InternNav/
-pip install -e .[isaac]
-```
-
-
-If you need to train or evaluate models on [Habitat](#optional-habitat-environment) without physics simulation, we recommend the following setup and easier environment installation.
-
-### Install with Habitat Environment
-
-#### Prerequisite
-- Python 3.9
-- Pytorch 2.6.0
-- CUDA 12.4
-- GPU: NVIDIA A100 or higher (optional for VLA training)
-
-```bash
-conda create -n <env> python=3.9
-conda activate <env>
-```
-Install habitat sim and habitat lab:
-```bash
-conda install habitat-sim==0.2.4 withbullet headless -c conda-forge -c aihabitat
-git clone --branch v0.2.4 https://github.com/facebookresearch/habitat-lab.git
-cd habitat-lab
-pip install -e habitat-lab  # install habitat_lab
-pip install -e habitat-baselines # install habitat_baselines
-```
-Install pytorch and other requirements:
-```bash
-pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
-cd Path/to/InternNav/
-pip install -e .[habitat,internvla_n1]
-```
-
-
-## Verification
-
-### Data/Checkpoints Preparation
-To get started, we need to prepare the data and checkpoints.
+### Download Checkpoints
 1. **InternVLA-N1 pretrained Checkpoints**
 - Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
 - Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
-3. **InternData-N1 Dataset Episodes**
-- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). Extract them into the `data/vln_ce/` and `data/vln_pe/` directory.
-4. **Scene-N1**
-- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
-5. **Embodiments**
-- Download the [Embodiments](https://huggingface.co/datasets/InternRobotics/Embodiments) for the `Embodiments/`
 
-6. **Baseline models**
+## Verification
+
+InternNav adopts a **client–server design** to simplify model deployment and prediction. 
+
+To verify the installation of **InternNav**, start the model server first.
 ```bash
-# ddppo-models
-mkdir -p checkpoints/ddppo-models
-wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo/ddppo-models/gibson-4plus-mp3d-train-val-test-resnet50.pth
-# longclip-B
-huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
-# download r2r finetuned baseline checkpoints
-git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
+python scripts/eval/start_server.py --port 8087
+```
+The output should be:
+```
+Starting Agent Server...
+Registering agents...
+INFO:     Started server process [18877]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://localhost:8087 (Press CTRL+C to quit)
 ```
 
-The final folder structure should look like this:
+To verify the installation of **internvla-n1**. Initialize the internvla-n1 agent by
+```bash
+from internnav.configs.agent import AgentCfg
+from internnav.utils import AgentClient
 
-```bash
-InternNav/
-├── data/
-│   ├── scene_data/
-│   │   ├── mp3d_ce/
-│   │   │   └── mp3d/
-│   │   │       ├── 17DRP5sb8fy/
-│   │   │       ├── 1LXtFkjw3qL/
-│   │   │       └── ...
-│   │   └── mp3d_pe/
-│   │       ├──17DRP5sb8fy/
-│   │       ├── 1LXtFkjw3qL/
-│   │       └── ...
-│   ├── vln_ce/
-│   │   ├── raw_data/
-│   │   │   ├── r2r
-│   │   │   │   ├── train
-│   │   │   │   ├── val_seen
-│   │   │   │   │   └── val_seen.json.gz
-│   │   │   │   └── val_unseen
-│   │   │   │       └── val_unseen.json.gz
-│   │   └── traj_data/
-│   └── vln_pe/
-│       ├── raw_data/    # JSON files defining tasks, navigation goals, and dataset splits
-│       │   └── r2r/
-│       │       ├── train/
-│       │       ├── val_seen/
-│       │       │   └── val_seen.json.gz
-│       │       └── val_unseen/
-│       └── traj_data/   # training sample data for two types of scenes
-│           ├── interiornav/
-│           │   └── kujiale_xxxx.tar.gz
-│           └── r2r/
-│               └── trajectory_0/
-│                   ├── data/
-│                   ├── meta/
-│                   └── videos/
-├── checkpoints/
-│   ├── InternVLA-N1/
-│   │   ├── model-00001-of-00004.safetensors
-│   │   ├── config.json
-│   │   └── ...
-│   ├── InternVLA-N1-S2
-│   │   ├── model-00001-of-00004.safetensors
-│   │   ├── config.json
-│   │   └── ...
-│   ├── depth_anything_v2_vits.pth
-│   ├── r2r
-│   │   ├── fine_tuned
-│   │   └── zero_shot
-├── internnav/
-│   └── ...
+agent=AgentCfg(
+      server_host='localhost',
+      server_port=8087,
+      model_name='internvla_n1',
+      ckpt_path='',
+      model_settings={
+            'policy_name': "InternVLAN1_Policy",
+            'state_encoder': None,
+            'env_num': 1,
+            'sim_num': 1,
+            'model_path': "checkpoints/InternVLA-N1",
+            'camera_intrinsic': [[585.0, 0.0, 320.0], [0.0, 585.0, 240.0], [0.0, 0.0, 1.0]],
+            'width': 640,
+            'height': 480,
+            'hfov': 79,
+            'resize_w': 384,
+            'resize_h': 384,
+            'max_new_tokens': 1024,
+            'num_frames': 32,
+            'num_history': 8,
+            'num_future_steps': 4,
+            'device': 'cuda:0',
+            'predict_step_nums': 32,
+            'continuous_traj': True,
+      }
+)
+agent = AgentClient(cfg.agent)
 ```
-### Gradio demo
+The output should be something like:
+```
+Loading navdp model: NavDP_Policy_DPT_CriticSum_DAT
+Pretrained: None
+No pretrained weights provided, initializing randomly.
+Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.06it/s]
+INFO:     ::1:38332 - "POST /agent/init HTTP/1.1" 201 Created
+```
 
-Currently the gradio demo is only available in **habitat** environment. Replace the 'model_path' variable in 'vln_gradio_backend.py' with the path of InternVLA-N1 checkpoint.
-```bash
-conda activate <habitat-env>
-python3 scripts/demo/vln_gradio_backend.py
+Load a capture frame from RealSense DS455 camera:
 ```
-Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL in the gradio client (navigation_ui.py) to the server's IP address. Start the gradio.
-```bash
-python scripts/demo/navigation_ui.py
+from scripts.iros_challenge.onsite_competition.sdk.save_obs import load_obs_from_meta
+rs_meta_path = '/root/InternNav/scripts/iros_challenge/onsite_competition/captures/rs_meta.json'
+
+fake_obs_640 = load_obs_from_meta(rs_meta_path)
+fake_obs_640['instruction'] = 'go to the red car'
+print(fake_obs_640['rgb'].shape, fake_obs_640['depth'].shape)
 ```
-Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser
+The output should be:
+```
+(480, 640, 3) (480, 640)
+```
+
+Test model inference
+```
+action = agent.step([obs])[0]['action'][0]
+print(f"Action taken: {action}")
+```
+
+The output should be:
+```
+============ output 1  ←←←←
+s2 infer finish!!
+get s2 output lock
+=============== [2, 2, 2, 2] =================
+Output discretized traj: [2] 0
+INFO:     ::1:46114 - "POST /agent/internvla_n1/step HTTP/1.1" 200 OK
+Action taken: 2
+```
+
+for more details, check out the demo: [**Internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)

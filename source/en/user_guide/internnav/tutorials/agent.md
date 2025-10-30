@@ -97,11 +97,27 @@ from internnav.agent.internvla_n1_agent import InternVLAN1Agent
 
 Refer to existing **evaluation** config files for customization:
 ```
-agent=AgentCfg(
+agent_cfg=AgentCfg(
     server_host='localhost',
     server_port=8023,
     model_name='internvla_n1',
     ckpt_path='',
     model_settings={},
 )
+```
+
+## Typical Usage Example
+```
+from internnav.configs.agent import AgentCfg
+
+cfg = AgentCfg(server_host="127.0.0.1", server_port=8087)
+client = AgentClient(cfg)
+
+# step once
+obs = [{"rgb": ..., "depth": ..., "instruction": "go to kitchen"}]
+action = client.step(obs)
+print("Predicted action:", action)
+
+# reset agent
+client.reset()
 ```
