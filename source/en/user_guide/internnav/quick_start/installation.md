@@ -13,7 +13,7 @@
 
 # Installation Guide
 
-This page provides detailed guidance on simulation environment setup and quantitative model evaluation. If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page. Howerver, for inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simpler [guideline](https://github.com/InternRobotics/InternNav/blob/main/scripts/eval/inference_only_demo.ipynb) to setup the environment and run inference with the model.
+This page provides detailed guidance on simulation environment setup and quantitative model evaluation. If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page. However, for inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simpler [guideline](https://github.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb) to setup the environment and run inference with the model.
 
 ## Prerequisites
 
@@ -166,34 +166,54 @@ We provide a flexible installation tool for users who want to use InternNav for 
 
 ## Quick Installation
 ### Install InternNav
-Clone the InternNav repository:
+Clone the **InternNav** repository:
 ```bash
 git clone https://github.com/InternRobotics/InternNav.git --recursive
 ```
-After pull the latest code, install the package:
+After pull the latest code, install InternNav v0.1.2:
 ```bash
 pip install -e .
 ```
-By default, only the core modules are installed. It allows you to inherit the base class and implement your own models or benchmarks. In order to use different functionalities of InternNav tool, several install flags are provided:
-- `[isaac]`: install all requires for [Isaac environment](#isaac-sim-environment), follow the instructions below to install the evaluation environment
-- `[habitat]`: install all requires for [Habitat environment](#habitat-environment), follow the instructions below to install the evaluation environment
-- `demo`: install all requires to run the gradio demo for visualization usage
-- `model`: install all requires to train and evaluate all provided models included cma, rdp, navdp, internvla_n1
-- `internvla_n1`: quick installation of internvla_n1 to inference
 
-usage example:
+By default, only the core modules are installed — this allows you to inherit base classes and implement your own models or benchmarks.
+
+To enable additional functionalities, several install flags are available:
+
+| Flag             | Description                                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[isaac]`        | Install dependencies for the [Isaac environment](#isaac-sim-environment). Follow the setup instructions below for environment installation. |
+| `[habitat]`      | Install dependencies for the [Habitat environment](#habitat-environment). Follow the setup instructions below for environment installation. |
+| `[demo]`         | Install dependencies to run the **Gradio demo** for visualization and quick testing.                                                        |
+| `[model]`        | Install all dependencies for training and evaluating models (CMA, RDP, NavDP, InternVLA-N1).                                                |
+| `[internvla_n1]` | Quick installation of **InternVLA-N1** for Habitat.                                                                                         |
+
+
+Usage examples:
 ```bash
 pip install -e .[model]
 pip install -e .[isaac,demo]
 pip install -e .[internvla_n1,habitat]
 ```
 ### Install Models
-For quick usage and deploy models, InternNav provide client-server design for easy use of model prediction. More details can be find at [inference_only_demo](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb) and [real_world_agent_demo](). Install the requires:
+InternNav adopts a **client–server design** to simplify model deployment and prediction.
+For quick usage, refer to these demos:
+
+- 📘 [**internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
+- 🚀 [**Real-World Deploy Code**](https://github.com/InternRobotics/InternNav/tree/main/scripts/realworld) *(demo coming soon)*
+
+Create a dedicated conda environment for model deployment:
 ```bash
-# create a new conda env, the model server can be isolated from the evaluation env
-conda create -n <env> python=3.10 libxcb=1.14
-pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
+# create a new isolated environment for model server
+conda create -n <model_env> python=3.10 libxcb=1.14
+conda activate <model_env>
+
+# install PyTorch (CUDA 11.8)
+pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 \
+    --index-url https://download.pytorch.org/whl/cu118
+
+# install InternNav with model dependencies
 pip install -e .[model]
+
 ```
 
 Our toolchain provides two Python environment solutions to accommodate different usage scenarios with the InternNav-N1 series model:
@@ -204,29 +224,22 @@ Our toolchain provides two Python environment solutions to accommodate different
 Choose the environment that best fits your specific needs to optimize your experience with the InternNav-N1 model. Note that both environments support the training of the system1 model NavDP.
 
 ### Install with Isaac Sim Environment
-#### Prerequisite
-- Ubuntu 20.04, 22.04
-- Python 3.10.16 (3.10.* should be ok)
-- NVIDIA Omniverse Isaac Sim 4.5.0
-- NVIDIA GPU (RTX 2070 or higher)
-- NVIDIA GPU Driver (recommended version 535.216.01+)
-- PyTorch 2.5.1, 2.6.0 (recommended)
-- CUDA 11.8, 12.4 (recommended)
 
-Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
+#### Install from Docker Image
+To help you get started quickly, we've prepared a **Docker image** pre-configured with Isaac Sim 4.5, InternUtopia and models. A detailed guideline can be found at [challenge](https://github.com/InternRobotics/InternNav/tree/main/scripts/iros_challenge#-environment-setup) page.
 
-**Pull our latest Docker image with everything you need** (~17GB)
+You can pull the image (~17GB) and run evaluations in the container using the following command:
 ```bash
-$ docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
+docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
 ```
 
-Run the container
+Run the container by:
 ```bash
-$ xhost +local:root # Allow the container to access the display
+xhost +local:root # Allow the container to access the display
 
-$ cd PATH/TO/INTERNNAV/
+cd PATH/TO/INTERNNAV/  # where the latest code pulled
 
-$ docker run --name internnav -it --rm --gpus all --network host \
+docker run --name internnav -it --rm --gpus all --network host \
   -e "ACCEPT_EULA=Y" \
   -e "PRIVACY_CONSENT=Y" \
   -e "DISPLAY=${DISPLAY}" \
@@ -245,13 +258,29 @@ $ docker run --name internnav -it --rm --gpus all --network host \
   -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
   crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
 ```
-
+After the container started, you can quickly start the env and install the InternNav:
+```bash
+conda activate internutopia
+pip install -e .[isaac,model]
+```
 <!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
 ```bash
 docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 docker run -it --name internutopia-container registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 ``` -->
 #### Conda installation from Scretch
+**Prerequisite**
+- Ubuntu 20.04, 22.04
+- Python 3.10.16 (3.10.* should be ok)
+- NVIDIA Omniverse Isaac Sim 4.5.0
+- NVIDIA GPU (RTX 2070 or higher)
+- NVIDIA GPU Driver (recommended version 535.216.01+)
+- PyTorch 2.5.1, 2.6.0 (recommended)
+- CUDA 11.8, 12.4 (recommended)
+
+Before proceeding with the installation, ensure that you have [Isaac Sim 4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_workstation.html) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
+
+
 ```bash
 conda create -n <env> python=3.10 libxcb=1.14
 
@@ -270,7 +299,7 @@ pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https
 
 # Install other deps
 cd Path/to/InternNav/
-pip install -e .[isaac,model]
+pip install -e .[isaac]
 ```
 
 
@@ -322,12 +351,12 @@ To get started, we need to prepare the data and checkpoints.
 6. **Baseline models**
 ```bash
 # ddppo-models
-$ mkdir -p checkpoints/ddppo-models
-$ wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo/ddppo-models/gibson-4plus-mp3d-train-val-test-resnet50.pth
+mkdir -p checkpoints/ddppo-models
+wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo/ddppo-models/gibson-4plus-mp3d-train-val-test-resnet50.pth
 # longclip-B
-$ huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
+huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
 # download r2r finetuned baseline checkpoints
-$ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
+git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
 ```
 
 The final folder structure should look like this:
@@ -396,69 +425,4 @@ Find the IP address of the node allocated by Slurm. Then change the BACKEND_URL 
 ```bash
 python scripts/demo/navigation_ui.py
 ```
-Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser and enter the Gradio address (such as http://0.0.0.0:5700). We can see the interface as shown below.
-![img.png](../../../_static/image/gradio_interface.jpg)
-
-Click the 'Start Navigation Simulation' button to send a VLN request to the backend. The backend will submit a task to ray server and simulate the VLN task with InternVLA-N1 models. Wait about 2 minutes, the VLN task will be finished and return a result video. We can see the result video in the gradio like this.
-![img.png](../../../_static/image/gradio_result.jpg)
-
-
-🎉 Congratulations! You have successfully installed InternNav.
-
-
-
-## InternData-N1 Dataset Preparation
-```
-Due to network throttling restrictions on HuggingFace, InternData-N1 has not been fully uploaded yet. Please wait patiently for several days.
-```
-We also prepare high-quality data for **training** system1/system2 and **evaluation** on isaac sim environment. To set up the dataset, please follow the steps below:
-
-1. Download Datasets
-- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) for:
-   - `vln_pe/`
-   - `vln_ce/`
-   - `vln_n1/`
-
-- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for the `scene_data/`.
-
-2. Directory Structure
-
-After downloading, organize the datasets into the following structure:
-
-```bash
-data/
-├── scene_data/
-│   ├── mp3d_pe/
-│   │   ├── 17DRP5sb8fy/
-│   │   ├── 1LXtFkjw3qL/
-│   │   └── ...
-│   ├── mp3d_ce/
-│   │   ├── mp3d/
-│   │   │   ├── 17DRP5sb8fy/
-│   │   │   ├── 1LXtFkjw3qL/
-│   │   │   └── ...
-│   └── mp3d_n1/
-├── vln_pe/
-│   ├── raw_data/
-│   │   ├── train/
-│   │   ├── val_seen/
-│   │   │   └── val_seen.json.gz
-│   │   └── val_unseen/
-│   │       └── val_unseen.json.gz
-├── └── traj_data/
-│       └── mp3d/
-│           └── 17DRP5sb8fy/
-│           └── 1LXtFkjw3qL/
-│           └── ...
-├── vln_ce/
-│   ├── raw_data/
-│   │   ├── r2r
-│   │   │   ├── train
-│   │   │   ├── val_seen
-│   │   │   │   └── val_seen.json.gz
-│   │   │   └── val_unseen
-│   │   │       └── val_unseen.json.gz
-│   └── traj_data/
-└── vln_n1/
-    └── traj_data/
-```
+Note that it's better to run the Gradio client on a machine with a graphical user interface (GUI) but ensure there is proper network connectivity between the client and the server. Download the gradio scene assets from [huggingface](https://huggingface.co/datasets/InternRobotics/Scene-N1) and extract them into the `scene_assets` directory of the client. Then open a browser

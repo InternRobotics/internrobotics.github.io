@@ -11,20 +11,17 @@ Before evaluation, we should download the robot assets from [InternUTopiaAssets]
 #### Evaluation on isaac sim
 The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
 
-First start the ray server:
+First, start change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
-ray disable-usage-stats
-ray stop
-ray start --head
+# from one process
+conda activate <model_env>
+python scripts/eval/start_server.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
-Then change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
+Then, start the client to run evaluation:
 ```bash
-python -m internnav.agent.utils.server --config scripts/eval/configs/h1_internvla_n1_cfg.py
-```
-
-Finally, start the client:
-```bash
+# from another process
+conda activate <internutopia>
 MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
@@ -210,17 +207,6 @@ $ wget -P checkpoints/ddppo-models https://dl.fbaipublicfiles.com/habitat/data/b
 $ huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks False --resume-download Beichenzhang/LongCLIP-B --local-dir checkpoints/clip-long
 # download r2r finetuned baseline checkpoints
 $ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
-```
-Start the Ray server:
-```bash
-ray disable-usage-stats
-ray stop
-ray start --head
-```
-
-Start the evaluation server:
-```bash
-python -m internnav.agent.utils.server --config scripts/eval/configs/h1_xxx_cfg.py
 ```
 
 Start Evaluation:
