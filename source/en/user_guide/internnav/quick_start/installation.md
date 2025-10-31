@@ -20,7 +20,7 @@ If you want to **reproduce the results** presented in the [technical report](htt
 
 For more advanced examples, refer to these demos:
 
--  [**InternVLA_N1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
+-  [**InternVLA-N1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
 -  [**Real-World Unitree Go2 Deploy Script**](https://github.com/kew6688/InternNav/tree/main/scripts/realworld)
 
 
@@ -209,7 +209,7 @@ To enable additional functionalities, several install flags are available:
 1. **InternVLA-N1 pretrained Checkpoints**
 - Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
-- Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
+- Download the DepthAnything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
 
 ## Verification
 

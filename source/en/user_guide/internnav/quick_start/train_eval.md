@@ -42,7 +42,7 @@ python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1 --cont
 For multi-gpu inference, currently we only support inference on SLURM.
 
 ```bash
-./scripts/eval/eval_dual_system.sh
+./scripts/eval/bash/eval_dual_system.sh
 ```
 
 
@@ -131,7 +131,7 @@ python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1-S2 --m
 For multi-gpu inference, currently we only support inference on SLURM.
 
 ```bash
-./scripts/eval/eval_system2.sh
+./scripts/eval/bash/eval_system2.sh
 ```
 
 #### Baseline Models
@@ -151,11 +151,11 @@ $ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkp
 Start Evaluation:
 ```bash
 # seq2seq model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
 # cma model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
 # rdp model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file.
