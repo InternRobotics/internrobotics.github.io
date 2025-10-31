@@ -1,0 +1,79 @@
+# How to Build a Benchmark
+
+> This tutorial explains how to build a comprehensive benchmark using InternUtopia.
+
+## 1. Understanding Benchmarks in InternUtopia
+
+A benchmark in InternUtopia is a collection of tasks and corresponding metrics to evaluate an agent's ablity to complete a certain kind of task. Typically, the agent drives a robot in a simulation environment with action for specific controllers, and make decision based on observation provided by the sensors. The metrics are used to evaluate the performance of an agent's behavior.
+
+## 2. Benchmark Components
+
+The key components of a benchmark includes:
+
+- Task: what the task for the agent to execute
+- Metric: how to evaluate the performance of an agent's behavior
+- Agent: how to generate an action from an observation
+
+### 2.1 Task
+
+First of all you should define a task for the benchmark.
+
+The core is to implement for a task the `is_done` method to determine when the task ends. For example, the task ends when the robot reaches a certain position or reaches a certain number of steps for a navigation task.
+
+```python
+def is_done(self) -> bool:
+    """
+    Returns True of the task is done. The result should be decided by the state of the task.
+    """
+    raise NotImplementedError
+```
+
+You can also extend other methods as you see fit, but you should always include the parent implementation in the overridden method.
+
+You can refer to the [how-to-add-task](how-to-add-task.md) tutorial to learn how to add a custom task, and refer to the [vln_eval_task.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/projects/internutopia_vln_extension/tasks/vln_eval_task.py) to see the task implementation for VLN benchmark.
+
+### 2.2 Metric
+
+The metrics are used to evaluate the performance of an agent's behavior in each task execution. The core is to implement for a metric the `update` method to update the metric with the latest observation.
+
+```python
+@abstractmethod
+def update(self, obs: dict):
+    """
+    This function is called at each world step.
+    """
+    raise NotImplementedError(f'`update` function of {self.name} is not implemented')
+```
+
+You can refer to the [how-to-add-metric](how-to-add-metric.md) tutorial to learn how to add a custom metric, and refer to the [vln_pe_metrics.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/projects/internutopia_vln_extension/metrics/vln_pe_metrics.py) to see the metric implementation for VLN benchmark.
+
+### 2.3 Agent
+
+The agent is responsible for generating an action from an observation. The core is to implement a method to generate an action from an observation in each step.
+
+For example, a step method is defined to generate an action from an observation.
+
+```python
+@abstractmethod
+def step(self, obs: dict) -> dict:
+    """
+    Generate an action from an observation.
+    """
+    # Agent logics here.
+    return {'controller-name': action}
+```
+
+The output action should be a dict with the controller name as the key and the corresponding action as the value.
+
+For InternUtopia there's no constraint on how the agent should look like, so you can implement an agent in any forms (a class, a function, a module, etc.)
+
+You can find a reference implementation of agent in [Add a New Benchmark](../../internmanip/quick_start/add_benchmark.md) of InternManip documentation.
+
+
+### 2.4 Others
+
+You may want to define your own robot, controllers and sensors to meet the specific needs of the benchmark, but it is not mandatory. If it is your case, refer to the [how-to-add-robot](how-to-add-robot.md), [how-to-add-controller](how-to-add-controller.md) and [how-to-add-sensor](how-to-add-sensor.md) tutorials.
+
+## 3. Benchmark
+
+Benchmark is the collection of tasks, metrics and agent.
