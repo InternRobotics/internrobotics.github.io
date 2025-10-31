@@ -1,4 +1,12 @@
 # Simulation Environments Setup
+
+Our toolchain provides two Python environment solutions to accommodate different usage scenarios with the InternNav-N1 series model:
+
+- For quick trials and evaluations of the InternNav-N1 model, we recommend using the [Habitat environment](#habitat-environment). This option offer allowing you to quickly test and eval the InternVLA-N1 models with minimal configuration.
+- If you require high-fidelity rendering, training capabilities, and physical property evaluations within the environment, we suggest using the [Isaac Sim](#isaac-sim-environment) environment. This solution provides enhanced graphical rendering and more accurate physics simulations for comprehensive testing.
+
+Choose the environment that best fits your specific needs to optimize your experience with the InternNav-N1 model. Note that both environments support the training of the system1 model NavDP.
+
 ## Install with Isaac Sim Environment
 
 #### Install from Docker Image

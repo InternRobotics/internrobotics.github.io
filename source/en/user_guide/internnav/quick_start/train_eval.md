@@ -1,19 +1,17 @@
 # Training and Evaluation
 
-This document presents how to train and evaluate models for different systems with InternNav.
+This document presents how to train and evaluate models for different systems with InternNav. 
 
-## Verification
-
-### Data/Checkpoints Preparation
-To get started, we need to prepare the data and checkpoints.
+## Data/Checkpoints Preparation
+To get started with the training and evaluation, we need to prepare the data and checkpoints properly.
 1. **InternVLA-N1 pretrained Checkpoints**
 - Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
 - Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
 3. **InternData-N1 Dataset Episodes**
-- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). Extract them into the `data/vln_ce/` and `data/vln_pe/` directory.
+- Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). You only need to download the dataset relevant to your chosen task. Download `vln_ce` for VLNCE evaluation in habitat, `vln_pe` for VLNPE evaluation in internutopia.
 4. **Scene-N1**
-- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce`. Extract them into the `data/scene_data/` directory.
+- Download the [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1) for `mp3d_ce` or `mp3d_pe`. Extract them into the `data/scene_data/` directory.
 5. **Embodiments**
 - Download the [Embodiments](https://huggingface.co/datasets/InternRobotics/Embodiments) for the `Embodiments/`
 
@@ -76,6 +74,9 @@ InternNav/
 
 ## Whole-system
 
+### Training
+The training pipeline is currently under preparation and will be open-sourced soon.
+
 ### Evaluation
 Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory. Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
 
@@ -97,6 +98,9 @@ MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/c
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
+The simulation can be visualized by set `vis_output=True` in eval_cfg.
+
+<img src="../../../_static/video/nav_eval.gif" alt="My GIF">
 
 #### Evaluation on habitat
 Evaluate on Single-GPU:

@@ -178,29 +178,11 @@ Clone the **InternNav** repository:
 ```bash
 git clone https://github.com/InternRobotics/InternNav.git --recursive
 ```
-After pull the latest code, install InternNav:
-```bash
-pip install -e .
-```
-
-By default, only the core modules are installed — this allows you to inherit base classes and implement your own models or benchmarks.
-
-To enable additional functionalities, several install flags are available:
-
-| Flag             | Description                                                                                                                                 |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[model]`        | Install all dependencies for training and evaluating models (CMA, RDP, NavDP, InternVLA-N1).                                                |
-| `[isaac]`        | Install dependencies for the [Isaac environment](./installation.md).                                                                        |
-| `[habitat]`      | Install dependencies for the [Habitat environment](./installation.md).                                                                      |
-
-
-### Install Models
-
-Create a dedicated conda environment for model deployment:
+After pull the latest code, install InternNav with models:
 ```bash
 # create a new isolated environment for model server
-conda create -n <model_env> python=3.10 libxcb=1.14
-conda activate <model_env>
+conda create -n <internnav> python=3.10 libxcb=1.14
+conda activate <internnav>
 
 # install PyTorch (CUDA 11.8)
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 \
@@ -211,12 +193,16 @@ pip install -e .[model]
 
 ```
 
-Our toolchain provides two Python environment solutions to accommodate different usage scenarios with the InternNav-N1 series model:
+To enable additional functionalities, several install flags are available:
 
-- For quick trials and evaluations of the InternNav-N1 model, we recommend using the [Habitat environment](#habitat-environment). This option offer allowing you to quickly test and eval the InternVLA-N1 models with minimal configuration.
-- If you require high-fidelity rendering, training capabilities, and physical property evaluations within the environment, we suggest using the [Isaac Sim](#isaac-sim-environment) environment. This solution provides enhanced graphical rendering and more accurate physics simulations for comprehensive testing.
+| Flag             | Description                                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.`              | Install the core only for the InternNav framework.                                                                                          |
+| `[model]`        | Install all dependencies for training and evaluating models (CMA, RDP, NavDP, InternVLA-N1).                                                |
+| `[isaac]`        | Install dependencies for the [Isaac environment](./simualtion.md).                                                                        |
+| `[habitat]`      | Install dependencies for the [Habitat environment](./simualtion.md).                                                                      |
 
-Choose the environment that best fits your specific needs to optimize your experience with the InternNav-N1 model. Note that both environments support the training of the system1 model NavDP.
+
 
 ### Download Checkpoints
 1. **InternVLA-N1 pretrained Checkpoints**
@@ -315,4 +301,12 @@ INFO:     ::1:46114 - "POST /agent/internvla_n1/step HTTP/1.1" 200 OK
 Action taken: 2
 ```
 
-for more details, check out the demo: [**Internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
+Congrats, now you have made one prediction. In this task, the agent convert the trajectory output to discrete action. Apply this action "turn left" (2) to real robot controller by using `internnav.env.real_world_env`. 
+
+Checkout the real deploy demo video:
+
+<video width="720" height="405" controls>
+    <source src="../../../_static/video/nav_demo.webm" type="video/webm">
+</video>
+
+for more details, check out the [**Internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb).
