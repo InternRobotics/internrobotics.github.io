@@ -13,13 +13,14 @@
 
 # Installation Guide
 
-This page provides detailed guidance on quantitative model evaluation. For inference-only usage, such as deploying InternVLA-N1 in your own robot or self-built dataset, you could follow this simple guideline to setup the environment and run inference with the model.
+This page provides detailed instructions for installing **InternNav** in inference-only mode, such as when deploying **InternVLA-N1** on your own robot or with a custom dataset.
+Follow the steps below to set up the environment and run inference with the model.
 
-If you want to reproduce the results of the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), you should follow this page, and finish the following simulation environment setup. 
+If you want to **reproduce the results** presented in the [technical report](https://internrobotics.github.io/internvla-n1.github.io/), please follow this page, and also complete the following sections on [Simulation Environments Setup](./simulation.md), [Dataset Preparation](./interndata.md) and [Training and Evaluation](./train_eval.md). 
 
 For more advanced examples, refer to these demos:
 
--  [**Internvla_n1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
+-  [**InternVLA_N1 Inference-only Demo**](https://githubtocolab.com/InternRobotics/InternNav/blob/main/scripts/notebooks/inference_only_demo.ipynb)
 -  [**Real-World Unitree Go2 Deploy Script**](https://github.com/kew6688/InternNav/tree/main/scripts/realworld)
 
 
