@@ -150,6 +150,7 @@ $ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkp
 
 Start Evaluation:
 ```bash
+# Please modify the first line of the bash file to your own conda path
 # seq2seq model
 ./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
 # cma model
@@ -157,5 +158,6 @@ Start Evaluation:
 # rdp model
 ./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
 ```
+
 
 The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file.
