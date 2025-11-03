@@ -52,7 +52,7 @@ pip install -e .[isaac,model]
 docker pull registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 docker run -it --name internutopia-container registry.cn-hangzhou.aliyuncs.com/internutopia/internutopia:2.2.0
 ``` -->
-#### Conda installation from Scretch
+#### Conda Installation from Scratch
 **Prerequisite**
 - Ubuntu 20.04, 22.04
 - Python 3.10.16 (3.10.* should be ok)

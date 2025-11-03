@@ -13,7 +13,7 @@ Before evaluation, we should download the robot assets from [InternUTopiaAssets]
 #### Evaluation on isaac sim
 The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
 
-First, start change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
+First, change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
 # from one process
 conda activate <model_env>
