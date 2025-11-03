@@ -10,7 +10,7 @@ The training pipeline is currently under preparation and will be open-sourced so
 ### Evaluation
 Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory. Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
 
-#### Evaluation on isaac sim
+#### Evaluation on Isaac Sim
 The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
 
 First, change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
@@ -32,7 +32,7 @@ The simulation can be visualized by set `vis_output=True` in eval_cfg.
 
 <img src="../../../_static/video/nav_eval.gif" alt="My GIF">
 
-#### Evaluation on habitat
+#### Evaluation on Habitat Sim
 Evaluate on Single-GPU:
 
 ```bash

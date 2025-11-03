@@ -1,5 +1,5 @@
-# Env
-## Create Your Env and Task in InternNav
+# Defining Custom Environments and Tasks in InternNav
+
 This tutorial provided a step-by-step guide to define a new environment and a new navigation task within the InternNav framework.
 
 ---
@@ -7,11 +7,11 @@ This tutorial provided a step-by-step guide to define a new environment and a ne
 ## Overview
 InternNav separates **navigation logic / policy** from **where the agent actually lives** (simulator vs real robot). The key ideas are:
 
-- `Env`: a unified interface. All environments must behave like an `Env`.
+- `Env`: A unified interface. All environments must behave like an `Env`.
 
-- `Task`: a high-level navigation objective exposed to the agent, like "go to the kitchen sink" or "follow this instruction".
+- `Task`: A high-level navigation objective exposed to the agent, like "go to the kitchen sink" or "follow this instruction".
 
-- `Agent`: consumes observations from `Env`, predicts an action, and sends that action back to `Env`.
+- `Agent`: Agent consumes observations from `Env`, predicts an action, and sends that action back to `Env`.
 
 Because of this separation:
 
@@ -37,13 +37,14 @@ For the vlnpe benchmark, we build the task based on internutopia. Here is a diag
 
 
 ## Evaluation Metrics (WIP)
-For the vlnpe benchmark in internutopia, InternNav provides comprehensive evaluation metrics:
-- **Success Rate (SR)**: Proportion of episodes where the agent reaches the goal location within 3m
-- **SPL**: Success weighted by Path Length
-- **Trajectory Length (TL)**: Total length of the trajectory (m)
-- **Navigation Error (NE)**: Euclidean distance between the agent's final position and the goal (m)
-- **OS Oracle Success Rate (OSR)**: Whether any point along the predicted trajectory reaches the goal within 3m
-- **Fall Rate (FR)**: Frequency of the agent falling during navigation
-- **Stuck Rate (StR)**: Frequency of the agent becoming stuck during navigation
+For the VLN-PE benchmark in internutopia, InternNav provides comprehensive evaluation metrics:
+- **Success Rate (SR)**: The proportion of episodes in which the agent successfully reaches the goal location within a 3-meter radius.
+- **Success Rate weighted by Path Length (SPL)**: Measures both efficiency and success. It is defined as the ratio of the shortest-path distance to the actual trajectory length, weighted by whether the agent successfully reaches the goal.
+A higher SPL indicates that the agent not only succeeds but does so efficiently, without taking unnecessarily long routes.
+- **Trajectory Length (TL)**: The total distance traveled by the agent during an episode, measured in meters.
+- **Navigation Error (NE)**: The Euclidean distance (in meters) between the agent’s final position and the goal location at the end of an episode.
+- **Oracle Success Rate (OSR)**: The proportion of episodes in which any point along the predicted trajectory comes within 3 meters of the goal—representing the agent’s potential success if it were to stop optimally.
+- **Fall Rate (FR)**: The frequency at which the agent falls or loses balance during navigation.
+- **Stuck Rate (StR)**: The frequency at which the agent becomes immobile or trapped (e.g., blocked by obstacles or unable to proceed).
 
-The implementation is under `internnav/env/utils/internutopia_extensions`, we highly suggested follow the guide of [Internutopia](../../internutopia).
+The implementation is under `internnav/env/utils/internutopia_extensions`, we highly suggested follow the guide of [InternUtopia](../../internutopia).

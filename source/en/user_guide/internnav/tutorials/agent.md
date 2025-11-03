@@ -1,7 +1,7 @@
-# Agent
-## Create Your Model and Agent in InternNav
+# Defining Custom Models and Agents in InternNav
 
 This tutorial provides a detailed guide for registering new agent and model within the InternNav framework
+
 ---
 
 ## Development Overview
@@ -93,7 +93,7 @@ Make sure you also import it inside `internnav/agent/__init__.py`
 from internnav.agent.internvla_n1_agent import InternVLAN1Agent
 ```
 
-## Set the Corresponding Configuration for agent and model initialization
+## Agent and Model Initialization
 
 Refer to existing **evaluation** config files for customization:
 ```
@@ -102,7 +102,10 @@ agent_cfg=AgentCfg(
     server_port=8023,
     model_name='internvla_n1',
     ckpt_path='',
-    model_settings={},
+    model_settings={
+        policy_name='InternVLAN1_Policy',
+        state_encoder=None,
+    },
 )
 ```
 
