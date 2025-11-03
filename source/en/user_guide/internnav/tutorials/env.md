@@ -1,4 +1,4 @@
-# Customizing Environments and Tasks
+# Customizing Environments and Tasks in InternNav
 
 This tutorial provided a step-by-step guide to define a new environment and a new navigation task within the InternNav framework.
 

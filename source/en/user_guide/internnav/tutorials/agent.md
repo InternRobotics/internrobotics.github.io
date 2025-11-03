@@ -1,4 +1,4 @@
-# Customizing Models and Agents
+# Customizing Models and Agents in InternNav
 
 This tutorial provides a detailed guide for registering new agent and model within the InternNav framework
 
