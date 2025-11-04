@@ -1,46 +1,38 @@
 # Training and Evaluation
 
-
-This document presents how to train and evaluate models for different systems with InternNav.
+This document presents how to train and evaluate models for different systems with InternNav. 
 
 ## Whole-system
+
+### Training
+The training pipeline is currently under preparation and will be open-sourced soon.
 
 ### Evaluation
 Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory. Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
 
-#### Evaluation on isaac sim
+#### Evaluation on Isaac Sim
 The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
 
-First start the ray server:
+First, change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
-ray disable-usage-stats
-ray stop
-ray start --head
+# from one process
+conda activate <model_env>
+python scripts/eval/start_server.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
-Then change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
+Then, start the client to run evaluation:
 ```bash
-python -m internnav.agent.utils.server --config scripts/eval/configs/h1_internvla_n1_cfg.py
-```
-
-Finally, start the client:
-```bash
+# from another process
+conda activate <internutopia>
 MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
+The simulation can be visualized by set `vis_output=True` in eval_cfg.
 
-Also, the Baselines can directly run:
-```bash
-# seq2seq model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
-# cma model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
-# rdp model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
-```
+<img src="../../../_static/video/nav_eval.gif" alt="My GIF">
 
-#### Evaluation on habitat
+#### Evaluation on Habitat Sim
 Evaluate on Single-GPU:
 
 ```bash
@@ -50,7 +42,7 @@ python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1 --cont
 For multi-gpu inference, currently we only support inference on SLURM.
 
 ```bash
-./scripts/eval/eval_dual_system.sh
+./scripts/eval/bash/eval_dual_system.sh
 ```
 
 
@@ -111,62 +103,6 @@ python eval_pointgoal_wheeled.py --port {PORT} --scene_dir {SCENE_DIR}
 
 ## System2
 
-### Data Preparation
-
-Please download the following VLN-CE datasets and insert them into the `data` folder following the same structure.
-
-1. **VLN-CE Episodes**
-
-   Download the VLN-CE episodes:
-   - [r2r](https://drive.google.com/file/d/18DCrNcpxESnps1IbXVjXSbGLDzcSOqzD/view) (rename R2R_VLNCE_v1/ -> r2r/)
-   - [rxr](https://drive.google.com/file/d/145xzLjxBaNTbVgBfQ8e9EsBAV8W-SM0t/view) (rename RxR_VLNCE_v0/ -> rxr/)
-   - [envdrop](https://drive.google.com/file/d/1fo8F4NKgZDH-bPSdVU3cONAkt5EW-tyr/view) (rename R2R_VLNCE_v1-3_preprocessed/envdrop/ -> envdrop/)
-
-   Extract them into the `data/datasets/` directory.
-
-2. **InternData-N1**
-
-  We provide pre-collected observation-action trajectory data for training. These trajectories were collected using the **training episodes** from **R2R** and **RxR** under the Matterport3D environment. Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1) and [SceneData-N1](https://huggingface.co/datasets/InternRobotics/Scene-N1).
-The final folder structure should look like this:
-```bash
-data/
-├── scene_data/
-│   ├── mp3d_pe/
-│   │   ├── 17DRP5sb8fy/
-│   │   ├── 1LXtFkjw3qL/
-│   │   └── ...
-│   ├── mp3d_ce/
-│   │   ├── mp3d/
-│   │   │   ├── 17DRP5sb8fy/
-│   │   │   ├── 1LXtFkjw3qL/
-│   │   │   └── ...
-│   └── mp3d_n1/
-├── vln_pe/
-│   ├── raw_data/
-│   │   ├── train/
-│   │   ├── val_seen/
-│   │   │   └── val_seen.json.gz
-│   │   └── val_unseen/
-│   │       └── val_unseen.json.gz
-├── └── traj_data/
-│       └── mp3d/
-│           └── trajectory_0/
-│               ├── data/
-│               ├── meta/
-│               └── videos/
-├── vln_ce/
-│   ├── raw_data/
-│   │   ├── r2r
-│   │   │   ├── train
-│   │   │   ├── val_seen
-│   │   │   │   └── val_seen.json.gz
-│   │   │   └── val_unseen
-│   │   │       └── val_unseen.json.gz
-│   └── traj_data/
-└── vln_n1/
-    └── traj_data/
-```
-
 ### Training
 
 Currently, we only support training of small VLN models (CMA, RDP, Seq2Seq) in this repo. For the training of LLM-based VLN (Navid, StreamVLN, etc), please refer to [StreamVLN](https://github.com/OpenRobotLab/StreamVLN) for training details.
@@ -195,7 +131,7 @@ python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1-S2 --m
 For multi-gpu inference, currently we only support inference on SLURM.
 
 ```bash
-./scripts/eval/eval_system2.sh
+./scripts/eval/bash/eval_system2.sh
 ```
 
 #### Baseline Models
@@ -211,26 +147,17 @@ $ huggingface-cli download --include 'longclip-B.pt' --local-dir-use-symlinks Fa
 # download r2r finetuned baseline checkpoints
 $ git clone https://huggingface.co/InternRobotics/VLN-PE && mv VLN-PE/r2r checkpoints/
 ```
-Start the Ray server:
-```bash
-ray disable-usage-stats
-ray stop
-ray start --head
-```
-
-Start the evaluation server:
-```bash
-python -m internnav.agent.utils.server --config scripts/eval/configs/h1_xxx_cfg.py
-```
 
 Start Evaluation:
 ```bash
+# Please modify the first line of the bash file to your own conda path
 # seq2seq model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_seq2seq_cfg.py
 # cma model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_cma_cfg.py
 # rdp model
-./scripts/eval/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
+./scripts/eval/bash/start_eval.sh --config scripts/eval/configs/h1_rdp_cfg.py
 ```
+
 
 The evaluation results will be saved in the `eval_results.log` file in the `output_dir` of the config file.

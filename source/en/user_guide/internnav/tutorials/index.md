@@ -12,9 +12,10 @@ myst:
 :caption: Tutorials
 :maxdepth: 2
 
+core
 dataset
-format_specification
 model
 training
-evaluation
+agent
+env
 ```

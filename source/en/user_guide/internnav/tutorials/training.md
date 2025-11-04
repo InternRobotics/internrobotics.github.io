@@ -117,3 +117,45 @@ For customizing the model structure or dataset format, see [model.md](./model.md
 ## System 2: InternVLA-N1-S2
 
 Currently we don't support the training of InternVLA-N1-S2 in this repository.
+
+## Baselines
+### Create a Trainer
+
+The Trainer manages the training loop, including data loading, forward pass, loss calculation, and backpropagation.
+A custom trainer usually inherits from the [`Base Trainer`](https://github.com/InternRobotics/InternNav/blob/main/internnav/trainer/base.py) and implements:
+
+- `train_epoch()`: Runs one training epoch (batch iteration, forward pass, loss calculation, parameter update).
+- `eval_epoch()`: Evaluates the model on the validation set and records metrics.
+- `save_checkpoint()`: Saves model weights, optimizer state, and training progress.
+- `load_checkpoint()`: Loads pretrained models or resumes training.
+
+Example: [`CMATrainer`](https://github.com/InternRobotics/InternNav/blob/main/internnav/trainer/cma_trainer.py) shows how to handle sequence data, compute action loss, and implement imitation learning.
+
+### Training Data
+
+The training data is under `data/vln_pe/traj_data`. Our dataset provides trajectory data collected from the H1 robot as it navigates through the task environment.
+Each observation in the trajectory is paired with its corresponding action.
+
+You may also incorporate external datasets to improve model generalization.
+
+### Set the Corresponding Configuration
+
+Refer to existing **training** configuration files for customization:
+
+- **CMA Model Config**: [`cma_exp_cfg`](https://github.com/InternRobotics/InternNav/blob/main/scripts/train/configs/cma.py)
+
+Configuration files should define:
+- `ExpCfg` (experiment config)
+- `EvalCfg` (evaluation config)
+- `IlCfg` (imitation learning config)
+
+Ensure your configuration is imported and registered in [`__init__.py`](https://github.com/InternRobotics/InternNav/blob/main/scripts/train/configs/__init__.py).
+
+Key parameters include:
+- `name`: Experiment name
+- `model_name`: Must match the name used during model registration
+- `batch_size`: Batch size
+- `lr`: Learning rate
+- `epochs`: Number of training epochs
+- `dataset_*_root_dir`: Dataset paths
+- `lmdb_features_dir`: Feature storage path
