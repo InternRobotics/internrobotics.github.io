@@ -18,7 +18,7 @@ The key components of a benchmark includes:
 
 First of all you should define a task class for the benchmark. In the benchmark one or more instances of the task class will be created and executed in the simulator.
 
-You can refer to the [how-to-add-task](how-to-add-task.md) tutorial to learn how to add a custom task. The core is to implement for a task the `is_done` method to determine when the task ends. For example, the task ends when the robot reaches a certain position or reaches a certain number of steps for a navigation task.
+You can refer to the [How to Add Custom Task](how-to-add-task.md) tutorial to learn how to add a custom task. The core is to implement for a task the `is_done` method to determine when the task ends. For example, the task ends when the robot reaches a certain position or reaches a certain number of steps for a navigation task.
 
 ```python
 def is_done(self) -> bool:
@@ -30,7 +30,7 @@ def is_done(self) -> bool:
 
 You can also extend other methods as you see fit, but you should always include the parent implementation in the overridden method.
 
-You can refer to the [vln_eval_task.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/projects/internutopia_vln_extension/tasks/vln_eval_task.py) to see the task implementation for VLN benchmark.
+You can refer to the [vln_eval_task.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/env/utils/internutopia_extension/tasks/vln_eval_task.py) to see the task implementation for VLN benchmark.
 
 ### 2.2 Metric
 
@@ -45,7 +45,7 @@ def update(self, obs: dict):
     raise NotImplementedError(f'`update` function of {self.name} is not implemented')
 ```
 
-You can refer to the [how-to-add-metric](how-to-add-metric.md) tutorial to learn how to add a custom metric, and refer to the [vln_pe_metrics.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/projects/internutopia_vln_extension/metrics/vln_pe_metrics.py) to see the metric implementation for VLN benchmark.
+You can refer to the [How to Add Custom Metric](how-to-add-metric.md) tutorial to learn how to add a custom metric, and refer to the [vln_pe_metrics.py](https://github.com/InternRobotics/InternNav/blob/main/internnav/env/utils/internutopia_extension/metrics/vln_pe_metrics.py) to see the metric implementation for VLN benchmark.
 
 ### 2.3 Agent
 
@@ -72,7 +72,7 @@ You can find a reference implementation of agent in [Add a New Benchmark](../../
 
 ### 2.4 Others
 
-You may want to define your own robot, controllers and sensors to meet the specific needs of the benchmark, but it is not mandatory. If it is your case, refer to the [how-to-add-robot](how-to-add-robot.md), [how-to-add-controller](how-to-add-controller.md) and [how-to-add-sensor](how-to-add-sensor.md) tutorials.
+You may want to define your own robot, controllers and sensors to meet the specific needs of the benchmark, but it is not mandatory. If it is your case, refer to the [How to Add Custom Robot](how-to-add-robot.md), [How to Add Custom Controller](how-to-add-controller.md) and [How to Add Custom Sensor](how-to-add-sensor.md) tutorials.
 
 ## 3. Run the Benchmark
 
