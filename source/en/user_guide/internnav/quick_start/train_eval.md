@@ -11,20 +11,39 @@ The training pipeline is currently under preparation and will be open-sourced so
 Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory. Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
 
 #### Evaluation on Isaac Sim
+[UPDATE] We support using local model and isaac sim in one process now. Evaluate on Single-GPU:
+
+```bash
+python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_async_cfg.py    
+```
+
+For multi-gpu inference, currently we support inference on environments that expose a torchrun-compatible runtime model (e.g., Torchrun or Aliyun DLC).
+
+```bash
+# for torchrun
+./scripts/eval/bash/torchrun_eval.sh \
+    --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
+
+# for alicloud dlc
+./scripts/eval/bash/eval_vln_distributed.sh \
+    internutopia \
+    --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
+```
+
 The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
 
 First, change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
 # from one process
 conda activate <model_env>
-python scripts/eval/start_server.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
+python scripts/eval/start_server.py --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
 ```
 
 Then, start the client to run evaluation:
 ```bash
 # from another process
 conda activate <internutopia>
-MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_cfg.py
+MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
@@ -36,13 +55,18 @@ The simulation can be visualized by set `vis_output=True` in eval_cfg.
 Evaluate on Single-GPU:
 
 ```bash
-python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1 --continuous_traj --output_path result/InternVLA-N1/val_unseen_32traj_8steps
+python scripts/eval/eval.py --config scripts/eval/configs/habitat_dual_system_cfg.py
 ```
 
-For multi-gpu inference, currently we only support inference on SLURM.
+For multi-gpu inference, currently we support inference on SLURM as well as environments that expose a torchrun-compatible runtime model (e.g., Aliyun DLC).
 
 ```bash
+# for slurm
 ./scripts/eval/bash/eval_dual_system.sh
+
+# for torchrun
+./scripts/eval/bash/torchrun_eval.sh \
+    --config scripts/eval/configs/habitat_dual_system_cfg.py
 ```
 
 
@@ -125,7 +149,18 @@ Currently we only support evaluate single System2 on Habitat:
 Evaluate on Single-GPU:
 
 ```bash
-python scripts/eval/eval_habitat.py --model_path checkpoints/InternVLA-N1-S2 --mode system2 --output_path results/InternVLA-N1-S2/val_unseen \
+python scripts/eval/eval.py --config scripts/eval/configs/habitat_s2_cfg.py
+
+# set config with the following fields
+eval_cfg = EvalCfg(
+    agent=AgentCfg(
+        model_name='internvla_n1',
+        model_settings={
+            "mode": "system2",  # inference mode: dual_system or system2
+            "model_path": "checkpoints/<s2_checkpoint>",  # path to model checkpoint
+        }
+    )
+)
 ```
 
 For multi-gpu inference, currently we only support inference on SLURM.

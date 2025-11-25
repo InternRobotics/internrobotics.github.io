@@ -12,7 +12,6 @@ myst:
 :caption: Tutorials
 :maxdepth: 2
 
-core
 dataset
 model
 training
