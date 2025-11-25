@@ -1,4 +1,4 @@
-# Customizing Environments in InternNav
+# Environments Design in InternNav
 
 This tutorial provided a step-by-step guide to define a new environment and a new navigation task within the InternNav framework.
 
@@ -32,4 +32,5 @@ Simulated environment built on top of InternUtopia / Isaac Sim. This supports co
 Wrapper around an actual robot platform and its sensors (e.g. RGB camera, depth, odometry). This lets you deploy the same agent logic in the physical world.
 
 Both of these are children of the same base [`Env`](https://github.com/InternRobotics/InternNav/blob/main/internnav/env/base.py) class.
+
 
