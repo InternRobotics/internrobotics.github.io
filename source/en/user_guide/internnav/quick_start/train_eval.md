@@ -67,6 +67,11 @@ For multi-gpu inference, currently we support inference on SLURM as well as envi
 # for torchrun
 ./scripts/eval/bash/torchrun_eval.sh \
     --config scripts/eval/configs/habitat_dual_system_cfg.py
+
+# for alicloud dlc
+./scripts/eval/bash/eval_vln_distributed.sh \
+    habitat \
+    --config scripts/eval/configs/habitat_dual_system_cfg.py
 ```
 
 
