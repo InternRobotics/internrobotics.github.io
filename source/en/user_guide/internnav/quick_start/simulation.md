@@ -14,7 +14,7 @@ To help you get started quickly, we've prepared a **Docker image** pre-configure
 
 You can pull the image (~17GB) and run evaluations in the container using the following command:
 ```bash
-docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
+docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.2.0
 ```
 
 Run the container by:
@@ -111,5 +111,5 @@ Install pytorch and other requirements:
 ```bash
 pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 cd Path/to/InternNav/
-pip install -e .[habitat,internvla_n1]
+pip install -e .[habitat]
 ```
