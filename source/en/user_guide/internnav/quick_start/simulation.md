@@ -40,7 +40,7 @@ docker run --name internnav -it --rm --gpus all --network host \
   -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
   -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
   -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
-  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/iros-challenge/internnav:v1.2
+  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.2.0
 ```
 After the container started, you can quickly start the env and install the InternNav:
 ```bash
