@@ -1,16 +1,16 @@
-# Training and Evaluation
+# Evaluation
 
-This document presents how to train and evaluate models for different systems with InternNav. 
+This document describes how to evaluate models in **InternNav**.
 
-## Whole-system
+## InternVLA-N1 (Dual System) 
 
-### Training
-The training pipeline is currently under preparation and will be open-sourced soon.
+Model weights of InternVLA-N1 (Dual System) can be downloaded from [InternVLA-N1-DualVLN](https://huggingface.co/InternRobotics/InternVLA-N1-DualVLN) and [InternVLA-N1-w-NavDP](https://huggingface.co/InternRobotics/InternVLA-N1-w-NavDP).
 
-### Evaluation
-Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory. Model weights of InternVLA-N1 can be downloaded from [InternVLA-N1](https://huggingface.co/InternRobotics/InternVLA-N1).
+---
 
-#### Evaluation on Isaac Sim
+### Evaluation on Isaac Sim
+Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory.
+
 [UPDATE] We support using local model and isaac sim in one process now. Evaluate on Single-GPU:
 
 ```bash
@@ -51,7 +51,7 @@ The simulation can be visualized by set `vis_output=True` in eval_cfg.
 
 <img src="../../../_static/video/nav_eval.gif" alt="My GIF">
 
-#### Evaluation on Habitat Sim
+### Evaluation on Habitat Sim
 Evaluate on Single-GPU:
 
 ```bash
@@ -74,18 +74,36 @@ For multi-gpu inference, currently we support inference on SLURM as well as envi
     --config scripts/eval/configs/habitat_dual_system_cfg.py
 ```
 
+## InternVLA-N1 (System 2)
 
-## System1
+Model weights of InternVLA-N1 (System2) can be downloaded from [InternVLA-N1-System2](https://huggingface.co/InternRobotics/InternVLA-N1-System2).
 
-### Training
+Currently we only support evaluate single System2 on Habitat:
 
-Download the training data from [Hugging Face](https://huggingface.co/datasets/InternRobotics/InternData-N1/), and organize them in the form mentioned in [installation](./installation.md).
+Evaluate on Single-GPU:
 
 ```bash
-./scripts/train/start_train.sh --name "$NAME" --model-name navdp
+python scripts/eval/eval.py --config scripts/eval/configs/habitat_s2_cfg.py
+
+# set config with the following fields
+eval_cfg = EvalCfg(
+    agent=AgentCfg(
+        model_name='internvla_n1',
+        model_settings={
+            "mode": "system2",  # inference mode: dual_system or system2
+            "model_path": "checkpoints/<s2_checkpoint>",  # path to model checkpoint
+        }
+    )
+)
 ```
 
-### Evaluation
+For multi-gpu inference, currently we only support inference on SLURM.
+
+```bash
+./scripts/eval/bash/eval_system2.sh
+```
+
+## VN Systems (System 1) 
 
 We support the evaluation of diverse System-1 baselines separately in [NavDP](https://github.com/InternRobotics/NavDP/tree/navdp_benchmark) to make it easy to use and deploy.
 To install the environment, we provide a quick start below:
@@ -129,52 +147,7 @@ python navdp_server.py --port {PORT} --checkpoint {CHECKPOINT_path}
 python eval_pointgoal_wheeled.py --port {PORT} --scene_dir {SCENE_DIR}
 ```
 
-
-## System2
-
-### Training
-
-Currently, we only support training of small VLN models (CMA, RDP, Seq2Seq) in this repo. For the training of LLM-based VLN (Navid, StreamVLN, etc), please refer to [StreamVLN](https://github.com/OpenRobotLab/StreamVLN) for training details.
-
-```base
-# train cma model
-./scripts/train/start_train.sh --name cma_train --model cma
-
-# train rdp model
-./scripts/train/start_train.sh --name rdp_train --model rdp
-
-# train seq2seq model
-./scripts/train/start_train.sh --name seq2seq_train --model seq2seq
-```
-### Evaluation
-
-#### InternVLA-N1-S2
-Currently we only support evaluate single System2 on Habitat:
-
-Evaluate on Single-GPU:
-
-```bash
-python scripts/eval/eval.py --config scripts/eval/configs/habitat_s2_cfg.py
-
-# set config with the following fields
-eval_cfg = EvalCfg(
-    agent=AgentCfg(
-        model_name='internvla_n1',
-        model_settings={
-            "mode": "system2",  # inference mode: dual_system or system2
-            "model_path": "checkpoints/<s2_checkpoint>",  # path to model checkpoint
-        }
-    )
-)
-```
-
-For multi-gpu inference, currently we only support inference on SLURM.
-
-```bash
-./scripts/eval/bash/eval_system2.sh
-```
-
-#### Baseline Models
+## Baseline VLN Single-System Models 
 We provide three small VLN baselines (Seq2Seq, CMA, RDP) for evaluation in the InterUtopia (Isaac-Sim) environment.
 
 Download the baseline models:
