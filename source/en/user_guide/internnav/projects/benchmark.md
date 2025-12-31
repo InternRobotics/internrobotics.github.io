@@ -1,21 +1,21 @@
-# Extension Benchmark in InternNav
+# Extended Benchmarks in InternNav
 
-This guidance would detail to show how to use specific dataset for training a VLA model for different navigation benchmark.
+This guide details how to use specific dataset for training a VLA model for different navigation benchmark.
 
 ## VL-LN Bench
 
-VL-LN Bench is a large-scale benchmark for Interactive Instance Goal Navigation. It provides (1) an automatically dialog-augmented trajectory generation pipeline, (2) a comprehensive evaluation protocol for training and assessing dialog-capable navigation models, and (3) the dataset and base model used in our experiments. For full details, see our [paper](https://arxiv.org/abs/2512.22342) and the [project website](https://0309hws.github.io/VL-LN.github.io/).
+VL-LN Bench is a large-scale benchmark for Interactive Instance Goal Navigation. VL-LN Bench provides: (1) an automatically dialog-augmented trajectory generation pipeline, (2) a comprehensive evaluation protocol for training and assessing dialog-capable navigation models, and (3) the dataset and base model used in our experiments. For full details, see our [paper](https://arxiv.org/abs/2512.22342) and the [project website](https://0309hws.github.io/VL-LN.github.io/).
 
 - [Data Collection Pipeline](https://github.com/InternRobotics/VL-LN)
-- [Training and Evaluation](https://github.com/InternRobotics/InternNav)
+- [Training and Evaluation Code](https://github.com/InternRobotics/InternNav)
 - [Dataset](https://huggingface.co/datasets/InternRobotics/VL-LN-Bench) and [Base Model](https://huggingface.co/InternRobotics/VL-LN-Bench-basemodel)
 
 
 ### 1. Download Data & Assets
-VL-LN Bench is built on Matterport3D (MP3D) scenes, so you’ll need to download both the MP3D scene dataset and the VL-LN Bench dataset.
+VL-LN Bench is built on Matterport3D (MP3D) Scene Dataset, so you need to download both the MP3D scene dataset and the VL-LN Bench dataset.
 - Scene Datasets
 
-    Download the scene dataset of [MP3D](https://niessner.github.io/Matterport/)
+    Download the [MP3D Scene Dataset](https://niessner.github.io/Matterport/)
 - [VL-LN Data](https://huggingface.co/datasets/InternRobotics/VL-LN-Bench)
 - [VL-LN Base Model](https://huggingface.co/InternRobotics/VL-LN-Bench-basemodel)
   
@@ -45,7 +45,7 @@ After unzipping the base model, scene datasets, and trajectory data, put everyth
   ```
 
 ### 2. Environment Setup
-Here we set up the Python environment for VL-LN Bench and InternVLA-N1. If you’ve already installed the InternVLA-N1 environment, you can skip those steps and only run the commands related to VL-LN Bench.
+Here we set up the Python environment for VL-LN Bench and InternVLA-N1. If you've already installed the InternNav Habitat environment, you can skip those steps and only run the commands related to VL-LN Bench.
 
 - Get Code
   ```bash
@@ -119,7 +119,7 @@ Here we show how to train your own model for the IIGN task and evaluate it on VL
   mkdir projects && cd projects
   ln -s /path/to/your/VL-LN-Bench ./VL-LN-Bench
   ```
-  - Write Your Api Key of OpenAI in api_key.txt. 
+  - Write your OpenAI API key to api_key.txt.
   ```bash
   # Your final repo structure may look like
   InternNav
@@ -143,7 +143,7 @@ Here we show how to train your own model for the IIGN task and evaluate it on VL
   ```bash
   # Before running, please open this script and make sure 
   # the "llm" path points to the correct checkpoint on your machine.
-  sh ./scripts/train/qwenvl_train/train_system2_vlln.sh
+  sbatch ./scripts/train/qwenvl_train/train_system2_vlln.sh
   ```
 
 - Start Evaluation
