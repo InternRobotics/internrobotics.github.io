@@ -6,12 +6,11 @@ myst:
       pydata-sphinx-theme.
 ---
 
-# InternNav
+# Projects
 
 ```{toctree}
-:maxdepth: 3
+:caption: Projects
+:maxdepth: 2
 
-quick_start/index
-tutorials/index
-projects/index
+benchmark
 ```
