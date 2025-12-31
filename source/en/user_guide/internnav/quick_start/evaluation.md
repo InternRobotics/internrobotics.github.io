@@ -147,8 +147,8 @@ python navdp_server.py --port {PORT} --checkpoint {CHECKPOINT_path}
 python eval_pointgoal_wheeled.py --port {PORT} --scene_dir {SCENE_DIR}
 ```
 
-## Baseline VLN Single-System Models 
-We provide three small VLN baselines (Seq2Seq, CMA, RDP) for evaluation in the InterUtopia (Isaac-Sim) environment.
+## Single-System VLN Baselines
+We provide three small Single-System VLN baselines (Seq2Seq, CMA, RDP) for evaluation in the InterUtopia (Isaac-Sim) environment.
 
 Download the baseline models:
 ```bash

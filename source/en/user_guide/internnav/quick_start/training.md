@@ -6,23 +6,23 @@ This document provides instructions for training models in **InternNav**.
 
 InternNav supports training models under three system paradigms:
 
-- **VLN Multi-System**: integrated System2 + System2 architectures  
-- **VLN Single-System**: end-to-end vision-and-language navigation models  
-- **VN System (System1)**: low-level visual navigation and control models  
+- **Dual-System VLN Models**: integrated System2 + System1 architectures  
+- **Single-System VLN Models**: end-to-end vision-and-language navigation models  
+- **VN System (System1) Models**: low-level visual navigation and control models  
 
 
 Each paradigm follows a different training protocol, which is detailed below.
 
 
-## VLN Multi-System
-VLN Multi-System integrates **System2** (high-level reasoning and planning) with  
+## Dual-System VLN Models
+Dual-System VLN Models integrates **System2** (high-level reasoning and planning) with  
 **System1** (low-level action control), supporting both modular integration and joint training.
 
 
 ### Supported Systems
 - **InternVLA-N1 (System2)**  
-- **InternVLA-N1 (Dual System) w/ NavDP**
-  (*NavDP* indicates joint tuning with System2)
+- **InternVLA-N1 (Dual System) w/ NavDP***
+  (*NavDP** indicates joint tuning with System2)
 - **InternVLA-N1 (Dual System) DualVLN**
 
 
@@ -60,14 +60,14 @@ sbatch ./scripts/train/base_train/qwenvl_train/train_dual_system.sh
 - For **w/ NavDP** model variant, set `system1=navdp_async`. Optimal performance is typically observed after **30,000 iterations**.  
 - For **DualVLN** model variant, set `system1=nextdit_async`. Optimal performance is typically observed after **15,000 iterations**.
 
-## VLN Single-System
+## Single-System VLN Models
 
-VLN Single-System models directly map **visual observations and language instructions** to navigation actions in an end-to-end manner.
+Single-System VLN Models directly map **visual observations and language instructions** to navigation actions in an end-to-end manner.
 
 
 ### Supported Models
 
-The following VLN Single-System models are currently supported:
+The following Single-System VLN Models are currently supported:
 
 - Seq2Seq  
 - CMA  
@@ -100,7 +100,7 @@ Below are example commands for each supported model.
 ```
 
 
-## VN System (System1)
+## VN System (System1) Models
 
 VN System (System1) focuses on **low-level visual navigation and motion control**.  
 
