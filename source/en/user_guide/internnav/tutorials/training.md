@@ -1,8 +1,113 @@
 # Training
 
-This tutorial provides a detailed guide for training both System 1 (NavDP) and whole system (InternVLA-N1-S2) policy models within the InterNav framework.
+This tutorial provides a detailed guide for training both Dual System (InternVLA-N1) and System 1 (NavDP) policy models within the InterNav framework.
 
----
+## Dual-System: InternVLA-N1
+
+### 1. Environment Preparation
+
+Ensure you have installed InterNav and its dependencies, and have access to a multi-GPU environment.
+
+### 2. Start Training System 2
+```bash
+# training system2 separately
+sbatch ./scripts/train/base_train/qwenvl_train/train_system2.sh 
+```
+
+#### Pretrained Model Configuration
+
+```bash
+# Model configuration
+llm=Qwen/Qwen2.5-VL-7B-Instruct
+```
+
+#### Dataset Configuration
+
+```bash
+# Dataset configuration
+vln_datasets=r2r_125cm_0_30,r2r_125cm_0_45,r2r_60cm_15_15,r2r_60cm_30_30,rxr_125cm_0_30,rxr_125cm_0_45,rxr_60cm_15_15,rxr_60cm_30_30
+
+
+#Naming Convention: dataset_height_pitch1_pitch2
+
+#- **125cm / 60cm**: Agent height  
+#- **0_30**: Agent pitch starts at 0° elevation shift and shifts to 30° when output ⬇️  
+#- **15_15**: Agent pitch starts at 15° elevation shift and keeps 15° when output ⬇️  
+```
+
+#### Training Hyperparameters
+
+```bash
+# Training hyperparameters
+lr=2e-5                    # Global learning rate
+vision_tower_lr=5e-6       # Vision encoder learning rate (slower than LLM)
+batch_size=2               # Per-GPU batch size
+grad_accum_steps=1         # Gradient accumulation steps
+                            # Virtual batch size = batch_size × grad_accum_steps × num_gpus
+max_pixels=313600          # Maximum image pixels for processing
+min_pixels=3136            # Minimum image pixels
+```
+
+#### Training Architecture Parameters
+
+```bash
+# Model architecture tuning flags
+tune_mm_vision=True    # Fine-tune multimodal vision encoder
+tune_mm_mlp=True       # Fine-tune multimodal MLP adapter
+tune_mm_llm=True       # Fine-tune language model components
+
+# Data augmentation and temporal processing
+data_augmentation=True  # Apply data augmentation
+num_history=8           # Number of historical observations (frames)
+sample_step=4           # Frame sampling rate (every 4th frame)
+num_future_steps=4      # Number of future steps to predict
+```
+
+### 2. Start Joint Training of System 2 and System 1
+
+```bash
+# training system1 based on system2
+sbatch ./scripts/train/base_train/qwenvl_train/train_dual_system.sh 
+```
+
+#### Pretrained Model Configuration
+
+```bash
+# Model configuration
+system2_ckpt=checkpoints/InternVLA-N1-System2
+```
+
+
+
+#### Dataset Configuration
+
+```bash
+# Dataset configuration
+vln_datasets=r2r_125cm_0_30%30,r2r_60cm_15_15%30,rxr_125cm_0_30%30,rxr_60cm_15_15%30,scalevln_125cm_0_30%30,scalevln_60cm_30_30%30
+
+# %30 means using 30% of the data from each dataset
+```
+
+
+
+#### Training Architecture Parameters
+
+```bash
+# Freeze System 2 weights during joint training
+tune_mm_vision=False
+tune_mm_mlp=False
+tune_mm_llm=False
+
+# Planning and action configuration
+predict_step_num=32      # Number of predicted waypoints
+pixel_goal_only=True     # Turn and stop actions are not required at this stage
+
+# System 1 backend selection
+system1=${system1}       # Supported options: nextdit_async, nextdit, navdp_async
+```
+
+
+
 
 ## System 1: NavDP
 
@@ -10,7 +115,7 @@ This tutorial provides a detailed guide for training both System 1 (NavDP) and w
 
 This tutorial provides a detailed guide for training the NavDP policy model within the InterNav framework. It covers the **training workflow**, **configuration and parameters**, **command-line usage**, and **troubleshooting**.
 
----
+
 
 ### Overview of the Training Process
 
@@ -22,7 +127,7 @@ The NavDP training process in InterNav includes the following steps:
 4. **Distributed Training Environment Initialization**: Multi-GPU training is supported out of the box.
 5. **Training Execution**: Start the main training loop, with automatic checkpointing and logging.
 
----
+
 
 ### Quick Start
 
@@ -68,7 +173,7 @@ torchrun \
     --model-name "$MODEL"
 ```
 
----
+
 
 ### Training Parameters and Configuration
 
@@ -91,14 +196,14 @@ The main training parameters for NavDP are set in `scripts/train/configs/navdp.p
 
 For more parameters, see the comments in the configuration file.
 
----
+
 
 ### Logging and Model Saving
 
 - Logs, tensorboard files, and checkpoints are saved by default under `data/checkpoints/<experiment_name>/`.
 - Tensorboard is supported for visualizing the training process.
 
----
+
 
 ### Troubleshooting
 
@@ -106,17 +211,16 @@ For more parameters, see the comments in the configuration file.
 - **Dataset path error**: Ensure the json file at `dataset_navdp` exists and is correctly formatted.
 - **Out of memory**: Try reducing `batch_size` or `image_size`.
 
----
+
 
 For customizing the model structure or dataset format, see [model.md](./model.md) and [dataset.md](./dataset.md).
 
 <!-- NavDP content end -->
 
----
 
-## System 2: InternVLA-N1-S2
+<!-- ## System 2: InternVLA-N1-S2
 
-Currently we don't support the training of InternVLA-N1-S2 in this repository.
+Currently we don't support the training of InternVLA-N1-S2 in this repository. -->
 
 ## Baselines
 ### Create a Trainer

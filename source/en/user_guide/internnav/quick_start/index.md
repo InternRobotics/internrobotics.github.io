@@ -15,5 +15,6 @@ myst:
 installation
 simulation
 interndata
-train_eval
+training
+evaluation
 ```
