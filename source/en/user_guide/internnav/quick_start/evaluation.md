@@ -59,6 +59,13 @@ Then, start the client to run evaluation:
 # from another process
 conda activate <internutopia>
 MESA_GL_VERSION_OVERRIDE=4.6 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
+
+# set config with the following fields
+eval_cfg = EvalCfg(
+    eval_settings={
+        'use_agent_server': True,          # run the model in the same process as the simulator
+    },
+)
 ```
 
 The evaluation results will be saved in the `eval_results.log` file in the output_dir of the config file. The whole evaluation process takes about 10 hours at RTX-4090 graphics platform.
