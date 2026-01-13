@@ -11,10 +11,25 @@ Model weights of InternVLA-N1 (Dual System) can be downloaded from [InternVLA-N1
 ### Evaluation on Isaac Sim
 Before evaluation, we should download the robot assets from [InternUTopiaAssets](https://huggingface.co/datasets/InternRobotics/Embodiments) and move them to the `data/` directory.
 
-[UPDATE] We support using local model and isaac sim in one process now. Evaluate on Single-GPU:
+InternNav supports two execution modes for running the model during evaluation. 
+
+#### 1) In-Process Mode (use_agent_server = False)
+We now support running the local model and Isaac Sim in the same process, enabling single-GPU evaluation without launching a separate agent service, and also supports multi-process execution, where each process hosts its own simulator and local model.
 
 ```bash
 python scripts/eval/eval.py --config scripts/eval/configs/h1_internvla_n1_async_cfg.py    
+
+# set config with the following fields
+eval_cfg = EvalCfg(
+    task=TaskCfg(
+        task_settings={
+            'use_distributed': False,       # disable Ray-based distributed evaluation 
+        }
+    ),
+    eval_settings={
+        'use_agent_server': False,          # run the model in the same process as the simulator
+    },
+)
 ```
 
 For multi-gpu inference, currently we support inference on environments that expose a torchrun-compatible runtime model (e.g., Torchrun or Aliyun DLC).
@@ -30,8 +45,8 @@ For multi-gpu inference, currently we support inference on environments that exp
     --config scripts/eval/configs/h1_internvla_n1_async_cfg.py
 ```
 
-The main architecture of the whole-system evaluation adopts a client-server model. In the client, we specify the corresponding configuration (*.cfg), which includes settings such as the scenarios to be evaluated, robots, models, and parallelization parameters. The client sends requests to the server, which then submits tasks to the Ray distributed framework based on the corresponding cfg file, enabling the entire evaluation process to run.
-
+#### 2) Agent Server Mode (use_agent_server = True)
+We also support running the model in a separate process. 
 First, change the 'model_path' in the cfg file to the path of the InternVLA-N1 weights. Start the evaluation server:
 ```bash
 # from one process

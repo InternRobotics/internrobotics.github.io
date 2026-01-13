@@ -14,7 +14,7 @@ To help you get started quickly, we've prepared a **Docker image** pre-configure
 
 You can pull the image (~17GB) and run evaluations in the container using the following command:
 ```bash
-docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.2.0
+docker pull crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.3.0
 ```
 
 Run the container by:
@@ -40,12 +40,11 @@ docker run --name internnav -it --rm --gpus all --network host \
   -v ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
   -v ${HOME}/docker/isaac-sim/documents:/root/Documents:rw \
   -v ${PWD}/data/scene_data/mp3d_pe:/isaac-sim/Matterport3D/data/v1/scans:rw \
-  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.2.0
+  crpi-mdum1jboc8276vb5.cn-beijing.personal.cr.aliyuncs.com/internrobotics/internnav:v0.3.0
 ```
-After the container started, you can quickly start the env and install the InternNav:
+After the container started, you can quickly start to use the InternNav with conda environment:
 ```bash
 conda activate internutopia
-pip install -e .[isaac,model]
 ```
 <!-- To help you get started quickly, we've prepared a Docker image pre-configured with Isaac Sim 4.5 and InternUtopia. You can pull the image and run evaluations in the container using the following command:
 ```bash
