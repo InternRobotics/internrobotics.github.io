@@ -8,7 +8,7 @@ To get started with the training and evaluation, we need to prepare the data and
 1. **InternVLA-N1 pretrained Checkpoints**
 - Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
-- Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/Ashoka74/Placement/resolve/main/depth_anything_v2_vits.pth). Move the checkpoint to the `checkpoints` directory.
+- Download the depthanything v2 pretrained [checkpoint](https://huggingface.co/depth-anything/Depth-Anything-V2-Metric-Hypersim-Small/resolve/main/depth_anything_v2_metric_hypersim_vits.pth). Move the checkpoint to the `checkpoints` directory.
 3. **InternData-N1 Dataset Episodes**
 - Download the [InternData-N1](https://huggingface.co/datasets/InternRobotics/InternData-N1). You only need to download the dataset relevant to your chosen task. Download `vln_ce` for VLNCE evaluation in habitat, `vln_pe` for VLNPE evaluation in internutopia.
 4. **Scene-N1**
