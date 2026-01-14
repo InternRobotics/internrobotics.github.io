@@ -13,4 +13,5 @@ myst:
 
 quick_start/index
 tutorials/index
+projects/index
 ```
