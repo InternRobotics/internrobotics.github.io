@@ -207,7 +207,7 @@ To enable additional functionalities, several install flags are available:
 
 ### Download Checkpoints
 1. **InternVLA-N1 pretrained Checkpoints**
-- Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
+- Download our latest pretrained [checkpoint](https://huggingface.co/InternRobotics/InternVLA-N1-DualVLN) of InternVLA-N1 and run the following script to inference with visualization results. Move the checkpoint to the `checkpoints` directory.
 2. **DepthAnything v2 Checkpoints**
 - Download the DepthAnything v2 pretrained [checkpoint](https://huggingface.co/depth-anything/Depth-Anything-V2-Metric-Hypersim-Small/resolve/main/depth_anything_v2_metric_hypersim_vits.pth). Move the checkpoint to the `checkpoints` directory.
 
