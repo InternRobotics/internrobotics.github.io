@@ -38,7 +38,7 @@ Alternatively, it can be jointly trained together with a System1 model for end-t
 
 ```bash
 # training system2 separately
-sbatch ./scripts/train/base_train/qwenvl_train/train_system2.sh 
+sbatch ./scripts/train/qwenvl_train/train_system2.sh 
 ```
 
 ---
@@ -54,7 +54,7 @@ After completing training of **InternVLA-N1 (System2)**, joint training is suppo
 
 ```bash
 # training system1 based on system2
-sbatch ./scripts/train/base_train/qwenvl_train/train_dual_system.sh 
+sbatch ./scripts/train/qwenvl_train/train_dual_system.sh 
 ```
 
 - For **w/ NavDP** model variant, set `system1=navdp_async`. Optimal performance is typically observed after **30,000 iterations**.  
