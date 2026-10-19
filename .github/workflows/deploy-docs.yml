@@ -31,6 +31,9 @@ jobs:
         run: |
           make html
 
+      - name: Include book URL aliases
+        run: python -c "import shutil; shutil.copytree('physical-ai-book', '_build/html/physical-ai-book', dirs_exist_ok=True)"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _build/html
