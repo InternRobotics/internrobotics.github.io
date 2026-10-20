@@ -17,4 +17,5 @@ how-to-add-controller
 how-to-add-sensor
 how-to-add-task
 how-to-add-metric
+how-to-build-a-benchmark
 ```
