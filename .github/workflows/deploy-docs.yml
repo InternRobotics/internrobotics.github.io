@@ -34,6 +34,36 @@ jobs:
       - name: Include book URL aliases
         run: python -c "import shutil; shutil.copytree('physical-ai-book', '_build/html/physical-ai-book', dirs_exist_ok=True)"
 
+      - name: Checkout internw0-page
+        uses: actions/checkout@v4
+        with:
+          repository: InternRobotics/internw0-page
+          path: internw0-page
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: internw0-page/pnpm-lock.yaml
+
+      - name: Build internw0 static site
+        working-directory: internw0-page
+        env:
+          NEXT_PUBLIC_BASE_PATH: /internw0
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+      - name: Include internw0 subpage
+        run: python -c "import shutil; shutil.copytree('internw0-page/out', '_build/html/internw0', dirs_exist_ok=True)"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _build/html
