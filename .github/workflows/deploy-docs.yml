@@ -64,6 +64,9 @@ jobs:
       - name: Include internw0 subpage
         run: python -c "import shutil; shutil.copytree('internw0-page/out', '_build/html/internw0', dirs_exist_ok=True)"
 
+      - name: Include RoboAtom subpage
+        run: python -c "import shutil; shutil.copytree('RoboAtom', '_build/html/RoboAtom', dirs_exist_ok=True)"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _build/html
