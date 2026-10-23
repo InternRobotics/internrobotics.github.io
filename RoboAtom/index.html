@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f3">
+  <meta name="description" content="RoboAtom provides unified, time-aligned atomic-action supervision for robot learning, with 1.45 million trajectories, a dedicated benchmark, and downstream validation.">
+  <meta property="og:title" content="RoboAtom: Large-scale Atomic-Action Supervision for Robot Learning">
+  <meta property="og:description" content="Unified, time-aligned atomic-action supervision for robot learning.">
+  <meta property="og:type" content="website">
+  <title>RoboAtom: Large-scale Atomic-Action Supervision for Robot Learning</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#home" aria-label="RoboAtom home">Robo<span>Atom</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#data">Data</a>
+        <a href="#method">Method</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#anno">RoboAtom-Anno</a>
+        <a href="#results">Results</a>
+        <a href="#resources">Resources</a>
+      </nav>
+      <span class="header-resource resource-link is-pending" data-resource="paper">
+        <span>Paper</span><small>Not linked</small>
+      </span>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation">
+        <a href="#data">Data</a>
+        <a href="#method">Method</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#anno">RoboAtom-Anno</a>
+        <a href="#results">Results</a>
+        <a href="#resources">Resources</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="content-width hero-layout">
+        <div class="hero-inner">
+          <p class="eyebrow">Atomic-action supervision for robot learning</p>
+          <h1 id="hero-title">RoboAtom</h1>
+          <p class="hero-paper-title">Large-scale Atomic-Action Supervision for Robot Learning</p>
+          <p class="hero-description">Unified, time-aligned annotations connect skill labels and action descriptions to temporal boundaries.</p>
+          <div class="hero-resources" aria-label="Project resources">
+            <span class="resource-link is-pending" data-resource="paper"><span>Paper</span><small>Not linked</small></span>
+            <span class="resource-link is-pending" data-resource="code"><span>Code</span><small>Not linked</small></span>
+            <span class="resource-link is-pending" data-resource="data"><span>Data</span><small>Not linked</small></span>
+            <a class="resource-link" href="#examples"><span>Video</span><small>Examples</small></a>
+          </div>
+        </div>
+        <article class="video-card hero-video-card" data-video-card data-video="nesting">
+          <div class="video-frame">
+            <video controls muted playsinline preload="auto" poster="assets/videos/posters/nesting-dolls.jpg" aria-label="Annotated RoboDojo video: arranging five nesting dolls">
+              <source src="assets/videos/nesting-dolls.mp4" type="video/mp4">
+            </video>
+            <div class="active-annotation" aria-live="polite">
+              <span class="active-skill" data-active-skill>Pick</span>
+              <span data-active-action>Picks up the first matryoshka doll.</span>
+            </div>
+          </div>
+          <div class="video-copy">
+            <div>
+              <h2>Order five nesting dolls</h2>
+              <p>RoboDojo · 10 annotated segments</p>
+            </div>
+            <span>00:18</span>
+          </div>
+          <div class="annotation-timeline" data-timeline role="group" aria-label="Nesting doll annotation timeline"></div>
+          <ol class="segment-list">
+            <li><strong>Pick</strong><span>Picks up each nesting doll in order.</span></li>
+            <li><strong>Place</strong><span>Places each doll from left to right.</span></li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section class="stats-band" aria-label="RoboAtom-Data at a glance">
+      <div class="content-width">
+        <dl class="stats-grid">
+          <div><dt>Trajectories</dt><dd>1.45M</dd></div>
+          <div><dt>Skill-labeled segments</dt><dd>6.88M</dd></div>
+          <div><dt>Hours</dt><dd>16,882.1</dd></div>
+          <div><dt>Sources</dt><dd>16</dd></div>
+          <div><dt>Skills</dt><dd>29</dd></div>
+          <div><dt>Tasks</dt><dd>3,334</dd></div>
+        </dl>
+        <p class="stats-note">Exact released-set counts: 1,446,974 trajectories and 6,876,282 skill-labeled segments.</p>
+      </div>
+    </section>
+
+    <section class="section media-section" id="examples" aria-labelledby="examples-title">
+      <div class="content-width">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="section-index">01 / Annotated examples</p>
+            <h2 id="examples-title">Watch the labels move with the action.</h2>
+          </div>
+          <p>Public source videos with RoboAtom skill labels, action descriptions, and temporal boundaries.</p>
+        </div>
+        <div class="video-grid">
+          <article class="video-card" data-video-card data-video="sandwich">
+            <div class="video-frame">
+              <video controls muted playsinline preload="auto" poster="assets/videos/posters/sandwich.jpg" aria-label="Annotated EBench video: making a sandwich">
+                <source src="assets/videos/sandwich.mp4" type="video/mp4">
+              </video>
+              <div class="active-annotation" aria-live="polite">
+                <span class="active-skill" data-active-skill>Pick</span>
+                <span data-active-action>Picks up the first bread slice and the meat patty.</span>
+              </div>
+            </div>
+            <div class="video-copy">
+              <div>
+                <h3>Make a sandwich</h3>
+                <p>EBench · 7 annotated segments</p>
+              </div>
+              <span>00:53</span>
+            </div>
+            <div class="annotation-timeline" data-timeline role="group" aria-label="Sandwich annotation timeline"></div>
+            <ol class="segment-list">
+              <li><strong>Pick</strong><span>Gathers bread, patty, and lettuce.</span></li>
+              <li><strong>Place</strong><span>Builds the sandwich layer by layer.</span></li>
+            </ol>
+          </article>
+          <article class="video-card" data-video-card data-video="dishwasher">
+            <div class="video-frame">
+              <video controls muted playsinline preload="auto" poster="assets/videos/posters/dishwasher-open-place.jpg" aria-label="Annotated EBench video: opening a dishwasher and placing a bowl">
+                <source src="assets/videos/dishwasher-open-place.mp4" type="video/mp4">
+              </video>
+              <div class="active-annotation" aria-live="polite">
+                <span class="active-skill" data-active-skill>Open</span>
+                <span data-active-action>Opens the dishwasher door.</span>
+              </div>
+            </div>
+            <div class="video-copy">
+              <div>
+                <h3>Open and place a bowl</h3>
+                <p>EBench · Open, Move, and Place clip</p>
+              </div>
+              <span>00:35</span>
+            </div>
+            <div class="annotation-timeline" data-timeline role="group" aria-label="Dishwasher annotation timeline"></div>
+            <ol class="segment-list">
+              <li><strong>Open</strong><span>Opens the dishwasher door.</span></li>
+              <li><strong>Place</strong><span>Places the dark bowl into the dishwasher.</span></li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tinted overview-section" id="overview" aria-labelledby="overview-title">
+      <div class="content-width">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="section-index">02 / Paper overview</p>
+            <h2 id="overview-title">One resource from data to control.</h2>
+          </div>
+          <p>RoboAtom-Data, RoboAtom-Bench, RoboAtom-Anno, and dual-system execution in one view.</p>
+        </div>
+        <figure class="paper-figure overview-figure">
+          <a class="figure-image" href="assets/figures/roboatom-overview.png"
+             data-figure data-title="RoboAtom overview"
+             data-caption="Data and benchmark, atomic-action annotations, annotation performance, and robot-control success rates."
+             data-source="assets/figures/roboatom-overview.pdf"
+             aria-label="Enlarge the RoboAtom overview figure">
+            <img src="assets/figures/roboatom-overview.png" alt="RoboAtom overview showing dataset scale, benchmark composition, atomic-action annotations, annotation results, and dual-system control results." width="3200" height="1439" loading="lazy" decoding="async">
+          </a>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="data" aria-labelledby="data-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">03 / RoboAtom-Data</p>
+            <h2 id="data-title">A shared language for atomic actions.</h2>
+          </div>
+            <p>One segment format for learning, annotation, and evaluation.</p>
+        </div>
+        <div class="schema-grid" aria-label="Atomic-action annotation format">
+          <article>
+            <span class="schema-number">01</span>
+            <h3>Skill category</h3>
+            <p>A shared 29-class vocabulary.</p>
+          </article>
+          <article>
+            <span class="schema-number">02</span>
+            <h3>Action description</h3>
+            <p>Object-specific action text is preserved.</p>
+          </article>
+          <article>
+            <span class="schema-number">03</span>
+            <h3>Temporal boundaries</h3>
+            <p>Start and end frames align each action.</p>
+          </article>
+        </div>
+        <figure class="paper-figure">
+          <a class="figure-image" href="assets/figures/data-characteristics.webp"
+             data-figure data-title="Scale and diversity of RoboAtom-Data"
+             data-caption="Annotation word cloud, trajectory durations, segments per trajectory, dataset-scale comparison, and language distributions."
+             data-source="assets/figures/data-characteristics.webp"
+             aria-label="Enlarge the RoboAtom-Data characteristics figure">
+            <img src="assets/figures/data-characteristics.webp" alt="Six panels summarizing RoboAtom-Data annotation language, durations, segment counts, dataset scale, and task and action distributions." width="3200" height="2079" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            <span><strong>Scale and diversity.</strong> Real-robot and high-fidelity simulated trajectories span varied tasks, durations, skills, and manipulated objects.</span>
+            <span class="figure-hint">Select the figure to enlarge</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="method" aria-labelledby="method-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">04 / Construction</p>
+            <h2 id="method-title">From human-reviewed seeds to millions of aligned segments.</h2>
+          </div>
+          <p>Human-reviewed seeds are extended and corrected at scale.</p>
+        </div>
+        <figure class="paper-figure">
+          <a class="figure-image" href="assets/figures/construction-pipeline.png"
+             data-figure data-title="RoboAtom construction pipeline"
+             data-caption="Model-assisted annotation and human review produce seed annotations; PhysExtend and quality control scale them into RoboAtom-Data. Expert review establishes RoboAtom-Bench."
+             data-source="assets/figures/construction-pipeline.pdf"
+             aria-label="Enlarge the RoboAtom construction pipeline">
+            <img src="assets/figures/construction-pipeline.png" alt="Pipeline from public and private videos through human-in-the-loop annotation, PhysExtend, filtering, revision, and expert review to RoboAtom-Data and RoboAtom-Bench." width="3200" height="1638" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            <span><strong>Human judgment where it matters.</strong> Annotators review source videos, correct action semantics and boundaries, and verify model-assisted revisions.</span>
+            <a href="assets/figures/construction-pipeline.pdf" target="_blank" rel="noopener">Open PDF</a>
+          </figcaption>
+        </figure>
+        <div class="process-list">
+          <article>
+            <h3>Seed annotation</h3>
+            <p>Model proposals are corrected against source videos.</p>
+          </article>
+          <article>
+            <h3>Same-task extension</h3>
+            <p>Annotations transfer across repeated executions with the same ordered skills.</p>
+          </article>
+          <article>
+            <h3>Quality control</h3>
+            <p>Sampling, visual checks, and human verification catch semantic and boundary errors.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="physextend" aria-labelledby="physextend-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">05 / PhysExtend</p>
+            <h2 id="physextend-title">Boundaries grounded in physical evidence.</h2>
+          </div>
+          <p>Gripper, motion, pause, and holding-state cues localize boundaries.</p>
+        </div>
+        <div class="metric-strip" aria-label="PhysExtend highlights">
+          <div><strong>71.0</strong><span>Skill F1@0.7 with one reference</span></div>
+          <div><strong>79.3</strong><span>Skill F1@0.7 with four references</span></div>
+          <div><strong>65%</strong><span>Episode accuracy with one reference</span></div>
+        </div>
+        <figure class="paper-figure">
+          <a class="figure-image" href="assets/figures/physical-evidence.webp"
+             data-figure data-title="Skill-aware boundary evidence"
+             data-caption="Gripper and base-motion evidence aligned with skill boundaries, skill-feature associations, and extension performance across reference counts."
+             data-source="assets/figures/physical-evidence.webp"
+             aria-label="Enlarge the PhysExtend physical evidence figure">
+            <img src="assets/figures/physical-evidence.webp" alt="Four panels showing gripper-state evidence for Pick and Place, base-motion evidence for Move, physical feature associations, and PhysExtend performance compared with Cortex." width="3200" height="2028" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            <span><strong>Ordered global partitioning.</strong> Dynamic programming, physical-event correction, and monotonic projection localize a complete sequence of non-overlapping segments.</span>
+            <span class="figure-hint">Select the figure to enlarge</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="benchmark" aria-labelledby="benchmark-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">06 / RoboAtom-Bench</p>
+            <h2 id="benchmark-title">Evaluate what happens, in what order, and when.</h2>
+          </div>
+          <p>Expert-reviewed trajectories test skills, boundaries, and sequence structure.</p>
+        </div>
+        <dl class="benchmark-facts">
+          <div><dt>Trajectories</dt><dd>500</dd></div>
+          <div><dt>GT segments</dt><dd>4,018</dd></div>
+          <div><dt>Skills</dt><dd>15</dd></div>
+          <div><dt>Skill-segment coverage</dt><dd>99.2%</dd></div>
+        </dl>
+        <div class="subset-grid" aria-label="RoboAtom-Bench subsets">
+          <article><h3>Short</h3><p>200 trajectories</p><span>1-4 GT actions</span></article>
+          <article><h3>Medium</h3><p>100 trajectories</p><span>5-8 GT actions</span></article>
+          <article><h3>Long</h3><p>100 trajectories</p><span>9-62 GT actions</span></article>
+          <article><h3>Multiview</h3><p>100 separate trajectories</p><span>Synchronized camera inputs</span></article>
+        </div>
+        <figure class="paper-figure wide-figure">
+          <a class="figure-image" href="assets/figures/benchmark-metrics.png"
+             data-figure data-title="RoboAtom-Bench metrics and analysis"
+             data-caption="Temporal mIoU and F1, Skill F1, Edit Score, cumulative GT segment counts, and predicted-to-GT segment-count ratios."
+             data-source="assets/figures/benchmark-metrics.pdf"
+             aria-label="Enlarge the RoboAtom-Bench metrics figure">
+            <img src="assets/figures/benchmark-metrics.png" alt="Benchmark illustrations of temporal overlap, skill-aware matching, edit operations, ground-truth segment distributions, and predicted segment-count ratios." width="3200" height="648" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            <span><strong>Complementary metrics.</strong> Temporal mIoU and F1 measure overlap, Skill F1 additionally requires the correct category, and Edit Score compares collapsed skill sequences without timestamps.</span>
+            <a href="assets/figures/benchmark-metrics.pdf" target="_blank" rel="noopener">Open PDF</a>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="anno" aria-labelledby="anno-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">07 / RoboAtom-Anno</p>
+            <h2 id="anno-title">Learning to annotate, then learning to act.</h2>
+          </div>
+          <p>The same supervision supports annotation and atomic-action-conditioned control.</p>
+        </div>
+        <div class="anno-layout">
+          <div class="anno-copy">
+            <h3>Automatic atomic-action annotation</h3>
+            <p>Robot-domain mid-training, task-sampled SFT, and GRPO produce the annotation model. The 27B model reaches <strong>33.8 Skill F1@0.7</strong> on task-disjoint RoboAtom-Bench; the 9B model reaches <strong>48.3 temporal F1@0.7</strong> on WGO-Bench Robot.</p>
+          </div>
+          <dl class="anno-stages">
+            <div><dt>01</dt><dd>Robot-domain mid-training</dd></div>
+            <div><dt>02</dt><dd>Supervised fine-tuning</dd></div>
+            <div><dt>03</dt><dd>GRPO reward optimization</dd></div>
+          </dl>
+        </div>
+        <div class="dual-heading">
+          <p class="section-index">Dual-system execution</p>
+          <h3>System 2 selects the instruction. System 1 executes it.</h3>
+        </div>
+        <figure class="paper-figure">
+          <a class="figure-image" href="assets/figures/dual-system.png"
+             data-figure data-title="Dual-system execution"
+             data-caption="System 2 uses a task-plan prior, visual observations, and execution history to select an atomic-action instruction. System 1 conditions on that instruction to produce robot actions."
+             data-source="assets/figures/dual-system.pdf"
+             aria-label="Enlarge the dual-system execution figure">
+            <img src="assets/figures/dual-system.png" alt="System 2 plans from instructions, retrieved task plans, and visual history; System 1 executes atomic-action-conditioned action chunks through a low-level controller." width="3200" height="1359" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            <span><strong>Closed-loop scheduling.</strong> Subsequent observations inform whether System 2 retains the current instruction or switches to another atomic action.</span>
+            <a href="assets/figures/dual-system.pdf" target="_blank" rel="noopener">Open PDF</a>
+          </figcaption>
+        </figure>
+        <div class="system-grid">
+          <article>
+            <h3>System 2 / planning</h3>
+            <p>A Qwen3.8-27B planner combines a task-plan prior with visual observations and execution history to select the current skill and action description.</p>
+          </article>
+          <article>
+            <h3>System 1 / control</h3>
+            <p>A fine-tuned &pi;<sub>0.5</sub> policy conditions on the selected atomic-action instruction and produces robot action chunks.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-results" id="results" aria-labelledby="results-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">08 / Results</p>
+            <h2 id="results-title">Main results from the paper.</h2>
+          </div>
+          <p>Complete primary tables for automatic annotation, downstream control, and same-task annotation extension.</p>
+        </div>
+        <div class="results-tabs" role="tablist" aria-label="Result tables">
+          <button id="tab-annotation" type="button" role="tab" aria-selected="true" aria-controls="panel-annotation">Annotation</button>
+          <button id="tab-control" type="button" role="tab" aria-selected="false" aria-controls="panel-control" tabindex="-1">Robot control</button>
+          <button id="tab-extension" type="button" role="tab" aria-selected="false" aria-controls="panel-extension" tabindex="-1">PhysExtend</button>
+        </div>
+
+        <section class="result-panel" id="panel-annotation" role="tabpanel" aria-labelledby="tab-annotation">
+          <div class="result-heading">
+            <h3>Automatic annotation</h3>
+            <p>Quality metrics are on a 0-100 scale. Cost is USD per source-video hour.</p>
+          </div>
+          <div class="table-scroll" role="region" aria-label="Automatic annotation results table" tabindex="0">
+            <table>
+              <caption>Annotation performance and inference cost</caption>
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">Model</th>
+                  <th scope="colgroup" colspan="5">RoboAtom-Bench</th>
+                  <th scope="colgroup" colspan="3">WGO-Bench Robot</th>
+                </tr>
+                <tr>
+                  <th scope="col">mIoU</th><th scope="col">F1@0.7</th><th scope="col">Skill F1@0.7</th><th scope="col">Edit</th><th scope="col">Cost</th>
+                  <th scope="col">mIoU</th><th scope="col">F1@0.7</th><th scope="col">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">GPT-4o</th><td>31.5</td><td>13.9</td><td>7.2</td><td>47.7</td><td>0.971</td><td>46.1</td><td>14.6</td><td>0.800</td></tr>
+                <tr><th scope="row">GPT-5.6-sol</th><td>44.0</td><td>28.0</td><td>21.4</td><td>63.4</td><td>4.330</td><td>41.9</td><td>31.3</td><td>3.375</td></tr>
+                <tr><th scope="row">Gemini 3.1 Pro</th><td>42.5</td><td>24.4</td><td>16.1</td><td>61.8</td><td>4.516</td><td>52.1</td><td>29.6</td><td>4.389</td></tr>
+                <tr><th scope="row">Qwen3.8-27B</th><td>38.4</td><td>20.1</td><td>10.9</td><td>56.6</td><td>0.103</td><td>51.3</td><td>24.3</td><td>0.096</td></tr>
+                <tr><th scope="row">Qwen3.5-9B</th><td>9.6</td><td>6.2</td><td>3.5</td><td>28.7</td><td>0.008</td><td>12.8</td><td>1.7</td><td>0.007</td></tr>
+                <tr class="our-result"><th scope="row">RoboAtom-Anno-9B</th><td>55.1</td><td>41.0</td><td>30.1</td><td>76.7</td><td>0.006</td><td>61.7</td><td>48.3</td><td>0.004</td></tr>
+                <tr class="our-result"><th scope="row">RoboAtom-Anno-27B</th><td>56.4</td><td>43.2</td><td>33.8</td><td>76.8</td><td>0.078</td><td>66.0</td><td>49.2</td><td>0.054</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="result-panel" id="panel-control" role="tabpanel" aria-labelledby="tab-control">
+          <div class="result-heading">
+            <h3>Downstream robot control</h3>
+            <p>Success rates (%). Comparisons use matched post-training budgets, observation spaces, and action spaces within each benchmark.</p>
+          </div>
+          <div class="table-scroll" role="region" aria-label="Downstream robot control results table" tabindex="0">
+            <table>
+              <caption>Success rates on LIBERO, LIBERO-Plus, and RoboTwin</caption>
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">Method</th>
+                  <th scope="col" rowspan="2">LIBERO Long</th>
+                  <th scope="colgroup" colspan="5">LIBERO-Plus</th>
+                  <th scope="colgroup" colspan="3">RoboTwin</th>
+                </tr>
+                <tr>
+                  <th scope="col">Spatial</th><th scope="col">Object</th><th scope="col">Goal</th><th scope="col">Long</th><th scope="col">Overall</th>
+                  <th scope="col">Clean</th><th scope="col">Random</th><th scope="col">Avg.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">&pi;<sub>0.5</sub></th><td>95.00</td><td>93.01</td><td>85.23</td><td>79.93</td><td>78.56</td><td>84.05</td><td>80.70</td><td>48.04</td><td>64.37</td></tr>
+                <tr class="our-result"><th scope="row">Our method</th><td>98.20</td><td>92.46</td><td>91.86</td><td>86.34</td><td>82.29</td><td>88.18</td><td>82.02</td><td>50.32</td><td>66.17</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">LIBERO-Plus Overall covers all 10,030 tasks. RoboTwin Avg. is the Clean/Random mean. These are results under the paper's evaluation settings, not a universal performance guarantee.</p>
+        </section>
+
+        <section class="result-panel" id="panel-extension" role="tabpanel" aria-labelledby="tab-extension">
+          <div class="result-heading">
+            <h3>Same-task annotation extension</h3>
+            <p>One-reference results. Cost is USD per source-video hour; episode accuracy requires every subtask to be correct.</p>
+          </div>
+          <div class="table-scroll" role="region" aria-label="PhysExtend annotation extension results table" tabindex="0">
+            <table>
+              <caption>Annotation extension performance and cost</caption>
+              <thead><tr><th scope="col">Model</th><th scope="col">mIoU</th><th scope="col">F1@0.7</th><th scope="col">Skill F1@0.7</th><th scope="col">EA (%)</th><th scope="col">Cost</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">GPT-4o</th><td>48.2</td><td>20.7</td><td>11.1</td><td>10</td><td>0.888</td></tr>
+                <tr><th scope="row">Gemini 3.1 Pro</th><td>61.1</td><td>44.9</td><td>39.7</td><td>39</td><td>2.877</td></tr>
+                <tr><th scope="row">GPT-5.6-sol</th><td>58.9</td><td>37.8</td><td>35.0</td><td>46</td><td>3.510</td></tr>
+                <tr><th scope="row">Qwen3.8-27B</th><td>46.1</td><td>25.4</td><td>19.1</td><td>25</td><td>0.051</td></tr>
+                <tr><th scope="row">Cortex</th><td>66.5</td><td>49.8</td><td>48.5</td><td>37</td><td>4.8 &times; 10<sup>-4</sup></td></tr>
+                <tr class="our-result"><th scope="row">PhysExtend</th><td>76.8</td><td>71.6</td><td>71.0</td><td>65</td><td>2.8 &times; 10<sup>-5</sup></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">Episode accuracy is evaluated on 100 trajectories, one per task. The extension evaluation uses 100 tasks with five manually annotated and reviewed trajectories per task.</p>
+        </section>
+      </div>
+    </section>
+
+    <section class="section section-resources" id="resources" aria-labelledby="resources-title">
+      <div class="content-width">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">09 / Resources</p>
+            <h2 id="resources-title">Project resources.</h2>
+          </div>
+          <p>External destinations are intentionally left unconfigured. Entries remain non-interactive until a real URL is supplied.</p>
+        </div>
+        <div class="resource-list">
+          <div class="resource-row"><span><strong>Paper</strong><small>Technical report</small></span><span class="resource-link is-pending" data-resource="paper"><span>Not linked</span></span></div>
+          <div class="resource-row"><span><strong>Code</strong><small>Source repository</small></span><span class="resource-link is-pending" data-resource="code"><span>Not linked</span></span></div>
+          <div class="resource-row"><span><strong>Data</strong><small>RoboAtom-Data and RoboAtom-Bench</small></span><span class="resource-link is-pending" data-resource="data"><span>Not linked</span></span></div>
+          <div class="resource-row"><span><strong>Models</strong><small>RoboAtom-Anno checkpoints</small></span><span class="resource-link is-pending" data-resource="models"><span>Not linked</span></span></div>
+          <div class="resource-row"><span><strong>Video</strong><small>Annotated examples are available on this page; no external video URL is configured</small></span><a class="resource-link" href="#examples"><span>Watch examples</span></a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="content-width footer-inner">
+      <a class="brand" href="#home">Robo<span>Atom</span></a>
+      <p>Large-scale Atomic-Action Supervision for Robot Learning</p>
+      <a href="#home">Back to top</a>
+    </div>
+  </footer>
+
+  <dialog id="figure-dialog" class="figure-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-bar">
+      <h2 id="dialog-title">Paper figure</h2>
+      <button class="dialog-close" type="button" aria-label="Close figure viewer">&times;</button>
+    </div>
+    <div class="dialog-tools">
+      <button id="figure-zoom" type="button" aria-pressed="false">Original size</button>
+      <a id="figure-source" href="assets/figures/roboatom-overview.pdf" target="_blank" rel="noopener">Open source file</a>
+    </div>
+    <div id="figure-viewport" class="figure-viewport" role="region" aria-label="Scrollable enlarged paper figure" tabindex="0"></div>
+    <p id="dialog-caption" class="dialog-caption"></p>
+  </dialog>
+</body>
+</html>
