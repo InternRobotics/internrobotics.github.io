@@ -43,26 +43,42 @@
 
   <main id="main">
     <section class="hero" id="home" aria-labelledby="hero-title">
-      <div class="content-width hero-inner">
-        <p class="eyebrow">Atomic-action supervision for robot learning</p>
-        <h1 id="hero-title">RoboAtom</h1>
-        <p class="hero-paper-title">Large-scale Atomic-Action Supervision for Robot Learning</p>
-        <p class="hero-description">Unified, time-aligned annotations connect skill categories and action descriptions to temporal boundaries across heterogeneous robot trajectories.</p>
-        <div class="hero-resources" aria-label="Project resources">
-          <span class="resource-link is-pending" data-resource="paper"><span>Paper</span><small>Not linked</small></span>
-          <span class="resource-link is-pending" data-resource="code"><span>Code</span><small>Not linked</small></span>
-          <span class="resource-link is-pending" data-resource="data"><span>Data</span><small>Not linked</small></span>
-          <span class="resource-link is-pending" data-resource="video"><span>Video</span><small>Not linked</small></span>
+      <div class="content-width hero-layout">
+        <div class="hero-inner">
+          <p class="eyebrow">Atomic-action supervision for robot learning</p>
+          <h1 id="hero-title">RoboAtom</h1>
+          <p class="hero-paper-title">Large-scale Atomic-Action Supervision for Robot Learning</p>
+          <p class="hero-description">Unified, time-aligned annotations connect skill labels and action descriptions to temporal boundaries.</p>
+          <div class="hero-resources" aria-label="Project resources">
+            <span class="resource-link is-pending" data-resource="paper"><span>Paper</span><small>Not linked</small></span>
+            <span class="resource-link is-pending" data-resource="code"><span>Code</span><small>Not linked</small></span>
+            <span class="resource-link is-pending" data-resource="data"><span>Data</span><small>Not linked</small></span>
+            <span class="resource-link is-pending" data-resource="video"><span>Video</span><small>Not linked</small></span>
+          </div>
         </div>
-        <figure class="hero-figure">
-          <a class="figure-image" href="assets/figures/roboatom-overview.png"
-             data-figure data-title="RoboAtom overview"
-             data-caption="Data and benchmark, atomic-action annotations, annotation performance, and robot-control success rates."
-             data-source="assets/figures/roboatom-overview.pdf"
-             aria-label="Enlarge the RoboAtom overview figure">
-            <img src="assets/figures/roboatom-overview.png" alt="RoboAtom overview showing dataset scale, benchmark composition, atomic-action annotations, annotation results, and dual-system control results." width="3200" height="1439" fetchpriority="high" decoding="async">
-          </a>
-        </figure>
+        <article class="video-card hero-video-card" data-video-card data-video="nesting">
+          <div class="video-frame">
+            <video controls muted playsinline preload="auto" poster="assets/videos/posters/nesting-dolls.jpg" aria-label="Annotated RoboDojo video: arranging five nesting dolls">
+              <source src="assets/videos/nesting-dolls.mp4" type="video/mp4">
+            </video>
+            <div class="active-annotation" aria-live="polite">
+              <span class="active-skill" data-active-skill>Pick</span>
+              <span data-active-action>Picks up the first matryoshka doll.</span>
+            </div>
+          </div>
+          <div class="video-copy">
+            <div>
+              <h2>Order five nesting dolls</h2>
+              <p>RoboDojo · 10 annotated segments</p>
+            </div>
+            <span>00:18</span>
+          </div>
+          <div class="annotation-timeline" data-timeline role="group" aria-label="Nesting doll annotation timeline"></div>
+          <ol class="segment-list">
+            <li><strong>Pick</strong><span>Picks up each nesting doll in order.</span></li>
+            <li><strong>Place</strong><span>Places each doll from left to right.</span></li>
+          </ol>
+        </article>
       </div>
     </section>
 
@@ -80,30 +96,111 @@
       </div>
     </section>
 
+    <section class="section media-section" id="examples" aria-labelledby="examples-title">
+      <div class="content-width">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="section-index">01 / Annotated examples</p>
+            <h2 id="examples-title">Watch the labels move with the action.</h2>
+          </div>
+          <p>Public source videos with RoboAtom skill labels, action descriptions, and temporal boundaries.</p>
+        </div>
+        <div class="video-grid">
+          <article class="video-card" data-video-card data-video="sandwich">
+            <div class="video-frame">
+              <video controls muted playsinline preload="auto" poster="assets/videos/posters/sandwich.jpg" aria-label="Annotated EBench video: making a sandwich">
+                <source src="assets/videos/sandwich.mp4" type="video/mp4">
+              </video>
+              <div class="active-annotation" aria-live="polite">
+                <span class="active-skill" data-active-skill>Pick</span>
+                <span data-active-action>Picks up the first bread slice and the meat patty.</span>
+              </div>
+            </div>
+            <div class="video-copy">
+              <div>
+                <h3>Make a sandwich</h3>
+                <p>EBench · 7 annotated segments</p>
+              </div>
+              <span>00:53</span>
+            </div>
+            <div class="annotation-timeline" data-timeline role="group" aria-label="Sandwich annotation timeline"></div>
+            <ol class="segment-list">
+              <li><strong>Pick</strong><span>Gathers bread, patty, and lettuce.</span></li>
+              <li><strong>Place</strong><span>Builds the sandwich layer by layer.</span></li>
+            </ol>
+          </article>
+          <article class="video-card" data-video-card data-video="dishwasher">
+            <div class="video-frame">
+              <video controls muted playsinline preload="auto" poster="assets/videos/posters/dishwasher-open-place.jpg" aria-label="Annotated EBench video: opening a dishwasher and placing a bowl">
+                <source src="assets/videos/dishwasher-open-place.mp4" type="video/mp4">
+              </video>
+              <div class="active-annotation" aria-live="polite">
+                <span class="active-skill" data-active-skill>Open</span>
+                <span data-active-action>Opens the dishwasher door.</span>
+              </div>
+            </div>
+            <div class="video-copy">
+              <div>
+                <h3>Open and place a bowl</h3>
+                <p>EBench · Open, Move, and Place clip</p>
+              </div>
+              <span>00:35</span>
+            </div>
+            <div class="annotation-timeline" data-timeline role="group" aria-label="Dishwasher annotation timeline"></div>
+            <ol class="segment-list">
+              <li><strong>Open</strong><span>Opens the dishwasher door.</span></li>
+              <li><strong>Place</strong><span>Places the dark bowl into the dishwasher.</span></li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tinted overview-section" id="overview" aria-labelledby="overview-title">
+      <div class="content-width">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="section-index">02 / Paper overview</p>
+            <h2 id="overview-title">One resource from data to control.</h2>
+          </div>
+          <p>RoboAtom-Data, RoboAtom-Bench, RoboAtom-Anno, and dual-system execution in one view.</p>
+        </div>
+        <figure class="paper-figure overview-figure">
+          <a class="figure-image" href="assets/figures/roboatom-overview.png"
+             data-figure data-title="RoboAtom overview"
+             data-caption="Data and benchmark, atomic-action annotations, annotation performance, and robot-control success rates."
+             data-source="assets/figures/roboatom-overview.pdf"
+             aria-label="Enlarge the RoboAtom overview figure">
+            <img src="assets/figures/roboatom-overview.png" alt="RoboAtom overview showing dataset scale, benchmark composition, atomic-action annotations, annotation results, and dual-system control results." width="3200" height="1439" loading="lazy" decoding="async">
+          </a>
+        </figure>
+      </div>
+    </section>
+
     <section class="section" id="data" aria-labelledby="data-title">
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">01 / RoboAtom-Data</p>
+            <p class="section-index">03 / RoboAtom-Data</p>
             <h2 id="data-title">A shared language for atomic actions.</h2>
           </div>
-          <p>Existing robot trajectories gain a consistent segment-level interface for learning, annotation, and evaluation.</p>
+            <p>One segment format for learning, annotation, and evaluation.</p>
         </div>
         <div class="schema-grid" aria-label="Atomic-action annotation format">
           <article>
             <span class="schema-number">01</span>
             <h3>Skill category</h3>
-            <p>A label shared across sources. The released dataset retains a 29-class vocabulary.</p>
+            <p>A shared 29-class vocabulary.</p>
           </article>
           <article>
             <span class="schema-number">02</span>
             <h3>Action description</h3>
-            <p>Object and action details remain in natural language instead of being collapsed into the category.</p>
+            <p>Object-specific action text is preserved.</p>
           </article>
           <article>
             <span class="schema-number">03</span>
             <h3>Temporal boundaries</h3>
-            <p>Start and end frames align every segment with its source trajectory.</p>
+            <p>Start and end frames align each action.</p>
           </article>
         </div>
         <figure class="paper-figure">
@@ -126,10 +223,10 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">02 / Construction</p>
+            <p class="section-index">04 / Construction</p>
             <h2 id="method-title">From human-reviewed seeds to millions of aligned segments.</h2>
           </div>
-          <p>A unified protocol, model-assisted annotation, human review, PhysExtend, and multi-stage quality control form one construction pipeline.</p>
+          <p>Human-reviewed seeds are extended and corrected at scale.</p>
         </div>
         <figure class="paper-figure">
           <a class="figure-image" href="assets/figures/construction-pipeline.png"
@@ -147,15 +244,15 @@
         <div class="process-list">
           <article>
             <h3>Seed annotation</h3>
-            <p>Gemini 3.6 Flash proposes ordered segments and initial boundaries. Human annotators refine skills, descriptions, step order, and frames against the original videos.</p>
+            <p>Model proposals are corrected against source videos.</p>
           </article>
           <article>
             <h3>Same-task extension</h3>
-            <p>PhysExtend transfers annotations across repeated executions with the same ordered skill sequence, jointly localizing boundaries under order constraints.</p>
+            <p>Annotations transfer across repeated executions with the same ordered skills.</p>
           </article>
           <article>
             <h3>Quality control</h3>
-            <p>Sampling, targeted propagation improvements, visual semantic checks, and human verification address structural and language inconsistencies.</p>
+            <p>Sampling, visual checks, and human verification catch semantic and boundary errors.</p>
           </article>
         </div>
       </div>
@@ -165,10 +262,10 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">03 / PhysExtend</p>
+            <p class="section-index">05 / PhysExtend</p>
             <h2 id="physextend-title">Boundaries grounded in physical evidence.</h2>
           </div>
-          <p>Motion intensity, pauses, direction changes, gripper state, and holding-state consistency provide skill-dependent cues.</p>
+          <p>Gripper, motion, pause, and holding-state cues localize boundaries.</p>
         </div>
         <div class="metric-strip" aria-label="PhysExtend highlights">
           <div><strong>71.0</strong><span>Skill F1@0.7 with one reference</span></div>
@@ -195,10 +292,10 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">04 / RoboAtom-Bench</p>
+            <p class="section-index">06 / RoboAtom-Bench</p>
             <h2 id="benchmark-title">Evaluate what happens, in what order, and when.</h2>
           </div>
-          <p>Expert-reviewed trajectories test skill recognition, temporal boundary localization, and sequence structure under a shared protocol.</p>
+          <p>Expert-reviewed trajectories test skills, boundaries, and sequence structure.</p>
         </div>
         <dl class="benchmark-facts">
           <div><dt>Trajectories</dt><dd>500</dd></div>
@@ -232,16 +329,15 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">05 / RoboAtom-Anno</p>
+            <p class="section-index">07 / RoboAtom-Anno</p>
             <h2 id="anno-title">Learning to annotate, then learning to act.</h2>
           </div>
-          <p>The same time-aligned supervision supports automatic video annotation and atomic-action-conditioned robot control.</p>
+          <p>The same supervision supports annotation and atomic-action-conditioned control.</p>
         </div>
         <div class="anno-layout">
           <div class="anno-copy">
             <h3>Automatic atomic-action annotation</h3>
-            <p>RoboAtom-Anno combines robot-domain mid-training, supervised fine-tuning on task-sampled RoboAtom annotations, and GRPO optimization. RoboAtom-Bench tasks are excluded from training.</p>
-            <p>The 27B model reaches <strong>33.8 Skill F1@0.7</strong> on task-disjoint RoboAtom-Bench. The 9B model reaches <strong>30.1</strong> on that benchmark and <strong>48.3 temporal F1@0.7</strong> on the external WGO-Bench Robot evaluation.</p>
+            <p>Robot-domain mid-training, task-sampled SFT, and GRPO produce the annotation model. The 27B model reaches <strong>33.8 Skill F1@0.7</strong> on task-disjoint RoboAtom-Bench; the 9B model reaches <strong>48.3 temporal F1@0.7</strong> on WGO-Bench Robot.</p>
           </div>
           <dl class="anno-stages">
             <div><dt>01</dt><dd>Robot-domain mid-training</dd></div>
@@ -283,7 +379,7 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">06 / Results</p>
+            <p class="section-index">08 / Results</p>
             <h2 id="results-title">Main results from the paper.</h2>
           </div>
           <p>Complete primary tables for automatic annotation, downstream control, and same-task annotation extension.</p>
@@ -383,7 +479,7 @@
       <div class="content-width">
         <div class="section-heading">
           <div>
-            <p class="section-index">07 / Resources</p>
+            <p class="section-index">09 / Resources</p>
             <h2 id="resources-title">Project resources.</h2>
           </div>
           <p>External destinations are intentionally left unconfigured. Entries remain non-interactive until a real URL is supplied.</p>
